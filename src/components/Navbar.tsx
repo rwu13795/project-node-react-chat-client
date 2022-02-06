@@ -1,4 +1,6 @@
-export default function Navbar(): JSX.Element {
+import { memo } from "react";
+
+function Navbar(): JSX.Element {
   return (
     <nav>
       <section>
@@ -7,3 +9,5 @@ export default function Navbar(): JSX.Element {
     </nav>
   );
 }
+
+export default memo(Navbar);

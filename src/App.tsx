@@ -10,34 +10,31 @@ import "./App.css";
 // import axios from "axios";
 import { Socket } from "socket.io-client";
 import Navbar from "./components/Navbar";
-import SignIn from "./components/SingIn";
+import Auth from "./components/Auth";
 import Main from "./components/Main";
+import { useDispatch } from "react-redux";
+import { getUserStatus } from "./utils/redux/userSlice";
 
 function App(): JSX.Element {
-  const [userName, setUserName] = useState<string>("");
+  const dispatch = useDispatch();
 
   const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
-    const name = window.prompt("enter your name");
-    setUserName(name || "no-name");
-  }, []);
+    dispatch(getUserStatus());
+  }, [dispatch]);
 
   return (
     <Router>
       <Navbar />
-
       <div className="App">
         <h1>TESTING</h1>
         <Routes>
           <Route
             path="/"
-            element={<SignIn socket={socket} setSocket={setSocket} />}
+            element={<Auth socket={socket} setSocket={setSocket} />}
           />
-          <Route
-            path="/chat"
-            element={<Main userName={userName} socket={socket} />}
-          />
+          <Route path="/chat" element={<Main socket={socket} />} />
         </Routes>
       </div>
     </Router>

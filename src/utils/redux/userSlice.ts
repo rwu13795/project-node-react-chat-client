@@ -69,6 +69,14 @@ const getUserStatus = createAsyncThunk("user/getUserStatus", async () => {
 //////////////
 // SIGN IN  //
 //////////////
+/*  createAsyncThunk types
+    1) UserState -- action payload types for the "signIn.fullfilled" and other signIn.xxxxx
+       I don't need to put the type in the Payload<> if I have indicate the type here
+    
+    2) types of object which is being passed into the dispatch function
+    3) { state: RootState } the thunkAPI type
+*/
+
 const signIn = createAsyncThunk<UserState, SignInBody, { state: RootState }>(
   "user/signIn",
   async (
@@ -80,10 +88,13 @@ const signIn = createAsyncThunk<UserState, SignInBody, { state: RootState }>(
     thunkAPI
   ) => {
     try {
-      const response = await client.post(serverUrl + "/auth/sign-in", {
-        req_email: signInBody.email,
-        req_password: signInBody.password,
-      });
+      const response = await client.post<UserState>(
+        serverUrl + "/auth/sign-in",
+        {
+          req_email: signInBody.email,
+          req_password: signInBody.password,
+        }
+      );
       return response.data;
     } catch (err: any) {
       // catch the error sent from the server manually, and put it in inside the action.payload

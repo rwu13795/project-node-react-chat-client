@@ -11,20 +11,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 
-import { setFriendChatHistory } from "../utils/redux/messageSlice";
+import {
+  MessageObject,
+  RoomIdentifier,
+  setChatHistory,
+} from "../utils/redux/messageSlice";
 import { selectIsLoggedIn, signIn } from "../utils/redux/userSlice";
 import { connectSocket } from "../utils/socketConnection";
-
-interface Props {
-  setSocket: React.Dispatch<React.SetStateAction<Socket | undefined>>;
-  socket: Socket | undefined;
-}
 
 interface InputValues {
   [inputNames: string]: string;
 }
 
-function Auth({ setSocket, socket }: Props): JSX.Element {
+function Auth(): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -32,28 +31,9 @@ function Auth({ setSocket, socket }: Props): JSX.Element {
 
   useEffect(() => {
     if (isLoggedIn) {
-      if (socket) {
-        console.log("A existing socket is found !");
-      } else {
-        let newSocket: Socket = connectSocket();
-        setSocket(newSocket);
-
-        // listen all messages sent from server for the current user
-        newSocket.on(
-          "messageToClients",
-          ({ sender_id, receiver_id, body, created_at }) => {
-            console.log({ sender_id, receiver_id, body, created_at });
-            dispatch(
-              setFriendChatHistory({ sender_id, receiver_id, body, created_at })
-            );
-          }
-        );
-
-        console.log("user signed, socket connected");
-        navigate("/chat");
-      }
+      navigate("/chat");
     }
-  }, [isLoggedIn, socket, setSocket, navigate, dispatch]);
+  }, [isLoggedIn, navigate]);
 
   // async function signUp() {
   //   try {

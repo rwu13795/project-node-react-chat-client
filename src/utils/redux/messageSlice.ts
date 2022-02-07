@@ -8,60 +8,97 @@ import type { RootState } from "./index";
 
 import axios_client from "../axios-client";
 
-interface ChatHistory {
+export enum chatType {
+  public = "public",
+  group = "group",
+  private = "private",
+}
+
+export interface MessageObject {
   sender_id: string;
-  receiver_id: string;
+  sender_username: string;
+  recipient_id: string;
+  recipient_username: string;
   body: string;
   created_at: string;
 }
-interface FriendChatHistory {
-  [friend_id: string]: ChatHistory[];
+export interface RoomIdentifier {
+  targetChatRoom_type: string;
+  currentUserId?: string;
 }
-interface GroupChatHistory {
-  [group_id: string]: ChatHistory[];
+export interface TargetChatRoom {
+  id: string;
+  name: string;
+  type: string;
+}
+
+interface ChatHistory {
+  [targetChatRoom_id: string]: MessageObject[];
+}
+
+interface chatHistory_response {
+  body: string;
+  created_at: string;
+  recipient_id: string;
+  sender_id: string;
+}
+
+interface LoadChatHistory {
+  chatHistory: chatHistory_response[];
+  currentUsername: string;
+  currentUserId: string;
+  wasHistoryLoaded: boolean;
 }
 
 interface MessageState {
-  currentMessageRecipient: string;
-  friendChatHistory: FriendChatHistory;
-  groupChatHistory: GroupChatHistory;
+  targetChatRoom: TargetChatRoom;
+  chatHistory: ChatHistory;
+  // add the room_type + id in the set, if the room is existed,
+  // that means chat history has been loaded, then don't make request again
+  // PS: cannot use Set in redux store due to non-serializable !?
+  visitedRoom: { [room_name: string]: boolean };
 }
 
 const initialState: MessageState = {
-  currentMessageRecipient: "",
-  friendChatHistory: {},
-  groupChatHistory: {},
+  targetChatRoom: { id: "", name: "", type: "" },
+  chatHistory: {},
+  visitedRoom: {},
 };
 
 const client = axios_client();
 //   const serverUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}`;
 const serverUrl = "http://localhost:5000/api";
 
-//////////////
-// SIGN IN  //
-//////////////
-//   const signIn = createAsyncThunk<UserState, SignInBody, { state: RootState }>(
-//     "user/signIn",
-//     async (
-//       signInBody,
-//       // NOTE//
-//       // if you need to customize the contents of the rejected action, you should
-//       // catch any errors yourself, and then return a new value using the
-//       // thunkAPI.rejectWithValue
-//       thunkAPI
-//     ) => {
-//       try {
-//         const response = await client.post(serverUrl + "/auth/sign-in", {
-//           req_email: signInBody.email,
-//           req_password: signInBody.password,
-//         });
-//         return response.data;
-//       } catch (err: any) {
-//         // catch the error sent from the server manually, and put it in inside the action.payload
-//         return thunkAPI.rejectWithValue(err.response.data);
-//       }
-//     }
-//   );
+const loadChatHistory = createAsyncThunk<
+  LoadChatHistory,
+  string,
+  { state: RootState }
+>("message/loadChatHistory", async (currentUserId, thunkAPI) => {
+  const { type, id } = thunkAPI.getState().message.targetChatRoom;
+  const visitedRoom = `${type}_${id}`;
+
+  // if the room is visited, that means chat history has been loaded, then don't make request again
+  if (thunkAPI.getState().message.visitedRoom[visitedRoom]) {
+    console.log("visied room");
+    return {
+      chatHistory: [],
+      currentUsername: "",
+      currentUserId: "",
+      wasHistoryLoaded: true,
+    };
+  }
+
+  const currentUsername = thunkAPI.getState().user.currentUser.username;
+  const response = await client.get<chatHistory_response[]>(
+    serverUrl + `/chat/private-chat-history?id_1=${currentUserId}&id_2=${id}`
+  );
+  return {
+    chatHistory: response.data,
+    currentUsername,
+    currentUserId,
+    wasHistoryLoaded: false,
+  };
+});
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -77,36 +114,77 @@ const messageSlice = createSlice({
     //     }
     //   },
 
-    setCurrentMessageRecipient(state, action: PayloadAction<string>) {
-      state.currentMessageRecipient = action.payload;
+    setTargetChatRoom(state, action: PayloadAction<TargetChatRoom>): void {
+      state.targetChatRoom = action.payload;
+      if (state.visitedRoom[`${action.payload.type}_${action.payload.id}`]) {
+        return;
+      }
+      if (!state.chatHistory[`${action.payload.type}_${action.payload.id}`]) {
+        state.visitedRoom[`${action.payload.type}_${action.payload.id}`] =
+          false;
+      } else {
+        state.visitedRoom[`${action.payload.type}_${action.payload.id}`] = true;
+      }
     },
-    setFriendChatHistory(
-      state,
-      action: PayloadAction<ChatHistory & { currentUserId?: string }>
-    ) {
-      const { sender_id, receiver_id, body, created_at, currentUserId } =
-        action.payload;
 
-      // the current user is the receiver
-      let friend_id = sender_id;
+    setChatHistory(
+      state,
+      action: PayloadAction<MessageObject & RoomIdentifier>
+    ) {
+      const {
+        sender_id,
+        sender_username,
+        recipient_id,
+        recipient_username,
+        body,
+        created_at,
+        targetChatRoom_type,
+        currentUserId,
+      } = action.payload;
+
+      // the current user is the recipient
+      let room_id = `${targetChatRoom_type}_${sender_id}`;
       // the current user is the sender
       if (sender_id === currentUserId) {
-        friend_id = receiver_id;
+        room_id = `${targetChatRoom_type}_${recipient_id}`;
       }
-      if (!state.friendChatHistory[friend_id]) {
-        state.friendChatHistory[friend_id] = [];
+      if (!state.chatHistory[room_id]) {
+        state.chatHistory[room_id] = [];
       }
-
-      state.friendChatHistory[friend_id].push({
+      state.chatHistory[room_id].push({
         sender_id,
-        receiver_id,
+        sender_username,
+        recipient_id,
+        recipient_username,
         body,
         created_at,
       });
     },
   },
-  // extraReducers: (builder) => {
-  //   builder
+  extraReducers: (builder) => {
+    builder.addCase(loadChatHistory.fulfilled, (state, action): void => {
+      const currentUsername = action.payload.currentUsername;
+      const currentUserId = action.payload.currentUserId;
+      const friendName = state.targetChatRoom.name;
+      const friendId = state.targetChatRoom.id;
+      const chatHistory = action.payload.chatHistory;
+
+      if (action.payload.wasHistoryLoaded) return;
+
+      state.chatHistory[`private_${friendId}`] = chatHistory.map((msg) => {
+        return {
+          sender_id: msg.sender_id,
+          sender_username:
+            msg.sender_id === currentUserId ? currentUsername : friendName,
+          recipient_id: msg.recipient_id,
+          recipient_username:
+            msg.recipient_id === currentUserId ? currentUsername : friendName,
+          body: msg.body,
+          created_at: msg.created_at,
+        };
+      });
+    });
+  },
 
   // .addCase(
   //   signIn.fulfilled,
@@ -126,15 +204,11 @@ const messageSlice = createSlice({
   //   state.loadingStatus = "failed";
   //   // state.pageLoading_user = false;
   // })
-  //////////////
-  // SIGN OUT //
-  //////////////
 });
 
-export const { setCurrentMessageRecipient, setFriendChatHistory } =
-  messageSlice.actions;
+export const { setTargetChatRoom, setChatHistory } = messageSlice.actions;
 
-export {};
+export { loadChatHistory };
 
 export default messageSlice.reducer;
 
@@ -142,15 +216,20 @@ export default messageSlice.reducer;
 // In typical Reselect usage, you write your top-level "input selectors" as plain functions,
 // and use createSelector to create memoized selectors that look up nested value
 const selectMessageState = (state: RootState) => state.message;
-export const selectCurrentMessageRecipient = createSelector(
+const selectChatHistory = createSelector(
   [selectMessageState],
-  (messageState) => messageState.currentMessageRecipient
+  (messageState) => messageState.chatHistory
 );
-export const selectFriendChatHistory = createSelector(
+
+export const selectTargetChatRoom = createSelector(
   [selectMessageState],
-  (messageState) => {
-    return messageState.friendChatHistory[messageState.currentMessageRecipient]
-      ? messageState.friendChatHistory[messageState.currentMessageRecipient]
-      : [];
+  (messageState) => messageState.targetChatRoom
+);
+
+export const selectTargetChatRoom_history = createSelector(
+  [selectChatHistory, selectTargetChatRoom],
+  (history, { id, type }) => {
+    let room_id = `${type}_${id}`;
+    return history[room_id] ? history[room_id] : [];
   }
 );

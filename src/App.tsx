@@ -11,7 +11,7 @@ import "./App.css";
 import { Socket } from "socket.io-client";
 import Navbar from "./components/Navbar";
 import Auth from "./components/Auth";
-import Main from "./components/Main";
+import MainChat from "./components/MainChat";
 import { useDispatch } from "react-redux";
 import { getUserStatus } from "./utils/redux/userSlice";
 
@@ -30,11 +30,11 @@ function App(): JSX.Element {
       <div className="App">
         <h1>TESTING</h1>
         <Routes>
+          <Route path="/" element={<Auth />} />
           <Route
-            path="/"
-            element={<Auth socket={socket} setSocket={setSocket} />}
+            path="/chat"
+            element={<MainChat socket={socket} setSocket={setSocket} />}
           />
-          <Route path="/chat" element={<Main socket={socket} />} />
         </Routes>
       </div>
     </Router>

@@ -14,7 +14,7 @@ export interface CurrentUser {
   username: string;
   email: string;
   user_id: string;
-  isLoggedIn: boolean;
+  isLoggedIn?: boolean;
 }
 
 export interface AuthErrors {
@@ -408,6 +408,10 @@ export const selectUserId = createSelector(
 export const selectUsername = createSelector(
   [selectCurrentUser],
   (currentUser) => currentUser.username
+);
+export const selectUserEmail = createSelector(
+  [selectCurrentUser],
+  (currentUser) => currentUser.email
 );
 
 export const selectFriendsList = createSelector(

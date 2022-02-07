@@ -41,7 +41,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
 
   /////////////// last ref /////////////////////
   const MSG_PER_PAGE = 10;
-  const room_identifier = `${targetChatRoom.type}_${targetChatRoom.id}`;
+
   const client = browserClient();
 
   //   const [chatHistory, setChatHistory] = useState<MessageObject[]>([]);
@@ -61,6 +61,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
   // const lastNodeRef = useLastNodeRef(isLoading, observer, hasMore, setPageNum);
 
   const fetchMoreData = useCallback(async () => {
+    const room_identifier = `${targetChatRoom.type}_${targetChatRoom.id}`;
     if (hasMore) {
       console.log("page num", pageNum);
 
@@ -86,7 +87,16 @@ function ChatBoard({ socket }: Props): JSX.Element {
         console.log("something went wrong in fetching! ", err);
       }
     }
-  }, [hasMore, targetChatRoom.id, targetChatRoom.type, pageNum]);
+  }, [
+    hasMore,
+    targetChatRoom.id,
+    targetChatRoom.type,
+    pageNum,
+    currentUsername,
+    currentUserId,
+    dispatch,
+    client,
+  ]);
 
   /////////////////////////
   ///////////////////////////

@@ -16,6 +16,7 @@ import {
   selectUsername,
   selectUserId,
   selectFriendsList,
+  selectUserEmail,
 } from "../utils/redux/userSlice";
 import { connectSocket } from "../utils/socketConnection";
 import ChatBoard from "./ChatBoard";
@@ -31,6 +32,7 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
 
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const currentUserId = useSelector(selectUserId);
+  const currentUserEmail = useSelector(selectUserEmail);
   const currentUsername = useSelector(selectUsername);
   const friendsList = useSelector(selectFriendsList);
 
@@ -40,17 +42,22 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
     } else {
       if (socket) return;
 
-      console.log("setting up socket");
-
-      // only initialize the socket once
-      let newSocket: Socket = connectSocket();
+      // only initialize the socket once. Pass all the user info to socket-server to let
+      // the server identify this socket-client
+      let newSocket: Socket = connectSocket({
+        username: currentUsername,
+        user_id: currentUserId,
+        email: currentUserEmail,
+      });
       setSocket(newSocket);
 
       // all user will join his/her private room after signing in
       newSocket.emit("joinRoom", `${chatType.private}_${currentUserId}`);
-      // listen all messages sent from server to the current user
+      // let all the friends know the user is online
+      newSocket.emit("online");
+      // listen all private messages sent to the current user
       newSocket.on(
-        "messageToClients",
+        "privateChat_toClient",
         (messageObject: MessageObject & RoomIdentifier) => {
           console.log(messageObject);
           dispatch(addNewMessageToHistory(messageObject));
@@ -67,6 +74,7 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
           }, 80);
         }
       );
+      console.log(" newSocket.id", newSocket.id);
 
       console.log("user signed, socket connected");
     }
@@ -77,6 +85,14 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
     let elem = document.getElementById("chat-board");
     if (elem) {
       elem.style.visibility = "hidden";
+    }
+
+    if (socket) {
+      socket.emit("setCurrentUser", {
+        currentTargetRoom: `${type}_${id}`,
+        user_id: currentUserId,
+        username: currentUsername,
+      });
     }
 
     dispatch(setTargetChatRoom({ id, name, type }));

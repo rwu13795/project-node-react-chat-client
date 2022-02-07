@@ -1,7 +1,9 @@
 import { io, Socket } from "socket.io-client";
+import { CurrentUser } from "./redux/userSlice";
 
-export function connectSocket() {
-  let socket = io("http://localhost:5000");
+export function connectSocket(currentUser: CurrentUser) {
+  // use the "handshake" to let server to identify the current user
+  let socket = io("http://localhost:5000", { query: currentUser });
   return socket;
 }
 

@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   ChangeEvent,
   FormEvent,
@@ -9,15 +8,8 @@ import {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { Socket } from "socket.io-client";
 
-import {
-  MessageObject,
-  RoomIdentifier,
-  setChatHistory,
-} from "../utils/redux/messageSlice";
 import { selectIsLoggedIn, signIn } from "../utils/redux/userSlice";
-import { connectSocket } from "../utils/socketConnection";
 
 interface InputValues {
   [inputNames: string]: string;

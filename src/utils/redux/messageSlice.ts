@@ -113,6 +113,9 @@ const messageSlice = createSlice({
     //       state.authErrors[action.payload] = "";
     //     }
     //   },
+    // setCurrentUser_msg(state, action: PayloadAction<CurrentUser_msg>): void {
+    //   state.currentUser = action.payload;
+    // },
 
     setTargetChatRoom(state, action: PayloadAction<TargetChatRoom>): void {
       state.targetChatRoom = action.payload;
@@ -127,7 +130,7 @@ const messageSlice = createSlice({
       }
     },
 
-    setChatHistory(
+    addNewMessageToHistory(
       state,
       action: PayloadAction<MessageObject & RoomIdentifier>
     ) {
@@ -151,7 +154,7 @@ const messageSlice = createSlice({
       if (!state.chatHistory[room_id]) {
         state.chatHistory[room_id] = [];
       }
-      state.chatHistory[room_id].push({
+      state.chatHistory[room_id].unshift({
         sender_id,
         sender_username,
         recipient_id,
@@ -160,7 +163,41 @@ const messageSlice = createSlice({
         created_at,
       });
     },
+
+    loadMoreOldChatHistory(
+      state,
+      action: PayloadAction<{
+        chatHistory: MessageObject[];
+        room_identifier: string;
+        currentUserId: string;
+        currentUsername: string;
+      }>
+    ) {
+      const { room_identifier, currentUserId, currentUsername } =
+        action.payload;
+      const friendName = state.targetChatRoom.name;
+      const chatHistory_req = action.payload.chatHistory;
+
+      const oldChatHistoy = chatHistory_req.map((msg) => {
+        return {
+          sender_id: msg.sender_id,
+          sender_username:
+            msg.sender_id === currentUserId ? currentUsername : friendName,
+          recipient_id: msg.recipient_id,
+          recipient_username:
+            msg.recipient_id === currentUserId ? currentUsername : friendName,
+          body: msg.body,
+          created_at: msg.created_at,
+        };
+      });
+
+      state.chatHistory[room_identifier] = [
+        ...state.chatHistory[room_identifier],
+        ...oldChatHistoy,
+      ];
+    },
   },
+
   extraReducers: (builder) => {
     builder.addCase(loadChatHistory.fulfilled, (state, action): void => {
       const currentUsername = action.payload.currentUsername;
@@ -206,7 +243,11 @@ const messageSlice = createSlice({
   // })
 });
 
-export const { setTargetChatRoom, setChatHistory } = messageSlice.actions;
+export const {
+  setTargetChatRoom,
+  addNewMessageToHistory,
+  loadMoreOldChatHistory,
+} = messageSlice.actions;
 
 export { loadChatHistory };
 

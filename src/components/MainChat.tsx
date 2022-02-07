@@ -8,7 +8,7 @@ import {
   loadChatHistory,
   MessageObject,
   RoomIdentifier,
-  setChatHistory,
+  addNewMessageToHistory,
   setTargetChatRoom,
 } from "../utils/redux/messageSlice";
 import {
@@ -53,7 +53,7 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
         "messageToClients",
         (messageObject: MessageObject & RoomIdentifier) => {
           console.log(messageObject);
-          dispatch(setChatHistory(messageObject));
+          dispatch(addNewMessageToHistory(messageObject));
 
           // scroll to down to show the new message
           let elem = document.getElementById("chat-board");

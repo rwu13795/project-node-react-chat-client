@@ -61,21 +61,21 @@ function ChatBoard({ socket }: Props): JSX.Element {
   // const lastNodeRef = useLastNodeRef(isLoading, observer, hasMore, setPageNum);
 
   const fetchMoreData = useCallback(async () => {
-    const room_identifier = `${targetChatRoom.type}_${targetChatRoom.id}`;
+    const room_id = `${targetChatRoom.type}_${targetChatRoom.friend_id}`;
     if (hasMore) {
       console.log("page num", pageNum);
 
       try {
         const { data } = await client.get<MessageObject[]>(
           "http://localhost:5000/api" +
-            `/chat/private-chat-history?id_1=${currentUserId}&id_2=${targetChatRoom.id}&page=${pageNum}`
+            `/chat/private-chat-history?id_1=${currentUserId}&id_2=${targetChatRoom.friend_id}&page=${pageNum}`
         );
 
         setHasMore(data.length >= MSG_PER_PAGE);
         dispatch(
           loadMoreOldChatHistory({
             chatHistory: data,
-            room_identifier,
+            room_id,
             currentUsername,
             currentUserId,
           })
@@ -89,7 +89,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
     }
   }, [
     hasMore,
-    targetChatRoom.id,
+    targetChatRoom.friend_id,
     targetChatRoom.type,
     pageNum,
     currentUsername,
@@ -109,8 +109,8 @@ function ChatBoard({ socket }: Props): JSX.Element {
     const messageObject: MessageObject = {
       sender_id: currentUserId,
       sender_username: currentUsername,
-      recipient_id: targetChatRoom.id,
-      recipient_username: targetChatRoom.name,
+      recipient_id: targetChatRoom.friend_id,
+      recipient_username: targetChatRoom.friend_name,
       body: msg,
       created_at: new Date().toDateString(),
     };
@@ -154,7 +154,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
     <main>
       <h1>I am the ChatBoard</h1>
       <h3>
-        Chatting with {targetChatRoom.name}-{targetChatRoom.id}
+        Chatting with {targetChatRoom.friend_name}-{targetChatRoom.friend_id}
       </h3>
       <form onSubmit={sendMessageHandler}>
         <input type="text" value={msg} onChange={onChangeHandler} />

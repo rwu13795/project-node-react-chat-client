@@ -18,7 +18,7 @@ import {
   selectFriendsList,
   selectUserEmail,
 } from "../utils/redux/userSlice";
-import { connectSocket } from "../utils/socketConnection";
+import { connectSocket } from "../socket-io/socketConnection";
 import ChatBoard from "./ChatBoard";
 
 interface Props {
@@ -42,45 +42,46 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
     } else {
       if (socket) return;
 
-      // only initialize the socket once. Pass all the user info to socket-server to let
+      // only initialize the socket once. Pass all the user_id to socket-server to let
       // the server identify this socket-client
       let newSocket: Socket = connectSocket({
         username: currentUsername,
         user_id: currentUserId,
-        email: currentUserEmail,
       });
       setSocket(newSocket);
 
       // all user will join his/her private room after signing in
       newSocket.emit("joinRoom", `${chatType.private}_${currentUserId}`);
       // let all the friends know the user is online
-      newSocket.emit("online");
+      newSocket.emit("online", currentUserId);
       // listen all private messages sent to the current user
-      newSocket.on(
-        "privateChat_toClient",
-        (messageObject: MessageObject & RoomIdentifier) => {
-          console.log(messageObject);
-          dispatch(addNewMessageToHistory(messageObject));
 
-          // scroll to down to show the new message
-          let elem = document.getElementById("chat-board");
-          setTimeout(() => {
-            if (elem) {
-              elem.scrollTo({
-                top: elem.scrollHeight,
-                behavior: "smooth",
-              });
-            }
-          }, 80);
-        }
-      );
-      console.log(" newSocket.id", newSocket.id);
+      aaa(newSocket, dispatch);
+
+      // listen for online event of all friends
+      newSocket.on("online", (friend_id) => {
+        // update the UI in redux here ///////////////
+        console.log(
+          `user ${friend_id} just logged in, let him know I am online`
+        );
+        // let the friend who just logged in know I am online too
+        newSocket.emit("online-echo", friend_id);
+      });
+
+      newSocket.on("online-echo", (friend_id) => {
+        // update the UI in redux here ///////////////
+        console.log(`user ${friend_id} let me know he is ALSO online`);
+      });
 
       console.log("user signed, socket connected");
     }
   }, [isLoggedIn, navigate, socket, currentUserId, dispatch, setSocket]);
 
-  function SelectTargetChatRoomHandler(id: string, name: string, type: string) {
+  function SelectTargetChatRoomHandler(
+    friend_id: string,
+    friend_name: string,
+    type: string
+  ) {
     // make the chat board invisible before the chst history is loaded
     let elem = document.getElementById("chat-board");
     if (elem) {
@@ -89,13 +90,13 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
 
     if (socket) {
       socket.emit("setCurrentUser", {
-        currentTargetRoom: `${type}_${id}`,
+        currentTargetRoom: `${type}_${friend_id}`,
         user_id: currentUserId,
         username: currentUsername,
       });
     }
 
-    dispatch(setTargetChatRoom({ id, name, type }));
+    dispatch(setTargetChatRoom({ friend_id, friend_name, type }));
     // load chat history from server in the specific room only once
     // all new messages will be store Redux for the session
     dispatch(loadChatHistory(currentUserId));
@@ -147,3 +148,25 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
 }
 
 export default memo(MainChat);
+
+// dispatch can be used in seperate file, need to refactor all the listeners
+function aaa(newSocket: any, dispatch: any) {
+  newSocket.on(
+    "privateMessage_toClient",
+    (messageObject: MessageObject & RoomIdentifier) => {
+      console.log(messageObject);
+      dispatch(addNewMessageToHistory(messageObject));
+
+      // scroll to down to show the new message
+      let elem = document.getElementById("chat-board");
+      setTimeout(() => {
+        if (elem) {
+          elem.scrollTo({
+            top: elem.scrollHeight,
+            behavior: "smooth",
+          });
+        }
+      }, 80);
+    }
+  );
+}

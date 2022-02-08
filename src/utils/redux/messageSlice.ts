@@ -27,8 +27,8 @@ export interface RoomIdentifier {
   currentUserId?: string;
 }
 export interface TargetChatRoom {
-  id: string;
-  name: string;
+  friend_id: string;
+  friend_name: string;
   type: string;
 }
 
@@ -60,7 +60,7 @@ interface MessageState {
 }
 
 const initialState: MessageState = {
-  targetChatRoom: { id: "", name: "", type: "" },
+  targetChatRoom: { friend_id: "", friend_name: "", type: "" },
   chatHistory: {},
   visitedRoom: {},
 };
@@ -74,8 +74,8 @@ const loadChatHistory = createAsyncThunk<
   string,
   { state: RootState }
 >("message/loadChatHistory", async (currentUserId, thunkAPI) => {
-  const { type, id } = thunkAPI.getState().message.targetChatRoom;
-  const visitedRoom = `${type}_${id}`;
+  const { type, friend_id } = thunkAPI.getState().message.targetChatRoom;
+  const visitedRoom = `${type}_${friend_id}`;
 
   // if the room is visited, that means chat history has been loaded, then don't make request again
   if (thunkAPI.getState().message.visitedRoom[visitedRoom]) {
@@ -90,7 +90,8 @@ const loadChatHistory = createAsyncThunk<
 
   const currentUsername = thunkAPI.getState().user.currentUser.username;
   const response = await client.get<chatHistory_response[]>(
-    serverUrl + `/chat/private-chat-history?id_1=${currentUserId}&id_2=${id}`
+    serverUrl +
+      `/chat/private-chat-history?id_1=${currentUserId}&id_2=${friend_id}`
   );
   return {
     chatHistory: response.data,
@@ -119,14 +120,14 @@ const messageSlice = createSlice({
 
     setTargetChatRoom(state, action: PayloadAction<TargetChatRoom>): void {
       state.targetChatRoom = action.payload;
-      if (state.visitedRoom[`${action.payload.type}_${action.payload.id}`]) {
+      const room_id = `${action.payload.type}_${action.payload.friend_id}`;
+      if (state.visitedRoom[room_id]) {
         return;
       }
-      if (!state.chatHistory[`${action.payload.type}_${action.payload.id}`]) {
-        state.visitedRoom[`${action.payload.type}_${action.payload.id}`] =
-          false;
+      if (!state.chatHistory[room_id]) {
+        state.visitedRoom[room_id] = false;
       } else {
-        state.visitedRoom[`${action.payload.type}_${action.payload.id}`] = true;
+        state.visitedRoom[room_id] = true;
       }
     },
 
@@ -168,14 +169,13 @@ const messageSlice = createSlice({
       state,
       action: PayloadAction<{
         chatHistory: MessageObject[];
-        room_identifier: string;
+        room_id: string;
         currentUserId: string;
         currentUsername: string;
       }>
     ) {
-      const { room_identifier, currentUserId, currentUsername } =
-        action.payload;
-      const friendName = state.targetChatRoom.name;
+      const { room_id, currentUserId, currentUsername } = action.payload;
+      const friendName = state.targetChatRoom.friend_name;
       const chatHistory_req = action.payload.chatHistory;
 
       const oldChatHistoy = chatHistory_req.map((msg) => {
@@ -191,8 +191,8 @@ const messageSlice = createSlice({
         };
       });
 
-      state.chatHistory[room_identifier] = [
-        ...state.chatHistory[room_identifier],
+      state.chatHistory[room_id] = [
+        ...state.chatHistory[room_id],
         ...oldChatHistoy,
       ];
     },
@@ -202,8 +202,8 @@ const messageSlice = createSlice({
     builder.addCase(loadChatHistory.fulfilled, (state, action): void => {
       const currentUsername = action.payload.currentUsername;
       const currentUserId = action.payload.currentUserId;
-      const friendName = state.targetChatRoom.name;
-      const friendId = state.targetChatRoom.id;
+      const friendName = state.targetChatRoom.friend_name;
+      const friendId = state.targetChatRoom.friend_id;
       const chatHistory = action.payload.chatHistory;
 
       if (action.payload.wasHistoryLoaded) return;
@@ -269,8 +269,8 @@ export const selectTargetChatRoom = createSelector(
 
 export const selectTargetChatRoom_history = createSelector(
   [selectChatHistory, selectTargetChatRoom],
-  (history, { id, type }) => {
-    let room_id = `${type}_${id}`;
+  (history, { friend_id, type }) => {
+    let room_id = `${type}_${friend_id}`;
     return history[room_id] ? history[room_id] : [];
   }
 );

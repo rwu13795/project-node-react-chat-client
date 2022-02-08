@@ -40,7 +40,7 @@ export default function useLoadMoreMessages(
         dispatch(
           loadMoreOldChatHistory({
             chatHistory: data,
-            room_identifier,
+            room_id,
             currentUsername,
             currentUserId,
           })

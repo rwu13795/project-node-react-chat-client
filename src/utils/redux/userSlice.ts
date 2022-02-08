@@ -32,7 +32,7 @@ interface SignInBody {
   password: string;
 }
 
-interface Friends {
+export interface Friends {
   friend_id: string;
   friend_username: string;
   friend_email: string;

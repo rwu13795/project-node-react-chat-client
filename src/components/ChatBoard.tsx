@@ -10,8 +10,7 @@ import {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
-import useLastNodeRef from "../utils/hooks/last-node-ref";
-import useLoadMoreMessages from "../utils/hooks/load-more-messages";
+
 import {
   MessageObject,
   selectTargetChatRoom,
@@ -61,14 +60,14 @@ function ChatBoard({ socket }: Props): JSX.Element {
   // const lastNodeRef = useLastNodeRef(isLoading, observer, hasMore, setPageNum);
 
   const fetchMoreData = useCallback(async () => {
-    const room_id = `${targetChatRoom.type}_${targetChatRoom.friend_id}`;
+    const room_id = `${targetChatRoom.type}_${targetChatRoom.id}`;
     if (hasMore) {
       console.log("page num", pageNum);
 
       try {
         const { data } = await client.get<MessageObject[]>(
           "http://localhost:5000/api" +
-            `/chat/private-chat-history?id_1=${currentUserId}&id_2=${targetChatRoom.friend_id}&page=${pageNum}`
+            `/chat/private-chat-history?id_1=${currentUserId}&id_2=${targetChatRoom.id}&page=${pageNum}`
         );
 
         setHasMore(data.length >= MSG_PER_PAGE);
@@ -78,6 +77,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
             room_id,
             currentUsername,
             currentUserId,
+            room_type: targetChatRoom.type,
           })
         );
         setPageNum((prev) => {
@@ -89,7 +89,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
     }
   }, [
     hasMore,
-    targetChatRoom.friend_id,
+    targetChatRoom.id,
     targetChatRoom.type,
     pageNum,
     currentUsername,
@@ -109,8 +109,8 @@ function ChatBoard({ socket }: Props): JSX.Element {
     const messageObject: MessageObject = {
       sender_id: currentUserId,
       sender_username: currentUsername,
-      recipient_id: targetChatRoom.friend_id,
-      recipient_username: targetChatRoom.friend_name,
+      recipient_id: targetChatRoom.id,
+      recipient_username: targetChatRoom.name,
       body: msg,
       created_at: new Date().toDateString(),
     };
@@ -122,28 +122,25 @@ function ChatBoard({ socket }: Props): JSX.Element {
       });
     }
 
-    // the server will only send the private messages to the friend's private room,
-    // so I need to update the local chat of the current user to display what he
-    // just sent out. On the other hand, I don't need to update the group chat here,
-    // since the message is sent to the group room, and everyone inside the group
-    // room can listen to that message using the "messageToClients" event listener
+    // (1) //
     dispatch(
       addNewMessageToHistory({
         ...messageObject,
-        currentUserId,
         targetChatRoom_type: targetChatRoom.type,
       })
     );
 
-    // let elem = document.getElementById("chat-board");
-    // setTimeout(() => {
-    //   if (elem) {
-    //     elem.scrollTo({
-    //       top: elem.scrollHeight,
-    //       behavior: "smooth",
-    //     });
-    //   }
-    // }, 80);
+    // scroll to down to show the new message
+    let elem = document.getElementById("chat-board");
+    console.log("elem found !", elem);
+    setTimeout(() => {
+      if (elem) {
+        elem.scrollTo({
+          top: elem.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    }, 280);
   }
 
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
@@ -154,7 +151,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
     <main>
       <h1>I am the ChatBoard</h1>
       <h3>
-        Chatting with {targetChatRoom.friend_name}-{targetChatRoom.friend_id}
+        Chatting with {targetChatRoom.name}-{targetChatRoom.id}
       </h3>
       <form onSubmit={sendMessageHandler}>
         <input type="text" value={msg} onChange={onChangeHandler} />
@@ -208,3 +205,14 @@ function ChatBoard({ socket }: Props): JSX.Element {
 }
 
 export default memo(ChatBoard);
+
+// NOTES //
+/*
+(1)
+  the server will only send the private messages to the friend's private room,
+  so I need to update the local chat of the current user to display what he
+  just sent out. Moreover, I don't need to update the group chat here,
+  since the message is sent to the group room, and everyone inside the group
+  room can listen to that message using the "messageToClients" event listener,
+  that is where I add the new message in group chat
+*/

@@ -24,61 +24,76 @@ export interface MessageObject {
 }
 export interface RoomIdentifier {
   targetChatRoom_type: string;
-  currentUserId?: string;
 }
 export interface TargetChatRoom {
-  friend_id: string;
-  friend_name: string;
-  type: string;
+  id: string; // friend_id or group_id
+  name: string; // friend_name or group_name
+  type: string; // private | group | public
 }
 
 interface ChatHistory {
   [targetChatRoom_id: string]: MessageObject[];
 }
 
-interface chatHistory_response {
+interface chatHistory_res {
   body: string;
   created_at: string;
   recipient_id: string;
   sender_id: string;
 }
 
-interface LoadChatHistory {
-  chatHistory: chatHistory_response[];
+interface LoadChatHistory_res {
+  chatHistory: chatHistory_res[];
   currentUsername: string;
   currentUserId: string;
   wasHistoryLoaded: boolean;
+}
+interface LoadChatHistory_req {
+  type: string;
+  id: string;
+  currentUserId: string;
+}
+
+interface PrivateNotifications {
+  sender_id: string;
+  count: number;
+}
+interface GetNotifications_res {
+  private: PrivateNotifications[];
+  group: string[];
 }
 
 interface MessageState {
   targetChatRoom: TargetChatRoom;
   chatHistory: ChatHistory;
+  messageNotifications: { [room_id: string]: number };
   // add the room_type + id in the set, if the room is existed,
   // that means chat history has been loaded, then don't make request again
   // PS: cannot use Set in redux store due to non-serializable !?
-  visitedRoom: { [room_name: string]: boolean };
+  visitedRoom: { [room_id: string]: boolean };
+  currentUserId_message: string;
 }
 
 const initialState: MessageState = {
-  targetChatRoom: { friend_id: "", friend_name: "", type: "" },
+  targetChatRoom: { id: "", name: "", type: "" },
   chatHistory: {},
+  messageNotifications: {},
   visitedRoom: {},
+  currentUserId_message: "",
 };
 
 const client = axios_client();
 //   const serverUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}`;
 const serverUrl = "http://localhost:5000/api";
 
-const loadChatHistory = createAsyncThunk<
-  LoadChatHistory,
-  string,
+export const loadChatHistory = createAsyncThunk<
+  LoadChatHistory_res,
+  LoadChatHistory_req,
   { state: RootState }
->("message/loadChatHistory", async (currentUserId, thunkAPI) => {
-  const { type, friend_id } = thunkAPI.getState().message.targetChatRoom;
-  const visitedRoom = `${type}_${friend_id}`;
-
+>("message/loadChatHistory", async ({ type, id, currentUserId }, thunkAPI) => {
+  const room_id = `${type}_${id}`;
   // if the room is visited, that means chat history has been loaded, then don't make request again
-  if (thunkAPI.getState().message.visitedRoom[visitedRoom]) {
+  if (thunkAPI.getState().message.visitedRoom[room_id]) {
     console.log("visied room");
     return {
       chatHistory: [],
@@ -89,9 +104,8 @@ const loadChatHistory = createAsyncThunk<
   }
 
   const currentUsername = thunkAPI.getState().user.currentUser.username;
-  const response = await client.get<chatHistory_response[]>(
-    serverUrl +
-      `/chat/private-chat-history?id_1=${currentUserId}&id_2=${friend_id}`
+  const response = await client.get<chatHistory_res[]>(
+    serverUrl + `/chat/private-chat-history?id_1=${currentUserId}&id_2=${id}`
   );
   return {
     chatHistory: response.data,
@@ -99,6 +113,32 @@ const loadChatHistory = createAsyncThunk<
     currentUserId,
     wasHistoryLoaded: false,
   };
+});
+
+export const getNotifications = createAsyncThunk<
+  GetNotifications_res,
+  string,
+  { state: RootState }
+>("message/getNotifications", async (currentUserId) => {
+  const response = await client.get<GetNotifications_res>(
+    serverUrl + `/chat/get-notifications?user_id=${currentUserId}`
+  );
+  return response.data;
+});
+
+export const clearNotifications = createAsyncThunk<
+  { type: string; id: string },
+  { type: string; id: string },
+  { state: RootState }
+>("message/clearNotifications", async ({ type, id }, thunkAPI) => {
+  const user_id = thunkAPI.getState().user.currentUser.user_id;
+  await client.post(serverUrl + `/chat/clear-notifications`, {
+    type,
+    target_id: id,
+    user_id,
+  });
+
+  return { type, id };
 });
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -114,21 +154,11 @@ const messageSlice = createSlice({
     //       state.authErrors[action.payload] = "";
     //     }
     //   },
-    // setCurrentUser_msg(state, action: PayloadAction<CurrentUser_msg>): void {
-    //   state.currentUser = action.payload;
-    // },
-
+    setCurrentUserId_message(state, action: PayloadAction<string>): void {
+      state.currentUserId_message = action.payload;
+    },
     setTargetChatRoom(state, action: PayloadAction<TargetChatRoom>): void {
       state.targetChatRoom = action.payload;
-      const room_id = `${action.payload.type}_${action.payload.friend_id}`;
-      if (state.visitedRoom[room_id]) {
-        return;
-      }
-      if (!state.chatHistory[room_id]) {
-        state.visitedRoom[room_id] = false;
-      } else {
-        state.visitedRoom[room_id] = true;
-      }
     },
 
     addNewMessageToHistory(
@@ -143,15 +173,18 @@ const messageSlice = createSlice({
         body,
         created_at,
         targetChatRoom_type,
-        currentUserId,
       } = action.payload;
 
-      // the current user is the recipient
-      let room_id = `${targetChatRoom_type}_${sender_id}`;
-      // the current user is the sender
-      if (sender_id === currentUserId) {
-        room_id = `${targetChatRoom_type}_${recipient_id}`;
-      }
+      const currentUserId = state.currentUserId_message;
+
+      const room_id =
+        sender_id === currentUserId
+          ? // the current user is the sender
+            `${targetChatRoom_type}_${recipient_id}`
+          : // the current user is the recipient
+            `${targetChatRoom_type}_${sender_id}`;
+
+      // add message to chat history for the specific room
       if (!state.chatHistory[room_id]) {
         state.chatHistory[room_id] = [];
       }
@@ -163,6 +196,16 @@ const messageSlice = createSlice({
         body,
         created_at,
       });
+
+      // increament notification count for the specific room
+      if (!state.messageNotifications[room_id]) {
+        state.messageNotifications[room_id] = 0;
+      }
+
+      // only show notification if user is not in the target room and user is the recipient
+      const chatRoomUserIsIn = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
+      if (currentUserId === recipient_id && chatRoomUserIsIn !== room_id)
+        state.messageNotifications[room_id] += 1;
     },
 
     loadMoreOldChatHistory(
@@ -172,13 +215,23 @@ const messageSlice = createSlice({
         room_id: string;
         currentUserId: string;
         currentUsername: string;
+        room_type: string;
       }>
     ) {
-      const { room_id, currentUserId, currentUsername } = action.payload;
-      const friendName = state.targetChatRoom.friend_name;
-      const chatHistory_req = action.payload.chatHistory;
+      const {
+        room_id,
+        currentUserId,
+        currentUsername,
+        chatHistory,
+        room_type,
+      } = action.payload;
+      const friendName = state.targetChatRoom.name;
 
-      const oldChatHistoy = chatHistory_req.map((msg) => {
+      // map the chat history for different room_type
+      if (room_type) {
+      }
+
+      const oldChatHistoy = chatHistory.map((msg) => {
         return {
           sender_id: msg.sender_id,
           sender_username:
@@ -199,28 +252,58 @@ const messageSlice = createSlice({
   },
 
   extraReducers: (builder) => {
-    builder.addCase(loadChatHistory.fulfilled, (state, action): void => {
-      const currentUsername = action.payload.currentUsername;
-      const currentUserId = action.payload.currentUserId;
-      const friendName = state.targetChatRoom.friend_name;
-      const friendId = state.targetChatRoom.friend_id;
-      const chatHistory = action.payload.chatHistory;
+    // load the last 20 chat messages when the user clicks on the target room
+    // if user wants to read more old messages, the "infinite scroll" will be
+    // used to fetch more old messages. and the messages will be merged into
+    // the chatHistory by using "loadMoreOldChatHistory"
+    builder
+      .addCase(loadChatHistory.fulfilled, (state, action): void => {
+        const currentUsername = action.payload.currentUsername;
+        const currentUserId = action.payload.currentUserId;
+        const { type, id, name } = state.targetChatRoom;
 
-      if (action.payload.wasHistoryLoaded) return;
+        const chatHistory = action.payload.chatHistory;
 
-      state.chatHistory[`private_${friendId}`] = chatHistory.map((msg) => {
-        return {
-          sender_id: msg.sender_id,
-          sender_username:
-            msg.sender_id === currentUserId ? currentUsername : friendName,
-          recipient_id: msg.recipient_id,
-          recipient_username:
-            msg.recipient_id === currentUserId ? currentUsername : friendName,
-          body: msg.body,
-          created_at: msg.created_at,
-        };
+        if (action.payload.wasHistoryLoaded) return;
+
+        // map the chat history for different room_type
+        if (type === "") {
+        }
+
+        state.chatHistory[`${type}_${id}`] = chatHistory.map((msg) => {
+          return {
+            sender_id: msg.sender_id,
+            sender_username:
+              msg.sender_id === currentUserId ? currentUsername : name,
+            recipient_id: msg.recipient_id,
+            recipient_username:
+              msg.recipient_id === currentUserId ? currentUsername : name,
+            body: msg.body,
+            created_at: msg.created_at,
+          };
+        });
+
+        // set this room as visited, so it won't fetch message from server again unless
+        // the user is scrolling up for older messages
+        state.visitedRoom[`${type}_${id}`] = true;
+      })
+
+      /////////////// getNotifications///////////
+
+      .addCase(getNotifications.fulfilled, (state, action): void => {
+        action.payload.private.forEach((note) => {
+          state.messageNotifications[`${chatType.private}_${note.sender_id}`] =
+            note.count;
+        });
+        // action.payload.group.forEach(note=>{
+        //   state.messageNotifications[`${chatType.private}_${note.sender_id}`] = note.count
+        // })
+      })
+
+      .addCase(clearNotifications.fulfilled, (state, action): void => {
+        const { type, id } = action.payload;
+        state.messageNotifications[`${type}_${id}`] = 0;
       });
-    });
   },
 
   // .addCase(
@@ -247,9 +330,8 @@ export const {
   setTargetChatRoom,
   addNewMessageToHistory,
   loadMoreOldChatHistory,
+  setCurrentUserId_message,
 } = messageSlice.actions;
-
-export { loadChatHistory };
 
 export default messageSlice.reducer;
 
@@ -269,8 +351,12 @@ export const selectTargetChatRoom = createSelector(
 
 export const selectTargetChatRoom_history = createSelector(
   [selectChatHistory, selectTargetChatRoom],
-  (history, { friend_id, type }) => {
-    let room_id = `${type}_${friend_id}`;
+  (history, { id, type }) => {
+    let room_id = `${type}_${id}`;
     return history[room_id] ? history[room_id] : [];
   }
+);
+export const selectMessageNotifications = createSelector(
+  [selectMessageState],
+  (messageState) => messageState.messageNotifications
 );

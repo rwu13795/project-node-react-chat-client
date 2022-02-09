@@ -41,6 +41,7 @@ export interface Friends {
 interface UserState {
   currentUser: CurrentUser;
   friendsList: Friends[];
+  friendsOnlineStatus: { [friend_id: string]: boolean };
   loadingStatus: string;
   authErrors: AuthErrors;
 
@@ -50,6 +51,7 @@ interface UserState {
 const initialState: UserState = {
   currentUser: { username: "", email: "", user_id: "", isLoggedIn: false },
   friendsList: [],
+  friendsOnlineStatus: {},
   loadingStatus: "idle",
   authErrors: {},
 };
@@ -242,6 +244,13 @@ const userSlice = createSlice({
     setLoadingStatus(state, action: PayloadAction<string>) {
       state.loadingStatus = action.payload;
     },
+    setFriendsOnlineStatus(
+      state,
+      action: PayloadAction<{ friend_id: string; online: boolean }>
+    ) {
+      const { friend_id, online } = action.payload;
+      state.friendsOnlineStatus[friend_id] = online;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -265,6 +274,10 @@ const userSlice = createSlice({
           state.currentUser = action.payload.currentUser;
           state.friendsList = action.payload.friendsList;
           state.loadingStatus = "succeeded";
+          // initialize the friendsOnlineStatus
+          for (let f of action.payload.friendsList) {
+            state.friendsOnlineStatus[f.friend_id] = false;
+          }
         }
       )
       .addCase(signIn.pending, (state): void => {
@@ -370,7 +383,7 @@ export const {
   //   clearAuthErrors,
 
   setLoadingStatus,
-
+  setFriendsOnlineStatus,
   //   setPageLoading_user,
 } = userSlice.actions;
 
@@ -417,4 +430,8 @@ export const selectUserEmail = createSelector(
 export const selectFriendsList = createSelector(
   [selectUser],
   (userState) => userState.friendsList
+);
+export const selectFriendsOnlineStatus = createSelector(
+  [selectUser],
+  (userState) => userState.friendsOnlineStatus
 );

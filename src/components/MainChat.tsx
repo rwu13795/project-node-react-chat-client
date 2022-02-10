@@ -5,16 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import {
   chatType,
-  loadChatHistory,
   MessageObject,
   RoomIdentifier,
   addNewMessageToHistory,
   setTargetChatRoom,
   selectMessageNotifications,
   setCurrentUserId_message,
-  clearNotifications,
-  getNotifications,
-} from "../utils/redux/messageSlice";
+} from "../redux/message/messageSlice";
 import {
   selectIsLoggedIn,
   selectUsername,
@@ -23,10 +20,18 @@ import {
   selectUserEmail,
   selectFriendsOnlineStatus,
   setFriendsOnlineStatus,
-} from "../utils/redux/userSlice";
+  selectAddFriendRequests,
+  selectResult_addFriendRequest,
+} from "../redux/user/userSlice";
 import { connectSocket } from "../socket-io/socketConnection";
 import ChatBoard from "./ChatBoard";
 import { privateMessage_toClient_listener } from "../socket-io/listeners/private-message-listener";
+import { getNotifications } from "../redux/message/asyncThunk/get-notifications";
+import { loadChatHistory } from "../redux/message/asyncThunk/load-chat-history";
+import { clearNotifications } from "../redux/message/asyncThunk/clear-notifications";
+import SearchUser from "./SearchUser";
+import { addFriendRequest_listener } from "../socket-io/listeners/add-friend-request-listener";
+import { addFriendRequest_result_listener } from "../socket-io/listeners/add-friend-request-result-listener";
 
 interface Props {
   socket: Socket | undefined;
@@ -44,6 +49,7 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
   const friendsList = useSelector(selectFriendsList);
   const friendsOnlineStatus = useSelector(selectFriendsOnlineStatus);
   const messageNotifications = useSelector(selectMessageNotifications);
+  const addFriendRequests = useSelector(selectAddFriendRequests);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -63,9 +69,11 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
         `${chatType.private}_${currentUserId}`
       );
       // let all the friends know the user is online
-      newSocket.emit("online", currentUserId);
+      newSocket.emit("online");
       // listen all private messages sent to the current user and set the msg in chatHistory
       privateMessage_toClient_listener(newSocket, dispatch);
+      addFriendRequest_listener(newSocket, dispatch);
+      addFriendRequest_result_listener(newSocket, dispatch);
 
       // listen for online event of all friends
       newSocket.on("online", (friend_id) => {
@@ -106,14 +114,12 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
 
     dispatch(setTargetChatRoom({ id, name, type }));
 
-    // (1) //
-    // dispatch(storeChatRoom_and_clearNotifications({friend_id, type}))
-
     // load the latest 20 chat messages from server in the specific room only once
     dispatch(loadChatHistory({ type, id, currentUserId }));
     dispatch(clearNotifications({ type, id }));
 
     if (socket) {
+      // (1) //
       socket.emit("current-target-room", `${type}_${id}`);
     }
 
@@ -165,6 +171,21 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
       </div>
 
       <div>
+        <h4>Add Friend Requests</h4>
+        {addFriendRequests.map((req, index) => {
+          return (
+            <div key={index}>
+              {req.sender_email} username: {req.sender_username} requested
+              add-friend
+            </div>
+          );
+        })}
+      </div>
+
+      <br />
+      <SearchUser socket={socket} />
+
+      <div>
         <ChatBoard socket={socket} />
       </div>
     </main>
@@ -176,12 +197,7 @@ export default memo(MainChat);
 // NOTES //
 /*
 (1) 
-  set targetChatRoom in session store and clear the notifications associated 
-  with this chatRoom in DB while enter the room. 
-  By storing the targetChatRoom in session, I could find out what the last
-  ChatRoom the user was in before disconnected.
-  This is the only way I can clear all the notifications in that room
-  after user disconnected in the socket "disconnect" listener.
-
-
+  set targetChatRoom in the socket.currentUser, the data set inside will still be accessible
+  in the socket.on("disconnect") listener. In the listener callback, I can clear the notification
+  in the room where the user was in when he/she disconnected.
 */

@@ -5,7 +5,7 @@ import {
   addNewMessageToHistory,
   MessageObject,
   RoomIdentifier,
-} from "../../utils/redux/messageSlice";
+} from "../../redux/message/messageSlice";
 
 export function privateMessage_toClient_listener(
   socket: Socket,

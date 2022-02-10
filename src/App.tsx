@@ -1,19 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // (1)
 
 import "./App.css";
 
-// import {
-//   connectSocket,
-//   socket_messageToClients_listener,
-// } from "./utils/socketConnection";
-// import axios from "axios";
 import { Socket } from "socket.io-client";
 import Navbar from "./components/Navbar";
 import Auth from "./components/Auth";
 import MainChat from "./components/MainChat";
 import { useDispatch } from "react-redux";
-import { getUserStatus } from "./utils/redux/userSlice";
+import { getUserAuth } from "./redux/user/asyncThunk/get-user-auth";
 
 function App(): JSX.Element {
   const dispatch = useDispatch();
@@ -21,7 +16,7 @@ function App(): JSX.Element {
   const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
-    dispatch(getUserStatus());
+    dispatch(getUserAuth());
   }, [dispatch]);
 
   return (

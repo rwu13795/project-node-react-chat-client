@@ -8,8 +8,10 @@ import {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { signIn } from "../redux/user/asyncThunk/sign-in";
+import { signUp } from "../redux/user/asyncThunk/sign-up";
 
-import { selectIsLoggedIn, signIn } from "../utils/redux/userSlice";
+import { selectAuthErrors, selectIsLoggedIn } from "../redux/user/userSlice";
 
 interface InputValues {
   [inputNames: string]: string;
@@ -20,6 +22,7 @@ function Auth(): JSX.Element {
   const dispatch = useDispatch();
 
   const isLoggedIn = useSelector(selectIsLoggedIn);
+  const authErrors = useSelector(selectAuthErrors);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -44,20 +47,45 @@ function Auth(): JSX.Element {
     password: "",
   });
 
+  const [inputValuesSignUp, setInputValuesSignUp] = useState<InputValues>({
+    email: "",
+    username: "",
+    password: "",
+    confirm_password: "",
+  });
+
   function signInHandler(
     e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
   ) {
     e.preventDefault();
-    console.log(inputValues);
 
     dispatch(
       signIn({ email: inputValues.email, password: inputValues.password })
     );
   }
 
+  function signUpHandler(
+    e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
+  ) {
+    e.preventDefault();
+    const { email, username, password, confirm_password } = inputValuesSignUp;
+
+    if (password !== confirm_password) {
+      console.log("passwords not match");
+      return;
+    }
+    dispatch(signUp({ email, username, password, confirm_password }));
+  }
+
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setInputValues((prev) => {
+      return { ...prev, [name]: value };
+    });
+  };
+  const onChangeHandlerSignUp = (e: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setInputValuesSignUp((prev) => {
       return { ...prev, [name]: value };
     });
   };
@@ -83,10 +111,49 @@ function Auth(): JSX.Element {
             onChange={onChangeHandler}
           />
         </div>
-        <input type="submit" />
+        <button onClick={signInHandler}>sign in</button>
       </form>
-      {/* <button onClick={signUp}>sign up</button> */}
-      <Link to="/chat">To chat room</Link>;
+
+      <form onSubmit={signUpHandler}>
+        <div>
+          <label>Email</label>
+          <input
+            type="text"
+            name="email"
+            value={inputValuesSignUp.email}
+            onChange={onChangeHandlerSignUp}
+          />
+          {authErrors["email"]}
+        </div>
+        <div>
+          <label>Username</label>
+          <input
+            type="text"
+            name="username"
+            value={inputValuesSignUp.username}
+            onChange={onChangeHandlerSignUp}
+          />
+        </div>
+        <div>
+          <label>Password</label>
+          <input
+            type="text"
+            name="password"
+            value={inputValuesSignUp.password}
+            onChange={onChangeHandlerSignUp}
+          />
+        </div>
+        <div>
+          <label>Confirm Password</label>
+          <input
+            type="text"
+            name="confirm_password"
+            value={inputValuesSignUp.confirm_password}
+            onChange={onChangeHandlerSignUp}
+          />
+        </div>
+        <button onClick={signUpHandler}>sign up</button>
+      </form>
     </div>
   );
 }

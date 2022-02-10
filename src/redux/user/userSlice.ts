@@ -4,9 +4,10 @@ import {
   createSlice,
   PayloadAction,
 } from "@reduxjs/toolkit";
-import type { RootState } from "./index";
-
-import axios_client from "../axios-client";
+import type { RootState } from "../index";
+import { getUserAuth } from "./asyncThunk/get-user-auth";
+import { signIn } from "./asyncThunk/sign-in";
+import { signUp } from "./asyncThunk/sign-up";
 
 interface UserInfo {}
 
@@ -16,20 +17,13 @@ export interface CurrentUser {
   user_id: string;
   isLoggedIn?: boolean;
 }
-
 export interface AuthErrors {
   [inputName: string]: string;
 }
-
-interface SignUpBody {
-  email: string;
-  password: string;
-  confirm_password: string;
-  userInfo: UserInfo;
-}
-interface SignInBody {
-  email: string;
-  password: string;
+export interface AddFriendRequest {
+  sender_id: string;
+  sender_username: string;
+  sender_email: string;
 }
 
 export interface Friends {
@@ -38,13 +32,14 @@ export interface Friends {
   friend_email: string;
 }
 
-interface UserState {
+export interface UserState {
   currentUser: CurrentUser;
   friendsList: Friends[];
   friendsOnlineStatus: { [friend_id: string]: boolean };
   loadingStatus: string;
   authErrors: AuthErrors;
-
+  addFriendRequests: AddFriendRequest[];
+  result_addFriendRequest: string;
   // pageLoading_user: boolean;
 }
 
@@ -54,23 +49,10 @@ const initialState: UserState = {
   friendsOnlineStatus: {},
   loadingStatus: "idle",
   authErrors: {},
+  addFriendRequests: [],
+  result_addFriendRequest: "",
 };
 
-const client = axios_client();
-//   const serverUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}`;
-const serverUrl = "http://localhost:5000/api";
-
-//////////////
-// GET AUTH //
-//////////////
-const getUserStatus = createAsyncThunk("user/getUserStatus", async () => {
-  const response = await client.get(serverUrl + "/auth/user-auth-status");
-  return response.data;
-});
-
-//////////////
-// SIGN IN  //
-//////////////
 /*  createAsyncThunk types
     1) UserState -- action payload types for the "signIn.fullfilled" and other signIn.xxxxx
        I don't need to put the type in the Payload<> if I have indicate the type here
@@ -79,60 +61,13 @@ const getUserStatus = createAsyncThunk("user/getUserStatus", async () => {
     3) { state: RootState } the thunkAPI type
 */
 
-const signIn = createAsyncThunk<UserState, SignInBody, { state: RootState }>(
-  "user/signIn",
-  async (
-    signInBody,
-    // NOTE//
-    // if you need to customize the contents of the rejected action, you should
-    // catch any errors yourself, and then return a new value using the
-    // thunkAPI.rejectWithValue
-    thunkAPI
-  ) => {
-    try {
-      const response = await client.post<UserState>(
-        serverUrl + "/auth/sign-in",
-        {
-          req_email: signInBody.email,
-          req_password: signInBody.password,
-        }
-      );
-      return response.data;
-    } catch (err: any) {
-      // catch the error sent from the server manually, and put it in inside the action.payload
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
-
 //////////////
 // SIGN OUT //
 //////////////
-const signOut = createAsyncThunk("user/signOut", async () => {
-  await client.post(serverUrl + "/auth/sign-out");
-  return;
-});
-
-/////////////
-// SIGN UP //
-/////////////
-const signUp = createAsyncThunk<UserState, SignUpBody, { state: RootState }>(
-  "user/signUp",
-  async (signUpBody, thunkAPI) => {
-    try {
-      const response = await client.post(serverUrl + "/auth/sign-up", {
-        email: signUpBody.email,
-        password: signUpBody.password,
-        confirm_password: signUpBody.confirm_password,
-        userInfo: signUpBody.userInfo,
-      });
-      return response.data;
-    } catch (err: any) {
-      // catch the error sent from the server manually, and put it in inside the action.payload
-      return thunkAPI.rejectWithValue(err.response.data);
-    }
-  }
-);
+// const signOut = createAsyncThunk("user/signOut", async () => {
+//   await client.post(serverUrl + "/auth/sign-out");
+//   return;
+// });
 
 /////////////////
 // UPDATE INFO //
@@ -251,33 +186,42 @@ const userSlice = createSlice({
       const { friend_id, online } = action.payload;
       state.friendsOnlineStatus[friend_id] = online;
     },
+    setAddFriendRequests(state, action: PayloadAction<AddFriendRequest>) {
+      state.addFriendRequests.push(action.payload);
+    },
+    setResult_addFriendRequest(state, action: PayloadAction<string>) {
+      state.result_addFriendRequest = action.payload;
+    },
   },
+
   extraReducers: (builder) => {
     builder
-      //////////////
-      // GET AUTH //
-      //////////////
+      /***************  GET AUTH  ***************/
       .addCase(
-        getUserStatus.fulfilled,
+        getUserAuth.fulfilled,
         (state, action: PayloadAction<UserState>): void => {
           // remember to add the state type as return type
           state.currentUser = action.payload.currentUser;
           state.friendsList = action.payload.friendsList;
+          state.addFriendRequests = action.payload.addFriendRequests;
+          for (let f of action.payload.friendsList) {
+            state.friendsOnlineStatus[f.friend_id] = false;
+          }
         }
       )
-      /////////////
-      // SIGN IN //
-      /////////////
+
+      /***************  SIGN IN  ***************/
       .addCase(
         signIn.fulfilled,
         (state, action: PayloadAction<UserState>): void => {
           state.currentUser = action.payload.currentUser;
           state.friendsList = action.payload.friendsList;
-          state.loadingStatus = "succeeded";
+          state.addFriendRequests = action.payload.addFriendRequests;
           // initialize the friendsOnlineStatus
           for (let f of action.payload.friendsList) {
             state.friendsOnlineStatus[f.friend_id] = false;
           }
+          state.loadingStatus = "succeeded";
         }
       )
       .addCase(signIn.pending, (state): void => {
@@ -288,37 +232,32 @@ const userSlice = createSlice({
           state.authErrors[err.field] = err.message;
         }
         state.loadingStatus = "failed";
-        // state.pageLoading_user = false;
       })
-      //////////////
-      // SIGN OUT //
-      //////////////
-      .addCase(signOut.fulfilled, (state, action): void => {
-        state.currentUser.isLoggedIn = false;
-        state.loadingStatus = "idle";
-      })
-      /////////////
-      // SIGN UP //
-      /////////////
+
+      /***************  SIGN UP  ***************/
       .addCase(
         signUp.fulfilled,
         (state, action: PayloadAction<UserState>): void => {
           state.currentUser = action.payload.currentUser;
           state.loadingStatus = "succeeded";
-          //   state.pageLoading_user = false;
         }
       )
       .addCase(signUp.pending, (state, action): void => {
         state.loadingStatus = "loading";
-        // state.pageLoading_user = true;
       })
       .addCase(signUp.rejected, (state, action: PayloadAction<any>): void => {
         for (let err of action.payload.errors) {
           state.authErrors[err.field] = err.message;
         }
         state.loadingStatus = "failed";
-        // state.pageLoading_user = false;
       });
+    //////////////
+    // SIGN OUT //
+    //////////////
+    // .addCase(signOut.fulfilled, (state, action): void => {
+    //   state.currentUser.isLoggedIn = false;
+    //   state.loadingStatus = "idle";
+    // })
 
     ////////////////////
     // RESET PASSWORD //
@@ -381,24 +320,12 @@ const userSlice = createSlice({
 
 export const {
   //   clearAuthErrors,
-
   setLoadingStatus,
   setFriendsOnlineStatus,
+  setAddFriendRequests,
+  setResult_addFriendRequest,
   //   setPageLoading_user,
 } = userSlice.actions;
-
-export {
-  signIn,
-  signOut,
-  signUp,
-  getUserStatus,
-
-  //   updateUserInfo,
-
-  //   resetPassword,
-  //   forgotPassword_Request,
-  //   forgotPassword_Reset,
-};
 
 export default userSlice.reducer;
 
@@ -434,4 +361,16 @@ export const selectFriendsList = createSelector(
 export const selectFriendsOnlineStatus = createSelector(
   [selectUser],
   (userState) => userState.friendsOnlineStatus
+);
+export const selectAddFriendRequests = createSelector(
+  [selectUser],
+  (userState) => userState.addFriendRequests
+);
+export const selectAuthErrors = createSelector(
+  [selectUser],
+  (userState) => userState.authErrors
+);
+export const selectResult_addFriendRequest = createSelector(
+  [selectUser],
+  (userState) => userState.result_addFriendRequest
 );

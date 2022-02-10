@@ -1,12 +1,9 @@
-import {
-  createAsyncThunk,
-  createSelector,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
-import type { RootState } from "./index";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import type { RootState } from "../index";
 
-import axios_client from "../axios-client";
+import { loadChatHistory } from "./asyncThunk/load-chat-history";
+import { clearNotifications } from "./asyncThunk/clear-notifications";
+import { getNotifications } from "./asyncThunk/get-notifications";
 
 export enum chatType {
   public = "public",
@@ -34,35 +31,6 @@ export interface TargetChatRoom {
 interface ChatHistory {
   [targetChatRoom_id: string]: MessageObject[];
 }
-
-interface chatHistory_res {
-  body: string;
-  created_at: string;
-  recipient_id: string;
-  sender_id: string;
-}
-
-interface LoadChatHistory_res {
-  chatHistory: chatHistory_res[];
-  currentUsername: string;
-  currentUserId: string;
-  wasHistoryLoaded: boolean;
-}
-interface LoadChatHistory_req {
-  type: string;
-  id: string;
-  currentUserId: string;
-}
-
-interface PrivateNotifications {
-  sender_id: string;
-  count: number;
-}
-interface GetNotifications_res {
-  private: PrivateNotifications[];
-  group: string[];
-}
-
 interface MessageState {
   targetChatRoom: TargetChatRoom;
   chatHistory: ChatHistory;
@@ -81,67 +49,6 @@ const initialState: MessageState = {
   visitedRoom: {},
   currentUserId_message: "",
 };
-
-const client = axios_client();
-//   const serverUrl = `${process.env.NEXT_PUBLIC_SERVER_URL}`;
-const serverUrl = "http://localhost:5000/api";
-
-export const loadChatHistory = createAsyncThunk<
-  LoadChatHistory_res,
-  LoadChatHistory_req,
-  { state: RootState }
->("message/loadChatHistory", async ({ type, id, currentUserId }, thunkAPI) => {
-  const room_id = `${type}_${id}`;
-  // if the room is visited, that means chat history has been loaded, then don't make request again
-  if (thunkAPI.getState().message.visitedRoom[room_id]) {
-    console.log("visied room");
-    return {
-      chatHistory: [],
-      currentUsername: "",
-      currentUserId: "",
-      wasHistoryLoaded: true,
-    };
-  }
-
-  const currentUsername = thunkAPI.getState().user.currentUser.username;
-  const response = await client.get<chatHistory_res[]>(
-    serverUrl + `/chat/private-chat-history?id_1=${currentUserId}&id_2=${id}`
-  );
-  return {
-    chatHistory: response.data,
-    currentUsername,
-    currentUserId,
-    wasHistoryLoaded: false,
-  };
-});
-
-export const getNotifications = createAsyncThunk<
-  GetNotifications_res,
-  string,
-  { state: RootState }
->("message/getNotifications", async (currentUserId) => {
-  const response = await client.get<GetNotifications_res>(
-    serverUrl + `/chat/get-notifications?user_id=${currentUserId}`
-  );
-  return response.data;
-});
-
-export const clearNotifications = createAsyncThunk<
-  { type: string; id: string },
-  { type: string; id: string },
-  { state: RootState }
->("message/clearNotifications", async ({ type, id }, thunkAPI) => {
-  const user_id = thunkAPI.getState().user.currentUser.user_id;
-  await client.post(serverUrl + `/chat/clear-notifications`, {
-    type,
-    target_id: id,
-    user_id,
-  });
-
-  return { type, id };
-});
-
-////////////////////////////////////////////////////////////////////////////////
 
 const messageSlice = createSlice({
   name: "message",
@@ -201,7 +108,6 @@ const messageSlice = createSlice({
       if (!state.messageNotifications[room_id]) {
         state.messageNotifications[room_id] = 0;
       }
-
       // only show notification if user is not in the target room and user is the recipient
       const chatRoomUserIsIn = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
       if (currentUserId === recipient_id && chatRoomUserIsIn !== room_id)
@@ -252,11 +158,10 @@ const messageSlice = createSlice({
   },
 
   extraReducers: (builder) => {
-    // load the last 20 chat messages when the user clicks on the target room
-    // if user wants to read more old messages, the "infinite scroll" will be
-    // used to fetch more old messages. and the messages will be merged into
-    // the chatHistory by using "loadMoreOldChatHistory"
     builder
+      ///////////////////////
+      // Load Chat History //
+      ///////////////////////
       .addCase(loadChatHistory.fulfilled, (state, action): void => {
         const currentUsername = action.payload.currentUsername;
         const currentUserId = action.payload.currentUserId;
@@ -287,9 +192,9 @@ const messageSlice = createSlice({
         // the user is scrolling up for older messages
         state.visitedRoom[`${type}_${id}`] = true;
       })
-
-      /////////////// getNotifications///////////
-
+      ///////////////////////
+      // Get Notifications //
+      ///////////////////////
       .addCase(getNotifications.fulfilled, (state, action): void => {
         action.payload.private.forEach((note) => {
           state.messageNotifications[`${chatType.private}_${note.sender_id}`] =
@@ -299,31 +204,14 @@ const messageSlice = createSlice({
         //   state.messageNotifications[`${chatType.private}_${note.sender_id}`] = note.count
         // })
       })
-
+      /////////////////////////
+      // Clear Notifications //
+      /////////////////////////
       .addCase(clearNotifications.fulfilled, (state, action): void => {
         const { type, id } = action.payload;
         state.messageNotifications[`${type}_${id}`] = 0;
       });
   },
-
-  // .addCase(
-  //   signIn.fulfilled,
-  //   (state, action: PayloadAction<UserState>): void => {
-  //     state.currentUser = action.payload.currentUser;
-  //     state.friendsList = action.payload.friendsList;
-  //     state.loadingStatus = "succeeded";
-  //   }
-  // )
-  // .addCase(signIn.pending, (state): void => {
-  //   state.loadingStatus = "loading";
-  // })
-  // .addCase(signIn.rejected, (state, action: PayloadAction<any>): void => {
-  //   for (let err of action.payload.errors) {
-  //     state.authErrors[err.field] = err.message;
-  //   }
-  //   state.loadingStatus = "failed";
-  //   // state.pageLoading_user = false;
-  // })
 });
 
 export const {

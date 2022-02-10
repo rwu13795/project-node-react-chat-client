@@ -17,8 +17,8 @@ import {
   selectTargetChatRoom_history,
   addNewMessageToHistory,
   loadMoreOldChatHistory,
-} from "../utils/redux/messageSlice";
-import { selectUserId, selectUsername } from "../utils/redux/userSlice";
+} from "../redux/message/messageSlice";
+import { selectUserId, selectUsername } from "../redux/user/userSlice";
 
 import browserClient from "../utils/axios-client";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -131,16 +131,16 @@ function ChatBoard({ socket }: Props): JSX.Element {
     );
 
     // scroll to down to show the new message
-    let elem = document.getElementById("chat-board");
-    console.log("elem found !", elem);
-    setTimeout(() => {
-      if (elem) {
-        elem.scrollTo({
-          top: elem.scrollHeight,
-          behavior: "smooth",
-        });
-      }
-    }, 280);
+    // let elem = document.getElementById("chat-board");
+    // console.log("elem found !", elem);
+    // setTimeout(() => {
+    //   if (elem) {
+    //     elem.scrollTo({
+    //       top: elem.scrollHeight,
+    //       behavior: "smooth",
+    //     });
+    //   }
+    // }, 280);
   }
 
   const onChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {

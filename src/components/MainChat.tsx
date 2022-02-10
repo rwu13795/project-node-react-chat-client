@@ -1,5 +1,5 @@
 import axios from "axios";
-import { memo, useEffect } from "react";
+import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
@@ -22,6 +22,7 @@ import {
   setFriendsOnlineStatus,
   selectAddFriendRequests,
   selectResult_addFriendRequest,
+  UserState,
 } from "../redux/user/userSlice";
 import { connectSocket } from "../socket-io/socketConnection";
 import ChatBoard from "./ChatBoard";
@@ -31,7 +32,10 @@ import { loadChatHistory } from "../redux/message/asyncThunk/load-chat-history";
 import { clearNotifications } from "../redux/message/asyncThunk/clear-notifications";
 import SearchUser from "./SearchUser";
 import { addFriendRequest_listener } from "../socket-io/listeners/add-friend-request-listener";
-import { addFriendRequest_result_listener } from "../socket-io/listeners/add-friend-request-result-listener";
+import { check_addFriendRequest_listener } from "../socket-io/listeners/check-add-friend-request-listener";
+import { addFriendResponse_listener } from "../socket-io/listeners/add-friend-response-listener";
+import { AsyncThunkAction, Dispatch } from "@reduxjs/toolkit";
+import { getUserAuth } from "../redux/user/asyncThunk/get-user-auth";
 
 interface Props {
   socket: Socket | undefined;
@@ -50,6 +54,8 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
   const friendsOnlineStatus = useSelector(selectFriendsOnlineStatus);
   const messageNotifications = useSelector(selectMessageNotifications);
   const addFriendRequests = useSelector(selectAddFriendRequests);
+
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -73,7 +79,8 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
       // listen all private messages sent to the current user and set the msg in chatHistory
       privateMessage_toClient_listener(newSocket, dispatch);
       addFriendRequest_listener(newSocket, dispatch);
-      addFriendRequest_result_listener(newSocket, dispatch);
+      check_addFriendRequest_listener(newSocket, dispatch);
+      addFriendResponse_listener(newSocket, dispatch, currentUserId);
 
       // listen for online event of all friends
       newSocket.on("online", (friend_id) => {
@@ -96,7 +103,7 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
       newSocket.on("offline", (friend_id) => {
         // update the UI in redux here ///////////////
         console.log(`user ${friend_id} is offline`);
-        dispatch(setFriendsOnlineStatus({ friend_id, online: true }));
+        dispatch(setFriendsOnlineStatus({ friend_id, online: false }));
       });
 
       console.log("user signed, socket connected");
@@ -136,6 +143,44 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
     }, 100);
   }
 
+  function responseHandler(
+    sender_id: string,
+    sender_username: string,
+    target_id: string,
+    target_username: string,
+    accept: boolean
+  ) {
+    if (socket) {
+      // update the friends_pair and notificaiton if request is accepted
+      socket.emit("add-friend-response", {
+        sender_id,
+        sender_username,
+        target_id,
+        target_username,
+        accept,
+      });
+    }
+    if (accept) {
+      // after the user accepted the request, get the updated friends_pair, private_message and
+      // notification from server. Have to wait for a few second since the DB might be being updated
+      // need to add loading icon , setAccepetLoading to true
+      setLoading(true);
+      setTimeout(() => {
+        // don't initialize the onlineStatus, otherwise all friends will be marked as offline
+        dispatch(getUserAuth({ initialize: false }));
+        dispatch(getNotifications(currentUserId));
+        setLoading(false);
+      }, 3000);
+      // wait for 4 seconds, the getUserAuth() should finish updating the friendList
+      // then let the new added friend know this user is online.
+      setTimeout(() => {
+        if (socket) {
+          socket.emit("online", sender_id);
+        }
+      }, 5000);
+    }
+  }
+
   return (
     <main>
       <div>
@@ -162,7 +207,7 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
                 {messageNotifications[`${chatType.private}_${friend_id}`]}{" "}
               </div>
               <div>
-                friend ${friend_username} is online:{" "}
+                friend {friend_username} is online:{" "}
                 {friendsOnlineStatus[friend_id] ? "yes" : "no"}
               </div>
             </div>
@@ -177,6 +222,34 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
             <div key={index}>
               {req.sender_email} username: {req.sender_username} requested
               add-friend
+              <div>Message: {req.message}</div>
+              <button
+                onClick={() =>
+                  responseHandler(
+                    req.sender_id,
+                    req.sender_username,
+                    currentUserId,
+                    currentUsername,
+                    true
+                  )
+                }
+              >
+                Accept
+              </button>
+              <button
+                onClick={() =>
+                  responseHandler(
+                    req.sender_id,
+                    req.sender_username,
+                    currentUserId,
+                    currentUsername,
+                    false
+                  )
+                }
+              >
+                Reject
+              </button>
+              {loading && "Loading ............"}
             </div>
           );
         })}

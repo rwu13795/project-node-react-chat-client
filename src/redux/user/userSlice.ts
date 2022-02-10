@@ -24,6 +24,7 @@ export interface AddFriendRequest {
   sender_id: string;
   sender_username: string;
   sender_email: string;
+  message: string;
 }
 
 export interface Friends {
@@ -183,6 +184,7 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<{ friend_id: string; online: boolean }>
     ) {
+      console.log("setting online status", action.payload);
       const { friend_id, online } = action.payload;
       state.friendsOnlineStatus[friend_id] = online;
     },
@@ -197,18 +199,17 @@ const userSlice = createSlice({
   extraReducers: (builder) => {
     builder
       /***************  GET AUTH  ***************/
-      .addCase(
-        getUserAuth.fulfilled,
-        (state, action: PayloadAction<UserState>): void => {
-          // remember to add the state type as return type
-          state.currentUser = action.payload.currentUser;
-          state.friendsList = action.payload.friendsList;
-          state.addFriendRequests = action.payload.addFriendRequests;
+      .addCase(getUserAuth.fulfilled, (state, action): void => {
+        // remember to add the state type as return type
+        state.currentUser = action.payload.currentUser;
+        state.friendsList = action.payload.friendsList;
+        state.addFriendRequests = action.payload.addFriendRequests;
+        if (action.payload.require_initialize) {
           for (let f of action.payload.friendsList) {
             state.friendsOnlineStatus[f.friend_id] = false;
           }
         }
-      )
+      })
 
       /***************  SIGN IN  ***************/
       .addCase(

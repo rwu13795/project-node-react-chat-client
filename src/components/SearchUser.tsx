@@ -32,6 +32,7 @@ function SearchUser({ socket }: Props): JSX.Element {
     found: boolean;
   }>({ user_id: "", username: "", found: false });
   const [findById, setFindById] = useState<boolean>(true);
+  const [message, setMesssage] = useState<string>("");
 
   function inputChangeHanlder(e: ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
@@ -40,6 +41,9 @@ function SearchUser({ socket }: Props): JSX.Element {
     } else {
       setUserEmail(value);
     }
+  }
+  function setMessageHandler(e: ChangeEvent<HTMLInputElement>) {
+    setMesssage(e.target.value);
   }
   async function submitSearchHandler(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -77,12 +81,18 @@ function SearchUser({ socket }: Props): JSX.Element {
     // send request to target user. If user is online, he can see the request immediately
     // If target user is not online, save the request to DB, so he can get the request
     // notification next time he signs in
+    if (message === "") {
+      console.log("message is empty");
+      return;
+    }
+
     const { user_id, username, email } = currentUser;
     if (socket) {
       socket.emit("add-friend-request", {
         sender_id: user_id,
         sender_username: username,
         sender_email: email,
+        message,
         target_id: foundUser.user_id,
       });
     }
@@ -133,6 +143,7 @@ function SearchUser({ socket }: Props): JSX.Element {
             <span>
               <button onClick={addFriendRequestHandler}>Add Friend</button>
               <button onClick={cancelAddFriendHandler}>cancel</button>
+              <input type="text" value={message} onChange={setMessageHandler} />
             </span>
           )}
       </h4>

@@ -4,10 +4,12 @@ import { RootState } from "../..";
 import { client, serverUrl } from "../../utils";
 
 interface chatHistory_res {
-  body: string;
+  msg_body: string;
+  msg_type: string;
   created_at: string;
   recipient_id: string;
   sender_id: string;
+  file_name?: string;
 }
 interface LoadChatHistory_res {
   chatHistory: chatHistory_res[];
@@ -25,7 +27,7 @@ interface LoadChatHistory_req {
 // if user wants to read more old messages, the "infinite scroll" will be
 // used to fetch more old messages. and the messages will be merged into
 // the chatHistory by using "loadMoreOldChatHistory"
-export const loadChatHistory = createAsyncThunk<
+export const loadChatHistory_database = createAsyncThunk<
   LoadChatHistory_res,
   LoadChatHistory_req,
   { state: RootState }

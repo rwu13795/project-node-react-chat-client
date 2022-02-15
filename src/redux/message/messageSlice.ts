@@ -1,7 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../index";
 
-import { loadChatHistory } from "./asyncThunk/load-chat-history";
+import { loadChatHistory_database } from "./asyncThunk/load-chat-history";
 import { clearNotifications } from "./asyncThunk/clear-notifications";
 import { getNotifications } from "./asyncThunk/get-notifications";
 
@@ -16,8 +16,12 @@ export interface MessageObject {
   sender_username: string;
   recipient_id: string;
   recipient_username: string;
-  body: string;
+  msg_body: string;
+  msg_type: string;
   created_at: string;
+  file_url?: string;
+  file_body?: File | Blob | any;
+  file_name?: string;
 }
 export interface RoomIdentifier {
   targetChatRoom_type: string;
@@ -68,7 +72,7 @@ const messageSlice = createSlice({
       state.targetChatRoom = action.payload;
     },
 
-    addNewMessageToHistory(
+    addNewMessageToHistory_memory(
       state,
       action: PayloadAction<MessageObject & RoomIdentifier>
     ) {
@@ -77,7 +81,10 @@ const messageSlice = createSlice({
         sender_username,
         recipient_id,
         recipient_username,
-        body,
+        msg_body,
+        msg_type,
+        file_name,
+        file_url,
         created_at,
         targetChatRoom_type,
       } = action.payload;
@@ -95,12 +102,17 @@ const messageSlice = createSlice({
       if (!state.chatHistory[room_id]) {
         state.chatHistory[room_id] = [];
       }
+      console.log("file_url", file_url);
+
       state.chatHistory[room_id].unshift({
         sender_id,
         sender_username,
         recipient_id,
         recipient_username,
-        body,
+        msg_body,
+        msg_type,
+        file_name,
+        file_url,
         created_at,
       });
 
@@ -114,7 +126,7 @@ const messageSlice = createSlice({
         state.messageNotifications[room_id] += 1;
     },
 
-    loadMoreOldChatHistory(
+    loadMoreOldChatHistory_database(
       state,
       action: PayloadAction<{
         chatHistory: MessageObject[];
@@ -137,7 +149,7 @@ const messageSlice = createSlice({
       if (room_type) {
       }
 
-      const oldChatHistoy = chatHistory.map((msg) => {
+      const oldChatHistoy: MessageObject[] = chatHistory.map((msg) => {
         return {
           sender_id: msg.sender_id,
           sender_username:
@@ -145,7 +157,9 @@ const messageSlice = createSlice({
           recipient_id: msg.recipient_id,
           recipient_username:
             msg.recipient_id === currentUserId ? currentUsername : friendName,
-          body: msg.body,
+          msg_body: msg.msg_body,
+          msg_type: msg.msg_type,
+          file_name: msg.file_name,
           created_at: msg.created_at,
         };
       });
@@ -162,7 +176,7 @@ const messageSlice = createSlice({
       ///////////////////////
       // Load Chat History //
       ///////////////////////
-      .addCase(loadChatHistory.fulfilled, (state, action): void => {
+      .addCase(loadChatHistory_database.fulfilled, (state, action): void => {
         const currentUsername = action.payload.currentUsername;
         const currentUserId = action.payload.currentUserId;
         const { type, id, name } = state.targetChatRoom;
@@ -183,7 +197,9 @@ const messageSlice = createSlice({
             recipient_id: msg.recipient_id,
             recipient_username:
               msg.recipient_id === currentUserId ? currentUsername : name,
-            body: msg.body,
+            msg_body: msg.msg_body,
+            msg_type: msg.msg_type,
+            file_name: msg.file_name,
             created_at: msg.created_at,
           };
         });
@@ -216,8 +232,8 @@ const messageSlice = createSlice({
 
 export const {
   setTargetChatRoom,
-  addNewMessageToHistory,
-  loadMoreOldChatHistory,
+  addNewMessageToHistory_memory,
+  loadMoreOldChatHistory_database,
   setCurrentUserId_message,
 } = messageSlice.actions;
 

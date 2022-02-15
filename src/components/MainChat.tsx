@@ -7,7 +7,6 @@ import {
   chatType,
   MessageObject,
   RoomIdentifier,
-  addNewMessageToHistory,
   setTargetChatRoom,
   selectMessageNotifications,
   setCurrentUserId_message,
@@ -28,7 +27,7 @@ import { connectSocket } from "../socket-io/socketConnection";
 import ChatBoard from "./ChatBoard";
 import { privateMessage_toClient_listener } from "../socket-io/listeners/private-message-listener";
 import { getNotifications } from "../redux/message/asyncThunk/get-notifications";
-import { loadChatHistory } from "../redux/message/asyncThunk/load-chat-history";
+import { loadChatHistory_database } from "../redux/message/asyncThunk/load-chat-history";
 import { clearNotifications } from "../redux/message/asyncThunk/clear-notifications";
 import SearchUser from "./SearchUser";
 import { addFriendRequest_listener } from "../socket-io/listeners/add-friend-request-listener";
@@ -122,7 +121,7 @@ function MainChat({ socket, setSocket }: Props): JSX.Element {
     dispatch(setTargetChatRoom({ id, name, type }));
 
     // load the latest 20 chat messages from server in the specific room only once
-    dispatch(loadChatHistory({ type, id, currentUserId }));
+    dispatch(loadChatHistory_database({ type, id, currentUserId }));
     dispatch(clearNotifications({ type, id }));
 
     if (socket) {

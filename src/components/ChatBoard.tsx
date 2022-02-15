@@ -15,8 +15,8 @@ import {
   MessageObject,
   selectTargetChatRoom,
   selectTargetChatRoom_history,
-  addNewMessageToHistory,
-  loadMoreOldChatHistory,
+  addNewMessageToHistory_memory,
+  loadMoreOldChatHistory_database,
 } from "../redux/message/messageSlice";
 import { selectUserId, selectUsername } from "../redux/user/userSlice";
 
@@ -72,7 +72,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
 
         setHasMore(data.length >= MSG_PER_PAGE);
         dispatch(
-          loadMoreOldChatHistory({
+          loadMoreOldChatHistory_database({
             chatHistory: data,
             room_id,
             currentUsername,
@@ -101,9 +101,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
   /////////////////////////
   ///////////////////////////
 
-  function sendMessageHandler(
-    e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
-  ) {
+  function sendMessageHandler(e: FormEvent<HTMLFormElement>, msg_type: string) {
     e.preventDefault();
 
     const messageObject: MessageObject = {
@@ -111,11 +109,22 @@ function ChatBoard({ socket }: Props): JSX.Element {
       sender_username: currentUsername,
       recipient_id: targetChatRoom.id,
       recipient_username: targetChatRoom.name,
-      body: msg,
+      msg_body: "",
+      msg_type: "",
       created_at: new Date().toDateString(),
     };
 
     if (socket) {
+      // change the messageObject according to the msg_type
+      if (msg_type === "text") {
+        messageObject.msg_body = msg;
+        messageObject.msg_type = msg_type;
+      } else {
+        messageObject.file_url = URL.createObjectURL(imageFile!);
+        messageObject.file_body = imageFile;
+        messageObject.msg_type = "image";
+      }
+
       socket.emit("messageToServer", {
         ...messageObject,
         targetChatRoom_type: targetChatRoom.type,
@@ -124,8 +133,9 @@ function ChatBoard({ socket }: Props): JSX.Element {
 
     // (1) //
     dispatch(
-      addNewMessageToHistory({
+      addNewMessageToHistory_memory({
         ...messageObject,
+        file_body: "",
         targetChatRoom_type: targetChatRoom.type,
       })
     );
@@ -147,16 +157,64 @@ function ChatBoard({ socket }: Props): JSX.Element {
     setMsg(e.target.value);
   };
 
+  ////////// testing send image
+  const [imageFile, setImageFile] = useState<File>();
+
+  const sendImageHandler = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    /* 
+    the imageFile contains {
+      name: "cat1.jpg"
+      size: 16176  (in bytes)
+      type: "image/jpeg"
+    }
+    when it is sent to server, the imageFile will be a stream of Buffer
+    that can be ?upload to S3 directly?
+    */
+
+    if (socket) {
+      socket.emit("imageToServer", {
+        body: imageFile,
+        messageType: imageFile?.type,
+        fileName: imageFile?.name,
+      });
+    }
+  };
+
+  const onImageChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newImage = e.target.files[0] as File;
+      // check the extension of the file, if not txt, docx, pdf, don't let user send
+      // check the type of the file, if it is not of image, don't let user send
+      console.log(newImage.name.split(".")[1]);
+      console.log(URL.createObjectURL(newImage));
+      setImageFile(newImage);
+    }
+  };
+
   return (
     <main>
       <h1>I am the ChatBoard</h1>
       <h3>
         Chatting with {targetChatRoom.name}-{targetChatRoom.id}
       </h3>
-      <form onSubmit={sendMessageHandler}>
+      <form onSubmit={(e) => sendMessageHandler(e, "text")}>
+        {/* should limit to 250 characters */}
         <input type="text" value={msg} onChange={onChangeHandler} />
         <input type="submit" />
       </form>
+
+      <form onSubmit={(e) => sendMessageHandler(e, "file")}>
+        <input
+          type="file"
+          // accept=".txt, .pdf, .docx"
+          accept="image/*"
+          onChange={onImageChangeHandler}
+        />
+        <input type="submit" />
+      </form>
+
+      {imageFile && <img src={URL.createObjectURL(imageFile)} alt="input" />}
 
       <div
         style={{
@@ -188,16 +246,26 @@ function ChatBoard({ socket }: Props): JSX.Element {
           loader={<h4>Loading...</h4>}
           scrollableTarget="chat-board"
         >
-          {chatHistory.map((msg, index) => (
-            <div key={index}>
-              <div style={{ maxWidth: "250px", overflowWrap: "break-word" }}>
-                {msg.body} ------- {msg.created_at}
+          {chatHistory.map((msg, index) => {
+            console.log(msg.file_url);
+            return (
+              <div key={index}>
+                <div style={{ maxWidth: "250px", overflowWrap: "break-word" }}>
+                  {msg.msg_type !== "image" && (
+                    <div>
+                      {msg.msg_body} ------- {msg.created_at}
+                    </div>
+                  )}
+                  <div>
+                    <img alt="testing" src={msg.file_url} />
+                  </div>
+                </div>
+                <div>
+                  {msg.recipient_username} ------- {msg.sender_username}
+                </div>
               </div>
-              <div>
-                {msg.recipient_username} ------- {msg.sender_username}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </InfiniteScroll>
       </div>
     </main>

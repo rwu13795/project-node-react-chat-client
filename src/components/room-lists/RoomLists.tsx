@@ -7,6 +7,7 @@ import { clearNotifications } from "../../redux/message/asyncThunk/clear-notific
 import { loadChatHistory_database } from "../../redux/message/asyncThunk/load-chat-history";
 import { setTargetChatRoom } from "../../redux/message/messageSlice";
 import FriendsList from "./FriendsList";
+import CreateGroup from "../group/CreateGroup";
 
 interface Props {
   socket: Socket | undefined;
@@ -48,6 +49,7 @@ function RoomLists({ socket }: Props): JSX.Element {
     <main>
       <h3>RoomLists</h3>
       <FriendsList selectTargetChatRoomHandler={selectTargetChatRoomHandler} />
+      <CreateGroup />
     </main>
   );
 }

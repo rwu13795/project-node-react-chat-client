@@ -42,21 +42,21 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
     if (accept) {
       // after the user accepted the request, get the updated friends_pair, private_message and
       // notification from server. Have to wait for a few second since the DB might be being updated
-      // need to add loading icon , setAccepetLoading to true
+      // !!!! need to add loading icon here !!!!
       setLoading(true);
       setTimeout(() => {
         // don't initialize the onlineStatus, otherwise all friends will be marked as offline
         dispatch(getUserAuth({ initialize: false }));
         dispatch(getNotifications(currentUserId));
         setLoading(false);
-      }, 3000);
+      }, 4000);
       // wait for 4 seconds, the getUserAuth() should finish updating the friendList
       // then let the new added friend know this user is online.
       setTimeout(() => {
         if (socket) {
           socket.emit("online", sender_id);
         }
-      }, 5000);
+      }, 6000);
     }
   }
 

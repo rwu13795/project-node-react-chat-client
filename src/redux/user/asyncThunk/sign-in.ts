@@ -9,6 +9,12 @@ interface SignInBody {
   password: string;
 }
 
+/*  createAsyncThunk types
+    1) UserState -- action payload type for the "signIn.fullfilled" and other signIn.xxxxx
+       I don't need to put the type in the Payload<> if I have indicate the type here
+    2) type of object which is being passed into this dispatch function
+    3) { state: RootState } the type for thunkAPI 
+*/
 export const signIn = createAsyncThunk<
   UserState,
   SignInBody,

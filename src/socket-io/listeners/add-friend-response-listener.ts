@@ -13,12 +13,10 @@ export function addFriendResponse_listener(
     console.log(
       `user ${newFriend} has accepted you request, you are friends now!`
     );
-    // after the user accepted the request, get the updated friends_pair, private_message and
-    // notification from server. Have to wait for a few seconds since the DB might be being updated
-    setTimeout(() => {
-      // don't initialize the onlineStatus, otherwise all friends will be marked as offline
-      dispatch(getUserAuth({ initialize: false }));
-      dispatch(getNotifications(currentUserId));
-    }, 4000);
+    // after the invitee accepted the request, server will emit the "add-friend-response"
+    // get the updated friends_pair, private_message and notification from server for this inviter.
+    // don't initialize the onlineStatus, otherwise all friends will be marked as offline
+    dispatch(getUserAuth({ initialize: false }));
+    dispatch(getNotifications(currentUserId));
   });
 }

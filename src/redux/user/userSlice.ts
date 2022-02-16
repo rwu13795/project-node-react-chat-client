@@ -5,6 +5,7 @@ import {
   PayloadAction,
 } from "@reduxjs/toolkit";
 import type { RootState } from "../index";
+import { createNewGroup } from "./asyncThunk/create-new-group";
 import { getUserAuth } from "./asyncThunk/get-user-auth";
 import { signIn } from "./asyncThunk/sign-in";
 import { signUp } from "./asyncThunk/sign-up";
@@ -27,40 +28,42 @@ export interface AddFriendRequest {
   message: string;
 }
 
-export interface Friends {
+export interface Friend {
   friend_id: string;
   friend_username: string;
   friend_email: string;
 }
+export interface Group {
+  group_id: string;
+  group_name: string;
+  creator_user_id: string;
+  user_kicked: boolean;
+}
 
 export interface UserState {
   currentUser: CurrentUser;
-  friendsList: Friends[];
+  // friends
+  friendsList: Friend[];
   friendsOnlineStatus: { [friend_id: string]: boolean };
-  loadingStatus: string;
-  authErrors: AuthErrors;
   addFriendRequests: AddFriendRequest[];
   result_addFriendRequest: string;
-  // pageLoading_user: boolean;
+  // groups
+  groupsList: Group[];
+  // layout
+  loadingStatus: string;
+  authErrors: AuthErrors;
 }
 
 const initialState: UserState = {
   currentUser: { username: "", email: "", user_id: "", isLoggedIn: false },
   friendsList: [],
   friendsOnlineStatus: {},
-  loadingStatus: "idle",
-  authErrors: {},
   addFriendRequests: [],
   result_addFriendRequest: "",
+  groupsList: [],
+  loadingStatus: "idle",
+  authErrors: {},
 };
-
-/*  createAsyncThunk types
-    1) UserState -- action payload types for the "signIn.fullfilled" and other signIn.xxxxx
-       I don't need to put the type in the Payload<> if I have indicate the type here
-    
-    2) types of object which is being passed into the dispatch function
-    3) { state: RootState } the thunkAPI type
-*/
 
 //////////////
 // SIGN OUT //
@@ -251,7 +254,19 @@ const userSlice = createSlice({
           state.authErrors[err.field] = err.message;
         }
         state.loadingStatus = "failed";
+      })
+
+      /***************  CREATE A NEW GROUP  ***************/
+      .addCase(createNewGroup.fulfilled, (state, action): void => {
+        state.groupsList.push(action.payload);
+        state.loadingStatus = "succeeded";
+
+        console.log("state.groupsList", state.groupsList);
+      })
+      .addCase(createNewGroup.pending, (state, action): void => {
+        state.loadingStatus = "loading";
       });
+
     //////////////
     // SIGN OUT //
     //////////////

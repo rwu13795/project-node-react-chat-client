@@ -2,7 +2,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import { RootState } from "../..";
 import { client, serverUrl } from "../../utils";
-import { UserState } from "../userSlice";
+import { CurrentUser } from "../userSlice";
 
 interface SignUpBody {
   email: string;
@@ -12,17 +12,20 @@ interface SignUpBody {
 }
 
 export const signUp = createAsyncThunk<
-  UserState,
+  CurrentUser,
   SignUpBody,
   { state: RootState }
 >("user/signUp", async (signUpBody, thunkAPI) => {
   try {
-    const response = await client.post(serverUrl + "/auth/sign-up", {
-      req_email: signUpBody.email,
-      req_username: signUpBody.username,
-      req_password: signUpBody.password,
-      req_confirm_password: signUpBody.confirm_password,
-    });
+    const response = await client.post<CurrentUser>(
+      serverUrl + "/auth/sign-up",
+      {
+        req_email: signUpBody.email,
+        req_username: signUpBody.username,
+        req_password: signUpBody.password,
+        req_confirm_password: signUpBody.confirm_password,
+      }
+    );
     return response.data;
   } catch (err: any) {
     // catch the error sent from the server manually, and put it in inside the action.payload

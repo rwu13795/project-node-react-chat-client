@@ -6,10 +6,14 @@ import {
   chatType,
   setCurrentUserId_message,
 } from "../redux/message/messageSlice";
-import { selectIsLoggedIn, selectUserId } from "../redux/user/userSlice";
+import {
+  selectGroupsObjectList,
+  selectIsLoggedIn,
+  selectUserId,
+} from "../redux/user/userSlice";
 import { connectSocket } from "../socket-io/socketConnection";
 import ChatBoard from "./chat/ChatBoard";
-import { privateMessage_toClient_listener } from "../socket-io/listeners/private-message-listener";
+import { message_listener } from "../socket-io/listeners/message-listener";
 import { getNotifications } from "../redux/message/asyncThunk/get-notifications";
 
 import SearchUser from "./user/SearchUser";
@@ -33,6 +37,7 @@ function MainPage(): JSX.Element {
 
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const currentUserId = useSelector(selectUserId);
+  const groupsObjectList = useSelector(selectGroupsObjectList);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -47,16 +52,16 @@ function MainPage(): JSX.Element {
       let newSocket: Socket = connectSocket(currentUserId);
       setSocket(newSocket);
 
-      // each user will join his/her private room after signing in
-      newSocket.emit(
-        "join-private-room",
-        `${chatType.private}_${currentUserId}`
-      );
+      // each user will join his/her private room and all the groups room after signing in
+      newSocket.emit("join-room", {
+        private_id: `${chatType.private}_${currentUserId}`,
+        group_ids: Object.keys(groupsObjectList),
+      });
       // let all the friends know this user is online
       newSocket.emit("online");
 
       // initialize all the listeners //
-      privateMessage_toClient_listener(newSocket, dispatch);
+      message_listener(newSocket, dispatch);
       addFriendRequest_listener(newSocket, dispatch);
       check_addFriendRequest_listener(newSocket, dispatch);
       addFriendResponse_listener(newSocket, dispatch, currentUserId);

@@ -4,16 +4,13 @@ import { Socket } from "socket.io-client";
 import {
   addNewMessageToHistory_memory,
   MessageObject,
-  RoomIdentifier,
+  RoomType,
 } from "../../redux/message/messageSlice";
 
-export function privateMessage_toClient_listener(
-  socket: Socket,
-  dispatch: Dispatch
-) {
+export function message_listener(socket: Socket, dispatch: Dispatch) {
   socket.on(
-    "privateMessage_toClient",
-    async (messageObject: MessageObject & RoomIdentifier) => {
+    "message-to-client",
+    async (messageObject: MessageObject & RoomType) => {
       console.log(messageObject);
 
       dispatch(

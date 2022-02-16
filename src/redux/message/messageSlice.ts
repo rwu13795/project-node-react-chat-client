@@ -24,12 +24,13 @@ export interface MessageObject {
   msg_body: string;
   msg_type: string;
   created_at: string;
-  file_localUrl?: string;
+  file_url?: string;
   file_type?: string;
   file_name?: string;
+  file_localUrl?: string;
 }
 
-export interface RoomIdentifier {
+export interface RoomType {
   targetChatRoom_type: string;
 }
 export interface TargetChatRoom {
@@ -80,7 +81,7 @@ const messageSlice = createSlice({
 
     addNewMessageToHistory_memory(
       state,
-      action: PayloadAction<MessageObject & RoomIdentifier>
+      action: PayloadAction<MessageObject & RoomType>
     ) {
       const {
         sender_id,
@@ -90,6 +91,7 @@ const messageSlice = createSlice({
         msg_body,
         msg_type,
         file_name,
+        file_url,
         file_localUrl,
         created_at,
         targetChatRoom_type,
@@ -97,12 +99,19 @@ const messageSlice = createSlice({
 
       const currentUserId = state.currentUserId_message;
 
-      const room_id =
-        sender_id === currentUserId
-          ? // the current user is the sender
-            `${targetChatRoom_type}_${recipient_id}`
-          : // the current user is the recipient
-            `${targetChatRoom_type}_${sender_id}`;
+      let room_id = "";
+      if (targetChatRoom_type === chatType.private) {
+        if (sender_id === currentUserId) {
+          // the current user is the sender
+          room_id = `${targetChatRoom_type}_${recipient_id}`;
+        } else {
+          // the current user is the recipient
+          room_id = `${targetChatRoom_type}_${sender_id}`;
+        }
+      } else if (targetChatRoom_type === chatType.group) {
+        room_id = `${targetChatRoom_type}_${recipient_id}`;
+      } else {
+      }
 
       // add message to chat history for the specific room
       if (!state.chatHistory[room_id]) {
@@ -118,6 +127,7 @@ const messageSlice = createSlice({
         msg_type,
         file_name,
         file_localUrl,
+        file_url,
         created_at,
       });
 
@@ -165,6 +175,7 @@ const messageSlice = createSlice({
           msg_body: msg.msg_body,
           msg_type: msg.msg_type,
           file_name: msg.file_name,
+          file_url: msg.file_url,
           created_at: msg.created_at,
         };
       });
@@ -205,6 +216,7 @@ const messageSlice = createSlice({
             msg_body: msg.msg_body,
             msg_type: msg.msg_type,
             file_name: msg.file_name,
+            file_url: msg.file_url,
             file_type: msg.file_type,
             created_at: msg.created_at,
           };

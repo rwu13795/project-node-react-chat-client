@@ -125,9 +125,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
           scrollableTarget="chat-board"
         >
           {chatHistory.map((msg, index) => {
-            console.log("msg.msg_type", msg.msg_type);
-            console.log("msg.file_name", msg.file_name);
-            console.log("msg.file_type", msg.file_type);
+            console.log("msg.file_localUrl", msg.file_localUrl);
 
             return (
               <div key={index}>
@@ -141,7 +139,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
                       src={
                         msg.file_localUrl
                           ? msg.file_localUrl
-                          : `https://d229fmuzhn8qxo.cloudfront.net/users/${currentUserId}/${msg.file_name}`
+                          : `https://d229fmuzhn8qxo.cloudfront.net/users/${currentUserId}/${msg.file_url}`
                       }
                     />
                   </div>

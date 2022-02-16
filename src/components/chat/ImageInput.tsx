@@ -35,6 +35,8 @@ function ImageInput({ socket }: Props): JSX.Element {
       created_at: new Date().toDateString(),
     };
 
+    console.log(messageObject.file_localUrl);
+
     if (socket) {
       socket.emit("messageToServer", {
         ...messageObject,

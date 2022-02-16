@@ -11,6 +11,7 @@ interface chatHistory_res {
   sender_id: string;
   file_type: string;
   file_name: string;
+  file_url: string;
 }
 interface LoadChatHistory_res {
   chatHistory: chatHistory_res[];

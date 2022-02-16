@@ -1,21 +1,15 @@
-import {
-  createAsyncThunk,
-  createSelector,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../index";
 import { createNewGroup } from "./asyncThunk/create-new-group";
 import { getUserAuth } from "./asyncThunk/get-user-auth";
 import { signIn } from "./asyncThunk/sign-in";
 import { signUp } from "./asyncThunk/sign-up";
 
-interface UserInfo {}
-
 export interface CurrentUser {
   username: string;
   email: string;
   user_id: string;
+  avatar_url?: string;
   isLoggedIn?: boolean;
 }
 export interface AuthErrors {
@@ -32,12 +26,16 @@ export interface Friend {
   friend_id: string;
   friend_username: string;
   friend_email: string;
+  avatar_url?: string;
 }
+
 export interface Group {
   group_id: string;
   group_name: string;
   creator_user_id: string;
   user_kicked: boolean;
+  // only load group_members from DB when user enters the group room
+  group_members?: Friend[];
 }
 
 export interface UserState {
@@ -48,7 +46,8 @@ export interface UserState {
   addFriendRequests: AddFriendRequest[];
   result_addFriendRequest: string;
   // groups
-  groupsList: Group[];
+  groupsObjectList: { [group_id: string]: Group };
+  createGroupError: string;
   // layout
   loadingStatus: string;
   authErrors: AuthErrors;
@@ -60,7 +59,8 @@ const initialState: UserState = {
   friendsOnlineStatus: {},
   addFriendRequests: [],
   result_addFriendRequest: "",
-  groupsList: [],
+  groupsObjectList: {},
+  createGroupError: "",
   loadingStatus: "idle",
   authErrors: {},
 };
@@ -207,6 +207,15 @@ const userSlice = createSlice({
         state.currentUser = action.payload.currentUser;
         state.friendsList = action.payload.friendsList;
         state.addFriendRequests = action.payload.addFriendRequests;
+
+        console.log(action.payload.currentUser);
+
+        // map the groupsList into groupsObjectList. It would be easier to put
+        // the group_members in the respective group when user enters a group room
+        for (let group of action.payload.groupsList) {
+          state.groupsObjectList[group.group_id] = group;
+        }
+
         if (action.payload.require_initialize) {
           for (let f of action.payload.friendsList) {
             state.friendsOnlineStatus[f.friend_id] = false;
@@ -215,19 +224,20 @@ const userSlice = createSlice({
       })
 
       /***************  SIGN IN  ***************/
-      .addCase(
-        signIn.fulfilled,
-        (state, action: PayloadAction<UserState>): void => {
-          state.currentUser = action.payload.currentUser;
-          state.friendsList = action.payload.friendsList;
-          state.addFriendRequests = action.payload.addFriendRequests;
-          // initialize the friendsOnlineStatus
-          for (let f of action.payload.friendsList) {
-            state.friendsOnlineStatus[f.friend_id] = false;
-          }
-          state.loadingStatus = "succeeded";
+      .addCase(signIn.fulfilled, (state, action): void => {
+        state.currentUser = action.payload.currentUser;
+        state.friendsList = action.payload.friendsList;
+        state.addFriendRequests = action.payload.addFriendRequests;
+        for (let group of action.payload.groupsList) {
+          state.groupsObjectList[group.group_id] = group;
         }
-      )
+
+        // initialize the friendsOnlineStatus
+        for (let f of action.payload.friendsList) {
+          state.friendsOnlineStatus[f.friend_id] = false;
+        }
+        state.loadingStatus = "succeeded";
+      })
       .addCase(signIn.pending, (state): void => {
         state.loadingStatus = "loading";
       })
@@ -241,8 +251,8 @@ const userSlice = createSlice({
       /***************  SIGN UP  ***************/
       .addCase(
         signUp.fulfilled,
-        (state, action: PayloadAction<UserState>): void => {
-          state.currentUser = action.payload.currentUser;
+        (state, action: PayloadAction<CurrentUser>): void => {
+          state.currentUser = action.payload;
           state.loadingStatus = "succeeded";
         }
       )
@@ -258,14 +268,21 @@ const userSlice = createSlice({
 
       /***************  CREATE A NEW GROUP  ***************/
       .addCase(createNewGroup.fulfilled, (state, action): void => {
-        state.groupsList.push(action.payload);
+        state.groupsObjectList[action.payload.group_id] = action.payload;
         state.loadingStatus = "succeeded";
-
-        console.log("state.groupsList", state.groupsList);
       })
       .addCase(createNewGroup.pending, (state, action): void => {
         state.loadingStatus = "loading";
-      });
+      })
+      .addCase(
+        createNewGroup.rejected,
+        (state, action: PayloadAction<any>): void => {
+          for (let err of action.payload.errors) {
+            state.createGroupError = err.message;
+          }
+          state.loadingStatus = "failed";
+        }
+      );
 
     //////////////
     // SIGN OUT //
@@ -389,4 +406,12 @@ export const selectAuthErrors = createSelector(
 export const selectResult_addFriendRequest = createSelector(
   [selectUser],
   (userState) => userState.result_addFriendRequest
+);
+export const selectCreateGroupError = createSelector(
+  [selectUser],
+  (userState) => userState.createGroupError
+);
+export const selectGroupsObjectList = createSelector(
+  [selectUser],
+  (userState) => userState.groupsObjectList
 );

@@ -29,7 +29,7 @@ function FriendsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
           // will emit the messsage to the room where the friend is in
           let { friend_id, friend_username } = friend;
           return (
-            <div key={friend.friend_id}>
+            <div key={friend_id}>
               <button
                 onClick={() =>
                   selectTargetChatRoomHandler(
@@ -39,7 +39,7 @@ function FriendsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
                   )
                 }
               >
-                {friend.friend_username + friend.friend_id}
+                {friend_username + friend_id}
               </button>
               <div>
                 notifications:{" "}

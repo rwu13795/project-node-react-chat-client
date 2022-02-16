@@ -2,7 +2,14 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import { RootState } from "../..";
 import { client, serverUrl } from "../../utils";
-import { UserState } from "../userSlice";
+import { AddFriendRequest, CurrentUser, Friend, Group } from "../userSlice";
+
+interface SignIn_res {
+  currentUser: CurrentUser;
+  friendsList: Friend[];
+  addFriendRequests: AddFriendRequest[];
+  groupsList: Group[];
+}
 
 interface SignInBody {
   email: string;
@@ -16,7 +23,7 @@ interface SignInBody {
     3) { state: RootState } the type for thunkAPI 
 */
 export const signIn = createAsyncThunk<
-  UserState,
+  SignIn_res,
   SignInBody,
   { state: RootState }
 >(
@@ -30,7 +37,7 @@ export const signIn = createAsyncThunk<
     thunkAPI
   ) => {
     try {
-      const response = await client.post<UserState>(
+      const response = await client.post<SignIn_res>(
         serverUrl + "/auth/sign-in",
         {
           req_email: signInBody.email,

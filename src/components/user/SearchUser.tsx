@@ -7,10 +7,10 @@ import {
   selectResult_addFriendRequest,
   selectUserId,
   setResult_addFriendRequest,
-} from "../redux/user/userSlice";
-import { serverUrl } from "../redux/utils";
+} from "../../redux/user/userSlice";
+import { serverUrl } from "../../redux/utils";
 
-import axios_client from "../utils/axios-client";
+import axios_client from "../../utils/axios-client";
 
 interface Props {
   socket: Socket | undefined;
@@ -50,6 +50,15 @@ function SearchUser({ socket }: Props): JSX.Element {
     dispatch(setResult_addFriendRequest(""));
 
     if (userEmail === "" && userId === "") return;
+
+    if (userId === currentUser.user_id.toString()) {
+      setFoundUser({
+        user_id: "",
+        username: "You cannot add yourself as friend!",
+        found: false,
+      });
+      return;
+    }
     try {
       const { data } = await client.post<
         { user_id: string; username: string }[]

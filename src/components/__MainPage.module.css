@@ -1,0 +1,13 @@
+.main_grid {
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100vw;
+  gap: 10px;
+}
+
+.left_grid {
+  width: 30%;
+}
+.right_grid {
+  width: 70%;
+}

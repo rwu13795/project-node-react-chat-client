@@ -19,7 +19,6 @@ export function privateMessage_toClient_listener(
       dispatch(
         addNewMessageToHistory_memory({
           ...messageObject,
-          file_body: "",
         })
       );
     }

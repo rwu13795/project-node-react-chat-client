@@ -4,16 +4,14 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // (1
 import "./App.css";
 
 import { Socket } from "socket.io-client";
-import Navbar from "./components/Navbar";
+import Navbar from "./components/navbar/Navbar";
 import Auth from "./components/Auth";
-import MainChat from "./components/MainChat";
+import MainPage from "./components/MainPage";
 import { useDispatch } from "react-redux";
 import { getUserAuth } from "./redux/user/asyncThunk/get-user-auth";
 
 function App(): JSX.Element {
   const dispatch = useDispatch();
-
-  const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
     dispatch(getUserAuth({ initialize: true }));
@@ -26,10 +24,7 @@ function App(): JSX.Element {
         <h1>TESTING</h1>
         <Routes>
           <Route path="/" element={<Auth />} />
-          <Route
-            path="/chat"
-            element={<MainChat socket={socket} setSocket={setSocket} />}
-          />
+          <Route path="/chat" element={<MainPage />} />
         </Routes>
       </div>
     </Router>

@@ -9,7 +9,8 @@ interface chatHistory_res {
   created_at: string;
   recipient_id: string;
   sender_id: string;
-  file_name?: string;
+  file_type: string;
+  file_name: string;
 }
 interface LoadChatHistory_res {
   chatHistory: chatHistory_res[];
@@ -32,6 +33,8 @@ export const loadChatHistory_database = createAsyncThunk<
   LoadChatHistory_req,
   { state: RootState }
 >("message/loadChatHistory", async ({ type, id, currentUserId }, thunkAPI) => {
+  console.log("type", type);
+
   const room_id = `${type}_${id}`;
   // if the room is visited, that means chat history has been loaded, then don't make request again
   if (thunkAPI.getState().message.visitedRoom[room_id]) {
@@ -46,7 +49,8 @@ export const loadChatHistory_database = createAsyncThunk<
 
   const currentUsername = thunkAPI.getState().user.currentUser.username;
   const response = await client.get<chatHistory_res[]>(
-    serverUrl + `/chat/private-chat-history?id_1=${currentUserId}&id_2=${id}`
+    serverUrl +
+      `/chat/chat-history?id_1=${currentUserId}&id_2=${id}&type=${type}`
   );
   return {
     chatHistory: response.data,

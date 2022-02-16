@@ -10,19 +10,25 @@ export enum chatType {
   group = "group",
   private = "private",
 }
+export enum msgType {
+  text = "text",
+  image = "image",
+  file = "file",
+}
 
 export interface MessageObject {
   sender_id: string;
-  sender_username: string;
+  sender_name: string;
   recipient_id: string;
-  recipient_username: string;
+  recipient_name: string;
   msg_body: string;
   msg_type: string;
   created_at: string;
-  file_url?: string;
-  file_body?: File | Blob | any;
+  file_localUrl?: string;
+  file_type?: string;
   file_name?: string;
 }
+
 export interface RoomIdentifier {
   targetChatRoom_type: string;
 }
@@ -78,13 +84,13 @@ const messageSlice = createSlice({
     ) {
       const {
         sender_id,
-        sender_username,
+        sender_name,
         recipient_id,
-        recipient_username,
+        recipient_name,
         msg_body,
         msg_type,
         file_name,
-        file_url,
+        file_localUrl,
         created_at,
         targetChatRoom_type,
       } = action.payload;
@@ -102,27 +108,26 @@ const messageSlice = createSlice({
       if (!state.chatHistory[room_id]) {
         state.chatHistory[room_id] = [];
       }
-      console.log("file_url", file_url);
 
       state.chatHistory[room_id].unshift({
         sender_id,
-        sender_username,
+        sender_name,
         recipient_id,
-        recipient_username,
+        recipient_name,
         msg_body,
         msg_type,
         file_name,
-        file_url,
+        file_localUrl,
         created_at,
       });
 
       // increament notification count for the specific room
+      // only show notification if user is not in the target room and user is the recipient
       if (!state.messageNotifications[room_id]) {
         state.messageNotifications[room_id] = 0;
       }
-      // only show notification if user is not in the target room and user is the recipient
-      const chatRoomUserIsIn = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
-      if (currentUserId === recipient_id && chatRoomUserIsIn !== room_id)
+      const userIsInChatRoom = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
+      if (currentUserId === recipient_id && userIsInChatRoom !== room_id)
         state.messageNotifications[room_id] += 1;
     },
 
@@ -152,10 +157,10 @@ const messageSlice = createSlice({
       const oldChatHistoy: MessageObject[] = chatHistory.map((msg) => {
         return {
           sender_id: msg.sender_id,
-          sender_username:
+          sender_name:
             msg.sender_id === currentUserId ? currentUsername : friendName,
           recipient_id: msg.recipient_id,
-          recipient_username:
+          recipient_name:
             msg.recipient_id === currentUserId ? currentUsername : friendName,
           msg_body: msg.msg_body,
           msg_type: msg.msg_type,
@@ -192,14 +197,15 @@ const messageSlice = createSlice({
         state.chatHistory[`${type}_${id}`] = chatHistory.map((msg) => {
           return {
             sender_id: msg.sender_id,
-            sender_username:
+            sender_name:
               msg.sender_id === currentUserId ? currentUsername : name,
             recipient_id: msg.recipient_id,
-            recipient_username:
+            recipient_name:
               msg.recipient_id === currentUserId ? currentUsername : name,
             msg_body: msg.msg_body,
             msg_type: msg.msg_type,
             file_name: msg.file_name,
+            file_type: msg.file_type,
             created_at: msg.created_at,
           };
         });

@@ -7,9 +7,13 @@ interface PrivateNotifications {
   sender_id: string;
   count: number;
 }
+interface GroupNotifications {
+  group_id: string;
+  count: number;
+}
 interface GetNotifications_res {
   private: PrivateNotifications[];
-  group: string[];
+  group: GroupNotifications[];
 }
 
 export const getNotifications = createAsyncThunk<
@@ -20,5 +24,8 @@ export const getNotifications = createAsyncThunk<
   const response = await client.get<GetNotifications_res>(
     serverUrl + `/chat/get-notifications?user_id=${currentUserId}`
   );
+
+  console.log("response.data notification", response.data);
+
   return response.data;
 });

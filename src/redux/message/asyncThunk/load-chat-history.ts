@@ -3,7 +3,7 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../..";
 import { client, serverUrl } from "../../utils";
 
-interface chatHistory_res {
+interface MessageObject_res {
   msg_body: string;
   msg_type: string;
   created_at: string;
@@ -14,14 +14,14 @@ interface chatHistory_res {
   file_url: string;
 }
 interface LoadChatHistory_res {
-  chatHistory: chatHistory_res[];
+  chatHistory: MessageObject_res[];
   currentUsername: string;
   currentUserId: string;
   wasHistoryLoaded: boolean;
 }
 interface LoadChatHistory_req {
-  type: string;
-  id: string;
+  targetRoom_type: string;
+  targetRoom_id: string;
   currentUserId: string;
 }
 
@@ -33,30 +33,34 @@ export const loadChatHistory_database = createAsyncThunk<
   LoadChatHistory_res,
   LoadChatHistory_req,
   { state: RootState }
->("message/loadChatHistory", async ({ type, id, currentUserId }, thunkAPI) => {
-  console.log("type", type);
+>(
+  "message/loadChatHistory",
+  async ({ targetRoom_type, targetRoom_id, currentUserId }, thunkAPI) => {
+    // id can be user's, group's or public-channel's id
+    const room_id = `${targetRoom_type}_${targetRoom_id}`;
+    // if the room is visited, that means chat history has been loaded, then don't make request again
+    if (thunkAPI.getState().message.visitedRoom[room_id]) {
+      console.log("visied room");
+      return {
+        chatHistory: [],
+        currentUsername: "",
+        currentUserId: "",
+        wasHistoryLoaded: true,
+      };
+    }
 
-  const room_id = `${type}_${id}`;
-  // if the room is visited, that means chat history has been loaded, then don't make request again
-  if (thunkAPI.getState().message.visitedRoom[room_id]) {
-    console.log("visied room");
+    console.log("currentUserId", currentUserId);
+
+    const currentUsername = thunkAPI.getState().user.currentUser.username;
+    const response = await client.get<MessageObject_res[]>(
+      serverUrl +
+        `/chat/chat-history?id_1=${currentUserId}&id_2=${targetRoom_id}&type=${targetRoom_type}`
+    );
     return {
-      chatHistory: [],
-      currentUsername: "",
-      currentUserId: "",
-      wasHistoryLoaded: true,
+      chatHistory: response.data,
+      currentUsername,
+      currentUserId,
+      wasHistoryLoaded: false,
     };
   }
-
-  const currentUsername = thunkAPI.getState().user.currentUser.username;
-  const response = await client.get<chatHistory_res[]>(
-    serverUrl +
-      `/chat/chat-history?id_1=${currentUserId}&id_2=${id}&type=${type}`
-  );
-  return {
-    chatHistory: response.data,
-    currentUsername,
-    currentUserId,
-    wasHistoryLoaded: false,
-  };
-});
+);

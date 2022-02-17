@@ -51,6 +51,9 @@ interface MessageState {
   // PS: cannot use Set in redux store due to non-serializable !?
   visitedRoom: { [room_id: string]: boolean };
   currentUserId_message: string;
+  infiniteScrollStats: {
+    [room_id: string]: { hasMore: boolean; pageNum: number };
+  };
 }
 
 const initialState: MessageState = {
@@ -59,6 +62,7 @@ const initialState: MessageState = {
   messageNotifications: {},
   visitedRoom: {},
   currentUserId_message: "",
+  infiniteScrollStats: {},
 };
 
 const messageSlice = createSlice({
@@ -77,6 +81,31 @@ const messageSlice = createSlice({
     },
     setTargetChatRoom(state, action: PayloadAction<TargetChatRoom>): void {
       state.targetChatRoom = action.payload;
+      const { type, id } = action.payload;
+      // initialize the infiniteScrollStats whenever user enters a room
+      if (!state.infiniteScrollStats[`${type}_${id}`]) {
+        state.infiniteScrollStats[`${type}_${id}`] = {
+          hasMore: true,
+          pageNum: 2,
+        };
+      }
+    },
+
+    setInfiniteScrollStats(
+      state,
+      action: PayloadAction<{ hasMore?: boolean; pageNum?: number }>
+    ): void {
+      // the infinite scroll will be broken if user re-enters the a visited room
+      // the "hasMore" and "pageNum" will be reset.
+      //So each room needs to have its own chatHistory "hasMore" and "pageNum" values
+      const { hasMore, pageNum } = action.payload;
+      const { type, id } = state.targetChatRoom;
+      if (hasMore !== undefined) {
+        state.infiniteScrollStats[`${type}_${id}`].hasMore = hasMore;
+      }
+      if (pageNum !== undefined) {
+        state.infiniteScrollStats[`${type}_${id}`].pageNum = pageNum;
+      }
     },
 
     addNewMessageToHistory_memory(
@@ -99,25 +128,30 @@ const messageSlice = createSlice({
 
       const currentUserId = state.currentUserId_message;
 
+      // since this listener handles all types of live messages
+      // have to figure out which room the live message is belonged to
       let room_id = "";
       if (targetChatRoom_type === chatType.private) {
+        // for private_messages
+        // for exmaple, if user=1 is sends a message, then the sender_id=1 will be the
+        // the room_id. if the current user sends a message to user=5, then the
+        // recipient_id=5 will be the room_id
         if (sender_id === currentUserId) {
-          // the current user is the sender
+          // when the current user is the sender, then the recipient_id is the room_id
           room_id = `${targetChatRoom_type}_${recipient_id}`;
         } else {
-          // the current user is the recipient
+          // when the current user is the recipient, then then sender_id is the room_id
           room_id = `${targetChatRoom_type}_${sender_id}`;
         }
-      } else if (targetChatRoom_type === chatType.group) {
-        room_id = `${targetChatRoom_type}_${recipient_id}`;
       } else {
+        // all public and group rooms will always be the recipient
+        room_id = `${targetChatRoom_type}_${recipient_id}`;
       }
 
       // add message to chat history for the specific room
       if (!state.chatHistory[room_id]) {
         state.chatHistory[room_id] = [];
       }
-
       state.chatHistory[room_id].unshift({
         sender_id,
         sender_name,
@@ -131,14 +165,15 @@ const messageSlice = createSlice({
         created_at,
       });
 
-      // increament notification count for the specific room
-      // only show notification if user is not in the target room and user is the recipient
+      // update the live message notification for private or group chat rooms
       if (!state.messageNotifications[room_id]) {
         state.messageNotifications[room_id] = 0;
       }
       const userIsInChatRoom = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
-      if (currentUserId === recipient_id && userIsInChatRoom !== room_id)
+      // only show notification if user is not in the target room
+      if (userIsInChatRoom !== room_id) {
         state.messageNotifications[room_id] += 1;
+      }
     },
 
     loadMoreOldChatHistory_database(
@@ -148,22 +183,15 @@ const messageSlice = createSlice({
         room_id: string;
         currentUserId: string;
         currentUsername: string;
-        room_type: string;
       }>
     ) {
-      const {
-        room_id,
-        currentUserId,
-        currentUsername,
-        chatHistory,
-        room_type,
-      } = action.payload;
+      const { room_id, currentUserId, currentUsername, chatHistory } =
+        action.payload;
       const friendName = state.targetChatRoom.name;
 
-      // map the chat history for different room_type
-      if (room_type) {
-      }
-
+      // since the target room is specified when the user clicks on the room
+      // no need to figure out what the room_id is , like I did in
+      // the addNewMessageToHistory_memory
       const oldChatHistoy: MessageObject[] = chatHistory.map((msg) => {
         return {
           sender_id: msg.sender_id,
@@ -189,9 +217,7 @@ const messageSlice = createSlice({
 
   extraReducers: (builder) => {
     builder
-      ///////////////////////
-      // Load Chat History //
-      ///////////////////////
+      /***************  Load Chat History  ***************/
       .addCase(loadChatHistory_database.fulfilled, (state, action): void => {
         const currentUsername = action.payload.currentUsername;
         const currentUserId = action.payload.currentUserId;
@@ -201,10 +227,7 @@ const messageSlice = createSlice({
 
         if (action.payload.wasHistoryLoaded) return;
 
-        // map the chat history for different room_type
-        if (type === "") {
-        }
-
+        // map the chat history for different room_type `${type}_${id}`
         state.chatHistory[`${type}_${id}`] = chatHistory.map((msg) => {
           return {
             sender_id: msg.sender_id,
@@ -221,26 +244,23 @@ const messageSlice = createSlice({
             created_at: msg.created_at,
           };
         });
-
         // set this room as visited, so it won't fetch message from server again unless
         // the user is scrolling up for older messages
         state.visitedRoom[`${type}_${id}`] = true;
       })
-      ///////////////////////
-      // Get Notifications //
-      ///////////////////////
+
+      /***************  Get Notifications  ***************/
       .addCase(getNotifications.fulfilled, (state, action): void => {
         action.payload.private.forEach((note) => {
           state.messageNotifications[`${chatType.private}_${note.sender_id}`] =
             note.count;
         });
-        // action.payload.group.forEach(note=>{
-        //   state.messageNotifications[`${chatType.private}_${note.sender_id}`] = note.count
-        // })
+        action.payload.group.forEach((note) => {
+          state.messageNotifications[`${chatType.group}_${note.group_id}`] =
+            note.count;
+        });
       })
-      /////////////////////////
-      // Clear Notifications //
-      /////////////////////////
+      /***************  Clear Notifications  ***************/
       .addCase(clearNotifications.fulfilled, (state, action): void => {
         const { type, id } = action.payload;
         state.messageNotifications[`${type}_${id}`] = 0;
@@ -253,6 +273,7 @@ export const {
   addNewMessageToHistory_memory,
   loadMoreOldChatHistory_database,
   setCurrentUserId_message,
+  setInfiniteScrollStats,
 } = messageSlice.actions;
 
 export default messageSlice.reducer;
@@ -271,6 +292,9 @@ export const selectTargetChatRoom = createSelector(
   (messageState) => messageState.targetChatRoom
 );
 
+// whenever there is change in targetChatRoom, this selector will be triggered again
+// since the "selectTargetChatRoom" is one of the selectors. the new chatHistory
+// will be diplayed in the <ChatBoard />
 export const selectTargetChatRoom_history = createSelector(
   [selectChatHistory, selectTargetChatRoom],
   (history, { id, type }) => {
@@ -281,4 +305,8 @@ export const selectTargetChatRoom_history = createSelector(
 export const selectMessageNotifications = createSelector(
   [selectMessageState],
   (messageState) => messageState.messageNotifications
+);
+export const selectInfiniteScrollStats = createSelector(
+  [selectMessageState],
+  (messageState) => messageState.infiniteScrollStats
 );

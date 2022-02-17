@@ -5,7 +5,10 @@ import { Socket } from "socket.io-client";
 import { selectUserId } from "../../redux/user/userSlice";
 import { clearNotifications } from "../../redux/message/asyncThunk/clear-notifications";
 import { loadChatHistory_database } from "../../redux/message/asyncThunk/load-chat-history";
-import { setTargetChatRoom } from "../../redux/message/messageSlice";
+import {
+  selectTargetChatRoom,
+  setTargetChatRoom,
+} from "../../redux/message/messageSlice";
 import FriendsList from "./FriendsList";
 import GroupsList from "./GroupsList";
 
@@ -16,33 +19,49 @@ interface Props {
 function RoomLists({ socket }: Props): JSX.Element {
   const dispatch = useDispatch();
   const currentUserId = useSelector(selectUserId);
+  const targetChatRoom = useSelector(selectTargetChatRoom);
 
-  function selectTargetChatRoomHandler(id: string, name: string, type: string) {
-    // make the chat board invisible before the chst history is loaded
-    let elem = document.getElementById("chat-board");
-    if (elem) {
-      elem.style.visibility = "hidden";
-    }
+  function selectTargetChatRoomHandler(
+    nextRoom_id: string,
+    nextRoom_name: string,
+    nextRoom_type: string
+  ) {
+    // let elem = document.getElementById("chat-board");
+    // if (elem) elem.scrollTo({ top: elem.scrollHeight, behavior: "auto" });
 
-    dispatch(setTargetChatRoom({ id, name, type }));
+    // clear the notifications of the previous room in database, only when the user
+    // enters the next room
+    const previousRoom_id = targetChatRoom.id;
+    const previousRoom_type = targetChatRoom.type;
+    dispatch(
+      setTargetChatRoom({
+        id: nextRoom_id,
+        name: nextRoom_name,
+        type: nextRoom_type,
+      })
+    );
     // load the latest 20 chat messages from server in the specific room only once
-    dispatch(loadChatHistory_database({ type, id, currentUserId }));
-    dispatch(clearNotifications({ type, id }));
+    dispatch(
+      loadChatHistory_database({
+        targetRoom_type: nextRoom_type,
+        targetRoom_id: nextRoom_id,
+        currentUserId,
+      })
+    );
+    // this clearNotifications will clear the notifications of previous room in database,
+    // then clear notifications of next room in the store.
+    dispatch(
+      clearNotifications({
+        previousRoom_id,
+        previousRoom_type,
+        nextRoom_type,
+        nextRoom_id,
+      })
+    );
 
     // (1) //
-    if (socket) socket.emit("current-target-room", `${type}_${id}`);
-
-    setTimeout(() => {
-      if (elem) {
-        // make the chat board invisible after the chst history is loaded and
-        // the view is scrolled to the button, then display the chat board
-        elem.scrollTo({
-          top: elem.scrollHeight,
-          behavior: "auto",
-        });
-        elem.style.visibility = "visible";
-      }
-    }, 100);
+    if (socket)
+      socket.emit("current-target-room", `${nextRoom_type}_${nextRoom_id}`);
   }
 
   return (

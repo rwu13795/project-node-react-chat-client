@@ -208,14 +208,11 @@ const userSlice = createSlice({
         state.friendsList = action.payload.friendsList;
         state.addFriendRequests = action.payload.addFriendRequests;
 
-        console.log(action.payload.currentUser);
-
         // map the groupsList into groupsObjectList. It would be easier to put
         // the group_members in the respective group when user enters a group room
         for (let group of action.payload.groupsList) {
           state.groupsObjectList[group.group_id] = group;
         }
-
         if (action.payload.require_initialize) {
           for (let f of action.payload.friendsList) {
             state.friendsOnlineStatus[f.friend_id] = false;

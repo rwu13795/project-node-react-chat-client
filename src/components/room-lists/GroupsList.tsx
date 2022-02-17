@@ -9,6 +9,7 @@ import {
   selectGroupsObjectList,
   selectUserId,
 } from "../../redux/user/userSlice";
+import CreateGroup from "../group/CreateGroup";
 
 interface Props {
   selectTargetChatRoomHandler: (id: string, name: string, type: string) => void;
@@ -35,6 +36,9 @@ function GroupsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
   return (
     <main>
       <h3>GroupsList</h3>
+      <div>
+        <CreateGroup />
+      </div>
       <div>
         {Object.values(groupsObjectList).map((group) => {
           // choose which friend to send message

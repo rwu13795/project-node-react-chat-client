@@ -268,15 +268,14 @@ const userSlice = createSlice({
         state.groupsObjectList[action.payload.group_id] = action.payload;
         state.loadingStatus = "succeeded";
       })
-      .addCase(createNewGroup.pending, (state, action): void => {
+      .addCase(createNewGroup.pending, (state): void => {
         state.loadingStatus = "loading";
       })
       .addCase(
         createNewGroup.rejected,
         (state, action: PayloadAction<any>): void => {
-          for (let err of action.payload.errors) {
-            state.createGroupError = err.message;
-          }
+          // each user can only create 5 groups (for demo)
+          state.createGroupError = action.payload.errors[0].message;
           state.loadingStatus = "failed";
         }
       );

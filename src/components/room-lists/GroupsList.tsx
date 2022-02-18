@@ -10,6 +10,7 @@ import {
   selectUserId,
 } from "../../redux/user/userSlice";
 import CreateGroup from "../group/CreateGroup";
+import JoinGroupInvitation from "../group/JoinGroupInvitation";
 
 interface Props {
   selectTargetChatRoomHandler: (id: string, name: string, type: string) => void;
@@ -38,6 +39,7 @@ function GroupsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
       <h3>GroupsList</h3>
       <div>
         <CreateGroup />
+        <JoinGroupInvitation />
       </div>
       <div>
         {Object.values(groupsObjectList).map((group) => {

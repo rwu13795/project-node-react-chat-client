@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // (1
 
 import "./App.css";
 
-import { Socket } from "socket.io-client";
 import Navbar from "./components/navbar/Navbar";
 import Auth from "./components/Auth";
 import MainPage from "./components/MainPage";

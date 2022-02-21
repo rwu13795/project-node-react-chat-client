@@ -1,6 +1,6 @@
 import { memo } from "react";
 
-function Navbar(): JSX.Element {
+function MainNavbar(): JSX.Element {
   return (
     <nav>
       <section>
@@ -10,4 +10,4 @@ function Navbar(): JSX.Element {
   );
 }
 
-export default memo(Navbar);
+export default memo(MainNavbar);

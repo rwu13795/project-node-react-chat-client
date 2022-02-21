@@ -10,6 +10,7 @@ import {
   selectGroupsObjectList,
   selectIsLoggedIn,
   selectUserId,
+  selectUsername,
 } from "../redux/user/userSlice";
 import { connectSocket } from "../socket-io/socketConnection";
 import ChatBoard from "./chat/ChatBoard";
@@ -28,6 +29,11 @@ import { offline_listener } from "../socket-io/listeners/offline-listener";
 // UI //
 import styles from "./__MainPage.module.css";
 import RoomLists from "./room-lists/RoomLists";
+import { check_groupInvitation_listener } from "../socket-io/listeners/check-group-invitation-listener";
+import { groupInvitation_listener } from "../socket-io/listeners/group-invitation-listener";
+import ChatRoomMenu from "./menu/ChatRoomMenu";
+import { groupAdminNotification_listener } from "../socket-io/listeners/group-admin-notification-listener";
+import { kickedOutOfGroup_listener } from "../socket-io/listeners/kicked-out-of-group-listener";
 
 function MainPage(): JSX.Element {
   const [socket, setSocket] = useState<Socket>();
@@ -37,6 +43,7 @@ function MainPage(): JSX.Element {
 
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const currentUserId = useSelector(selectUserId);
+  const currentUsername = useSelector(selectUsername);
   const groupsObjectList = useSelector(selectGroupsObjectList);
 
   useEffect(() => {
@@ -49,7 +56,7 @@ function MainPage(): JSX.Element {
       if (socket) return;
       // only initialize the socket once. Pass all the user_id to socket-server to let
       // the server identify this socket-client
-      let newSocket: Socket = connectSocket(currentUserId);
+      let newSocket: Socket = connectSocket(currentUserId, currentUsername);
       setSocket(newSocket);
 
       // each user will join his/her private room and all the groups room after signing in
@@ -62,9 +69,16 @@ function MainPage(): JSX.Element {
 
       // initialize all the listeners //
       message_listener(newSocket, dispatch);
+
       addFriendRequest_listener(newSocket, dispatch);
       check_addFriendRequest_listener(newSocket, dispatch);
       addFriendResponse_listener(newSocket, dispatch, currentUserId);
+
+      groupInvitation_listener(newSocket, dispatch);
+      check_groupInvitation_listener(newSocket, dispatch);
+      groupAdminNotification_listener(newSocket, dispatch);
+      kickedOutOfGroup_listener(newSocket, dispatch);
+
       online_listener(newSocket, dispatch);
       onlineEcho_listener(newSocket, dispatch);
       offline_listener(newSocket, dispatch);
@@ -83,8 +97,9 @@ function MainPage(): JSX.Element {
 
         <div className={styles.right_grid}>
           <SearchUser socket={socket} />
-          <br />
-          <br />
+          <hr />
+          <ChatRoomMenu socket={socket} />
+          <hr />
           <ChatBoard socket={socket} />
         </div>
       </div>

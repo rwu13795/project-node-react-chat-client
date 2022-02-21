@@ -6,7 +6,11 @@ import {
   MessageObject,
   selectTargetChatRoom,
 } from "../../redux/message/messageSlice";
-import { selectUserId, selectUsername } from "../../redux/user/userSlice";
+import {
+  selectTargetGroup,
+  selectUserId,
+  selectUsername,
+} from "../../redux/user/userSlice";
 
 interface Props {
   socket: Socket | undefined;
@@ -18,6 +22,8 @@ function ImageInput({ socket }: Props): JSX.Element {
   const currentUserId = useSelector(selectUserId);
   const currentUsername = useSelector(selectUsername);
   const targetChatRoom = useSelector(selectTargetChatRoom);
+  const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
+
   const [imageFile, setImageFile] = useState<File>();
 
   function sendImageHandler(e: FormEvent<HTMLFormElement>) {
@@ -35,7 +41,13 @@ function ImageInput({ socket }: Props): JSX.Element {
       created_at: new Date().toDateString(),
     };
 
-    console.log(messageObject.file_localUrl);
+    dispatch(
+      addNewMessageToHistory_memory({
+        ...messageObject,
+        targetChatRoom_type: targetChatRoom.type,
+      })
+    );
+    if (targetGroup.user_kicked) return;
 
     if (socket) {
       socket.emit("messageToServer", {
@@ -44,13 +56,6 @@ function ImageInput({ socket }: Props): JSX.Element {
         targetChatRoom_type: targetChatRoom.type,
       });
     }
-
-    dispatch(
-      addNewMessageToHistory_memory({
-        ...messageObject,
-        targetChatRoom_type: targetChatRoom.type,
-      })
-    );
 
     // scroll to down to show the new message
     // let elem = document.getElementById("chat-board");

@@ -1,5 +1,6 @@
 import { memo } from "react";
 import { useSelector } from "react-redux";
+import { Socket } from "socket.io-client";
 
 import {
   chatType,
@@ -9,12 +10,17 @@ import {
   selectFriendsList,
   selectFriendsOnlineStatus,
 } from "../../redux/user/userSlice";
+import AddFriendRequest from "../user/AddFriendRequest";
 
 interface Props {
+  socket: Socket | undefined;
   selectTargetChatRoomHandler: (id: string, name: string, type: string) => void;
 }
 
-function FriendsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
+function FriendsList({
+  socket,
+  selectTargetChatRoomHandler,
+}: Props): JSX.Element {
   const friendsList = useSelector(selectFriendsList);
   const messageNotifications = useSelector(selectMessageNotifications);
   const friendsOnlineStatus = useSelector(selectFriendsOnlineStatus);
@@ -53,6 +59,9 @@ function FriendsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
           );
         })}
       </div>
+
+      <hr />
+      <AddFriendRequest socket={socket} />
     </main>
   );
 }

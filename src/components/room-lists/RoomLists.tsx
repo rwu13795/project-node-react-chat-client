@@ -6,11 +6,13 @@ import { selectUserId } from "../../redux/user/userSlice";
 import { clearNotifications } from "../../redux/message/asyncThunk/clear-notifications";
 import { loadChatHistory_database } from "../../redux/message/asyncThunk/load-chat-history";
 import {
+  chatType,
   selectTargetChatRoom,
   setTargetChatRoom,
 } from "../../redux/message/messageSlice";
 import FriendsList from "./FriendsList";
 import GroupsList from "./GroupsList";
+import { getGroupMembersList_database } from "../../redux/user/asyncThunk/get-members-list";
 
 interface Props {
   socket: Socket | undefined;
@@ -58,6 +60,11 @@ function RoomLists({ socket }: Props): JSX.Element {
         nextRoom_id,
       })
     );
+    // if the target room is a group, then fetch the member list from DB for that group
+    if (nextRoom_type === chatType.group) {
+      console.log("getting member list", nextRoom_id);
+      dispatch(getGroupMembersList_database({ group_id: nextRoom_id }));
+    }
 
     // (1) //
     if (socket)
@@ -67,8 +74,14 @@ function RoomLists({ socket }: Props): JSX.Element {
   return (
     <main>
       <h3>RoomLists</h3>
-      <GroupsList selectTargetChatRoomHandler={selectTargetChatRoomHandler} />
-      <FriendsList selectTargetChatRoomHandler={selectTargetChatRoomHandler} />
+      <GroupsList
+        socket={socket}
+        selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+      />
+      <FriendsList
+        socket={socket}
+        selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+      />
     </main>
   );
 }

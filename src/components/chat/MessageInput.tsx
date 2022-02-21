@@ -8,7 +8,11 @@ import {
   msgType,
   selectTargetChatRoom,
 } from "../../redux/message/messageSlice";
-import { selectUserId, selectUsername } from "../../redux/user/userSlice";
+import {
+  selectTargetGroup,
+  selectUserId,
+  selectUsername,
+} from "../../redux/user/userSlice";
 
 interface Props {
   socket: Socket | undefined;
@@ -20,6 +24,7 @@ function MessageInput({ socket }: Props): JSX.Element {
   const currentUserId = useSelector(selectUserId);
   const currentUsername = useSelector(selectUsername);
   const targetChatRoom = useSelector(selectTargetChatRoom);
+  const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
 
   const [msg, setMsg] = useState<string>("");
 
@@ -39,6 +44,10 @@ function MessageInput({ socket }: Props): JSX.Element {
       msg_type: msgType.text,
       created_at: new Date().toDateString(),
     };
+
+    // check if the user was kicked out of the group or blocked by a friend
+    if (targetGroup.user_kicked) return;
+    // if blocked_by_friend return
 
     if (socket) {
       socket.emit("messageToServer", {

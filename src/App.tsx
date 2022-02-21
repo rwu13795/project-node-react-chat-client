@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // (1
 
 import "./App.css";
 
-import Navbar from "./components/navbar/Navbar";
+import MainNavbar from "./components/menu/MainNavbar";
 import Auth from "./components/Auth";
 import MainPage from "./components/MainPage";
 import { useDispatch } from "react-redux";
@@ -18,7 +18,7 @@ function App(): JSX.Element {
 
   return (
     <Router>
-      <Navbar />
+      <MainNavbar />
       <div className="App">
         <h1>TESTING</h1>
         <Routes>

@@ -1,13 +1,20 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import { client, serverUrl } from "../../utils";
-import { AddFriendRequest, CurrentUser, Friend, Group } from "../userSlice";
+import {
+  AddFriendRequest,
+  CurrentUser,
+  Friend,
+  Group,
+  GroupInvitation,
+} from "../userSlice";
 
 interface GetUserAuth_res {
   currentUser: CurrentUser;
   friendsList: Friend[];
   addFriendRequests: AddFriendRequest[];
   groupsList: Group[];
+  groupInvitations: GroupInvitation[];
   require_initialize: boolean;
 }
 

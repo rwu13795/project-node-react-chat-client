@@ -1,9 +1,11 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import type { RootState } from "../index";
-import { createNewGroup } from "./asyncThunk/create-new-group";
 import { getUserAuth } from "./asyncThunk/get-user-auth";
 import { signIn } from "./asyncThunk/sign-in";
 import { signUp } from "./asyncThunk/sign-up";
+import { getGroupMembersList_database } from "./asyncThunk/get-members-list";
+import { createNewGroup } from "./asyncThunk/create-new-group";
 
 export interface CurrentUser {
   username: string;
@@ -21,11 +23,25 @@ export interface AddFriendRequest {
   sender_email: string;
   message: string;
 }
+export interface GroupInvitation {
+  group_id: string;
+  group_name: string;
+  inviter_name: string;
+  was_responded: boolean;
+}
 
 export interface Friend {
   friend_id: string;
   friend_username: string;
   friend_email: string;
+  avatar_url?: string;
+  block_friend: boolean;
+  is_blocked: boolean;
+}
+export interface GroupMember {
+  user_id: string;
+  username: string;
+  email: string;
   avatar_url?: string;
 }
 
@@ -35,7 +51,7 @@ export interface Group {
   creator_user_id: string;
   user_kicked: boolean;
   // only load group_members from DB when user enters the group room
-  group_members?: Friend[];
+  group_members?: GroupMember[];
 }
 
 export interface UserState {
@@ -48,6 +64,8 @@ export interface UserState {
   // groups
   groupsObjectList: { [group_id: string]: Group };
   createGroupError: string;
+  groupInvitations: GroupInvitation[];
+  result_groupInvitation: string;
   // layout
   loadingStatus: string;
   authErrors: AuthErrors;
@@ -59,6 +77,8 @@ const initialState: UserState = {
   friendsOnlineStatus: {},
   addFriendRequests: [],
   result_addFriendRequest: "",
+  groupInvitations: [],
+  result_groupInvitation: "",
   groupsObjectList: {},
   createGroupError: "",
   loadingStatus: "idle",
@@ -197,6 +217,37 @@ const userSlice = createSlice({
     setResult_addFriendRequest(state, action: PayloadAction<string>) {
       state.result_addFriendRequest = action.payload;
     },
+    setResult_groupInvitation(state, action: PayloadAction<string>) {
+      state.result_groupInvitation = action.payload;
+    },
+    setGroupInvitation(state, action: PayloadAction<GroupInvitation>) {
+      state.groupInvitations.push(action.payload);
+    },
+    respondToGroupInvitation(state, action: PayloadAction<number>) {
+      state.groupInvitations[action.payload].was_responded = true;
+    },
+    updateGroupsList(state, action: PayloadAction<Group[]>) {
+      for (let group of action.payload) {
+        state.groupsObjectList[group.group_id] = group;
+      }
+    },
+    leaveGroup(state, action: PayloadAction<string>) {
+      delete state.groupsObjectList[action.payload];
+    },
+    clearLeftMember(
+      state,
+      action: PayloadAction<{ group_id: string; member_user_id: string }>
+    ) {
+      const { group_id, member_user_id } = action.payload;
+      state.groupsObjectList[group_id].group_members = state.groupsObjectList[
+        group_id
+      ].group_members?.filter((member) => {
+        return member.user_id !== member_user_id;
+      });
+    },
+    setKickedMember(state, action: PayloadAction<string>) {
+      state.groupsObjectList[action.payload].user_kicked = true;
+    },
   },
 
   extraReducers: (builder) => {
@@ -207,7 +258,7 @@ const userSlice = createSlice({
         state.currentUser = action.payload.currentUser;
         state.friendsList = action.payload.friendsList;
         state.addFriendRequests = action.payload.addFriendRequests;
-
+        state.groupInvitations = action.payload.groupInvitations;
         // map the groupsList into groupsObjectList. It would be easier to put
         // the group_members in the respective group when user enters a group room
         for (let group of action.payload.groupsList) {
@@ -225,6 +276,8 @@ const userSlice = createSlice({
         state.currentUser = action.payload.currentUser;
         state.friendsList = action.payload.friendsList;
         state.addFriendRequests = action.payload.addFriendRequests;
+        state.groupInvitations = action.payload.groupInvitations;
+
         for (let group of action.payload.groupsList) {
           state.groupsObjectList[group.group_id] = group;
         }
@@ -253,7 +306,7 @@ const userSlice = createSlice({
           state.loadingStatus = "succeeded";
         }
       )
-      .addCase(signUp.pending, (state, action): void => {
+      .addCase(signUp.pending, (state): void => {
         state.loadingStatus = "loading";
       })
       .addCase(signUp.rejected, (state, action: PayloadAction<any>): void => {
@@ -277,6 +330,16 @@ const userSlice = createSlice({
           // each user can only create 5 groups (for demo)
           state.createGroupError = action.payload.errors[0].message;
           state.loadingStatus = "failed";
+        }
+      )
+
+      /***************  GET GROUP MEMBERS  ***************/
+      .addCase(
+        getGroupMembersList_database.fulfilled,
+        (state, action): void => {
+          const { group_id, group_members } = action.payload;
+          state.groupsObjectList[group_id].group_members = group_members;
+          state.loadingStatus = "succeeded";
         }
       );
 
@@ -353,6 +416,13 @@ export const {
   setFriendsOnlineStatus,
   setAddFriendRequests,
   setResult_addFriendRequest,
+  setResult_groupInvitation,
+  setGroupInvitation,
+  respondToGroupInvitation,
+  updateGroupsList,
+  leaveGroup,
+  clearLeftMember,
+  setKickedMember,
   //   setPageLoading_user,
 } = userSlice.actions;
 
@@ -411,3 +481,10 @@ export const selectGroupsObjectList = createSelector(
   [selectUser],
   (userState) => userState.groupsObjectList
 );
+export const selectGroupInvitations = createSelector(
+  [selectUser],
+  (userState) => userState.groupInvitations
+);
+
+export const selectTargetGroup = (group_id: string) =>
+  createSelector([selectGroupsObjectList], (groups) => groups[group_id]);

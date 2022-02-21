@@ -1,25 +1,34 @@
 import { memo } from "react";
 import { useSelector } from "react-redux";
+import { Socket } from "socket.io-client";
 
 import {
   chatType,
   selectMessageNotifications,
 } from "../../redux/message/messageSlice";
 import {
+  selectGroupInvitations,
   selectGroupsObjectList,
   selectUserId,
 } from "../../redux/user/userSlice";
 import CreateGroup from "../group/CreateGroup";
-import JoinGroupInvitation from "../group/JoinGroupInvitation";
+import InviteFriendToGroup from "../group/InviteFriendToGroup";
+import GroupInvitation from "../group/GroupInvitaion";
+import LeaveGroup from "../group/LeaveGroup";
 
 interface Props {
+  socket: Socket | undefined;
   selectTargetChatRoomHandler: (id: string, name: string, type: string) => void;
 }
 
-function GroupsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
+function GroupsList({
+  socket,
+  selectTargetChatRoomHandler,
+}: Props): JSX.Element {
   const groupsObjectList = useSelector(selectGroupsObjectList);
   const messageNotifications = useSelector(selectMessageNotifications);
   const currentUserId = useSelector(selectUserId);
+  const groupInvitations = useSelector(selectGroupInvitations);
 
   function groupOnClickHandler(
     group_id: string,
@@ -39,7 +48,8 @@ function GroupsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
       <h3>GroupsList</h3>
       <div>
         <CreateGroup />
-        <JoinGroupInvitation />
+        <hr />
+        <GroupInvitation socket={socket} />
       </div>
       <div>
         {Object.values(groupsObjectList).map((group) => {
@@ -56,6 +66,11 @@ function GroupsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
               >
                 {group_name + group_id}
               </button>
+              <InviteFriendToGroup
+                socket={socket}
+                group_id={group_id}
+                group_name={group_name}
+              />
               {currentUserId === creator_user_id && (
                 <button>kick member</button>
               )}
@@ -63,6 +78,11 @@ function GroupsList({ selectTargetChatRoomHandler }: Props): JSX.Element {
                 notifications:{" "}
                 {messageNotifications[`${chatType.group}_${group_id}`]}{" "}
               </div>
+              <LeaveGroup
+                socket={socket}
+                group_id={group_id}
+                group_name={group_name}
+              />
             </div>
           );
         })}

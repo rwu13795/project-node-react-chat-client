@@ -21,7 +21,11 @@ import {
   selectInfiniteScrollStats,
   setInfiniteScrollStats,
 } from "../../redux/message/messageSlice";
-import { selectUserId, selectUsername } from "../../redux/user/userSlice";
+import {
+  selectTargetGroup,
+  selectUserId,
+  selectUsername,
+} from "../../redux/user/userSlice";
 
 import browserClient from "../../utils/axios-client";
 import InfiniteScroll from "react-infinite-scroll-component";
@@ -41,6 +45,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
   const currentUserId = useSelector(selectUserId);
   const currentUsername = useSelector(selectUsername);
   const targetChatRoom = useSelector(selectTargetChatRoom);
+  const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const infiniteScrollStats = useSelector(selectInfiniteScrollStats);
 
   const MSG_PER_PAGE = 10;
@@ -183,6 +188,14 @@ function ChatBoard({ socket }: Props): JSX.Element {
                     </div>
                   </div>
                 )}
+                {targetGroup &&
+                  targetGroup.user_kicked &&
+                  msg.sender_id === currentUserId && (
+                    <div style={{ color: "red" }}>
+                      You were kicked out from the group, the other group
+                      members cannot see this message
+                    </div>
+                  )}
               </div>
             );
           })}

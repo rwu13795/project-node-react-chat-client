@@ -2,7 +2,7 @@ import { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { selectUserId } from "../../redux/user/userSlice";
+import { leaveGroup, selectUserId } from "../../redux/user/userSlice";
 import { clearNotifications } from "../../redux/message/asyncThunk/clear-notifications";
 import { loadChatHistory_database } from "../../redux/message/asyncThunk/load-chat-history";
 import {
@@ -30,6 +30,7 @@ function RoomLists({ socket }: Props): JSX.Element {
   ) {
     // let elem = document.getElementById("chat-board");
     // if (elem) elem.scrollTo({ top: elem.scrollHeight, behavior: "auto" });
+    dispatch(leaveGroup({ group_id: "", clearChatBoard: false }));
 
     // clear the notifications of the previous room in database, only when the user
     // enters the next room

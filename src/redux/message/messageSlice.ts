@@ -171,6 +171,7 @@ const messageSlice = createSlice({
       }
       const userIsInChatRoom = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
       // only show notification if user is not in the target room
+      console.log(userIsInChatRoom);
       if (userIsInChatRoom !== room_id) {
         state.messageNotifications[room_id] += 1;
       }

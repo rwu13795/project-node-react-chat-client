@@ -66,6 +66,7 @@ export interface UserState {
   createGroupError: string;
   groupInvitations: GroupInvitation[];
   result_groupInvitation: string;
+  clearChatBoard: boolean;
   // layout
   loadingStatus: string;
   authErrors: AuthErrors;
@@ -80,6 +81,7 @@ const initialState: UserState = {
   groupInvitations: [],
   result_groupInvitation: "",
   groupsObjectList: {},
+  clearChatBoard: false,
   createGroupError: "",
   loadingStatus: "idle",
   authErrors: {},
@@ -231,8 +233,15 @@ const userSlice = createSlice({
         state.groupsObjectList[group.group_id] = group;
       }
     },
-    leaveGroup(state, action: PayloadAction<string>) {
-      delete state.groupsObjectList[action.payload];
+    leaveGroup(
+      state,
+      action: PayloadAction<{ group_id: string; clearChatBoard: boolean }>
+    ) {
+      const { group_id, clearChatBoard } = action.payload;
+      if (group_id !== "") {
+        delete state.groupsObjectList[group_id];
+      }
+      state.clearChatBoard = clearChatBoard;
     },
     clearLeftMember(
       state,
@@ -488,3 +497,8 @@ export const selectGroupInvitations = createSelector(
 
 export const selectTargetGroup = (group_id: string) =>
   createSelector([selectGroupsObjectList], (groups) => groups[group_id]);
+
+export const selectClearChatBoard = createSelector(
+  [selectUser],
+  (userState) => userState.clearChatBoard
+);

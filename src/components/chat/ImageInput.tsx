@@ -47,7 +47,8 @@ function ImageInput({ socket }: Props): JSX.Element {
         targetChatRoom_type: targetChatRoom.type,
       })
     );
-    if (targetGroup.user_kicked) return;
+    // check if the user was kicked out of the group or blocked by a friend
+    if (targetGroup && targetGroup.user_kicked) return;
 
     if (socket) {
       socket.emit("messageToServer", {

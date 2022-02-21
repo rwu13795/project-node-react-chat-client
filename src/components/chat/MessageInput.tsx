@@ -45,8 +45,15 @@ function MessageInput({ socket }: Props): JSX.Element {
       created_at: new Date().toDateString(),
     };
 
+    // (1) //
+    dispatch(
+      addNewMessageToHistory_memory({
+        ...messageObject,
+        targetChatRoom_type: targetChatRoom.type,
+      })
+    );
     // check if the user was kicked out of the group or blocked by a friend
-    if (targetGroup.user_kicked) return;
+    if (targetGroup && targetGroup.user_kicked) return;
     // if blocked_by_friend return
 
     if (socket) {
@@ -55,14 +62,6 @@ function MessageInput({ socket }: Props): JSX.Element {
         targetChatRoom_type: targetChatRoom.type,
       });
     }
-
-    // (1) //
-    dispatch(
-      addNewMessageToHistory_memory({
-        ...messageObject,
-        targetChatRoom_type: targetChatRoom.type,
-      })
-    );
   }
 
   return (

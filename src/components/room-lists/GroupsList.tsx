@@ -71,9 +71,6 @@ function GroupsList({
                 group_id={group_id}
                 group_name={group_name}
               />
-              {currentUserId === creator_user_id && (
-                <button>kick member</button>
-              )}
               <div>
                 notifications:{" "}
                 {messageNotifications[`${chatType.group}_${group_id}`]}{" "}

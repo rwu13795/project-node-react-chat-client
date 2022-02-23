@@ -23,6 +23,7 @@ interface LoadChatHistory_req {
   targetRoom_type: string;
   targetRoom_id: string;
   currentUserId: string;
+  date_limit?: string;
 }
 
 // load the last 20 chat messages when the user clicks on the target room
@@ -35,7 +36,10 @@ export const loadChatHistory_database = createAsyncThunk<
   { state: RootState }
 >(
   "message/loadChatHistory",
-  async ({ targetRoom_type, targetRoom_id, currentUserId }, thunkAPI) => {
+  async (
+    { targetRoom_type, targetRoom_id, currentUserId, date_limit },
+    thunkAPI
+  ) => {
     // id can be user's, group's or public-channel's id
     const room_id = `${targetRoom_type}_${targetRoom_id}`;
     // if the room is visited, that means chat history has been loaded, then don't make request again
@@ -49,12 +53,11 @@ export const loadChatHistory_database = createAsyncThunk<
       };
     }
 
-    console.log("currentUserId", currentUserId);
-
+    if (!date_limit) date_limit = "";
     const currentUsername = thunkAPI.getState().user.currentUser.username;
     const response = await client.get<MessageObject_res[]>(
       serverUrl +
-        `/chat/chat-history?id_1=${currentUserId}&id_2=${targetRoom_id}&type=${targetRoom_type}`
+        `/chat/chat-history?id_1=${currentUserId}&id_2=${targetRoom_id}&type=${targetRoom_type}&date_limit=${date_limit}`
     );
     return {
       chatHistory: response.data,

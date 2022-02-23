@@ -42,7 +42,7 @@ function MessageInput({ socket }: Props): JSX.Element {
       recipient_name: targetChatRoom.name,
       msg_body: msg,
       msg_type: msgType.text,
-      created_at: new Date().toDateString(),
+      created_at: new Date().toString(),
     };
 
     // (1) //
@@ -53,7 +53,7 @@ function MessageInput({ socket }: Props): JSX.Element {
       })
     );
     // check if the user was kicked out of the group or blocked by a friend
-    if (targetGroup && targetGroup.user_kicked) return;
+    if (targetGroup && targetGroup.user_left) return;
     // if blocked_by_friend return
 
     if (socket) {

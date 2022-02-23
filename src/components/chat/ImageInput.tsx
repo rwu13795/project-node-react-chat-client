@@ -38,7 +38,7 @@ function ImageInput({ socket }: Props): JSX.Element {
       msg_type: "image",
       file_localUrl: URL.createObjectURL(imageFile!),
       file_name: imageFile!.name,
-      created_at: new Date().toDateString(),
+      created_at: new Date().toString(),
     };
 
     dispatch(
@@ -48,7 +48,7 @@ function ImageInput({ socket }: Props): JSX.Element {
       })
     );
     // check if the user was kicked out of the group or blocked by a friend
-    if (targetGroup && targetGroup.user_kicked) return;
+    if (targetGroup && targetGroup.user_left) return;
 
     if (socket) {
       socket.emit("messageToServer", {

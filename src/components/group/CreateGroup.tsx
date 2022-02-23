@@ -1,18 +1,46 @@
-import { ChangeEvent, memo, useState } from "react";
+import { ChangeEvent, memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Socket } from "socket.io-client";
+import { chatType } from "../../redux/message/messageSlice";
 import { createNewGroup } from "../../redux/user/asyncThunk/create-new-group";
 
 import {
   selectCreateGroupError,
+  selectLoadingStatus_user,
+  selectNewGroupToJoin,
   selectUserId,
+  setLoadingStatus_user,
+  UserLoadingStatus,
 } from "../../redux/user/userSlice";
 
-function CreateGroup(): JSX.Element {
+interface Props {
+  socket: Socket | undefined;
+  selectTargetChatRoomHandler: (id: string, name: string, type: string) => void;
+}
+
+function CreateGroup({
+  socket,
+  selectTargetChatRoomHandler,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const currentUserId = useSelector(selectUserId);
   const createGroupError = useSelector(selectCreateGroupError);
+  const newGroupToJoin = useSelector(selectNewGroupToJoin);
+  const loadingStatus = useSelector(selectLoadingStatus_user);
   const [groupName, setGroupName] = useState<string>("");
+
+  useEffect(() => {
+    if (
+      loadingStatus === UserLoadingStatus.createNewGroup_succeeded &&
+      socket
+    ) {
+      dispatch(setLoadingStatus_user("idle"));
+      // join the new created group
+      socket.emit("create-new-group", { group_id: newGroupToJoin });
+      selectTargetChatRoomHandler(newGroupToJoin, groupName, chatType.group);
+    }
+  }, [loadingStatus, newGroupToJoin]);
 
   function setGroupNameHandler(e: ChangeEvent<HTMLInputElement>) {
     setGroupName(e.target.value);

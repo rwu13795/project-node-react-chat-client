@@ -9,9 +9,18 @@ import {
 
 interface Props {
   socket: Socket | undefined;
+  selectTargetChatRoomHandler: (
+    id: string,
+    name: string,
+    type: string,
+    date_limit?: string | null
+  ) => void;
 }
 
-function GroupInvitation({ socket }: Props): JSX.Element {
+function GroupInvitation({
+  socket,
+  selectTargetChatRoomHandler,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const groupInvitations = useSelector(selectGroupInvitations);
@@ -27,6 +36,8 @@ function GroupInvitation({ socket }: Props): JSX.Element {
       });
     }
     dispatch(respondToGroupInvitation(index));
+
+    // set the loading status here !!!!!!!!!!!!!
 
     // if (accept) {
     //   setLoading(true);

@@ -7,6 +7,13 @@ import { signUp } from "./asyncThunk/sign-up";
 import { getGroupMembersList_database } from "./asyncThunk/get-members-list";
 import { createNewGroup } from "./asyncThunk/create-new-group";
 
+export enum UserLoadingStatus {
+  idle = "idle",
+  createNewGroup_succeeded = "createNewGroup_succeeded",
+  createNewGroup_loading = "createNewGroup_loading",
+  createNewGroup_failed = "createNewGroup_failed",
+}
+
 export interface CurrentUser {
   username: string;
   email: string;
@@ -49,9 +56,12 @@ export interface Group {
   group_id: string;
   group_name: string;
   creator_user_id: string;
-  user_kicked: boolean;
+  user_left: boolean;
+  user_left_at: string | null;
+  was_kicked: boolean;
   // only load group_members from DB when user enters the group room
   group_members?: GroupMember[];
+  wasMembersListLoaded: boolean;
 }
 
 export interface UserState {
@@ -63,10 +73,11 @@ export interface UserState {
   result_addFriendRequest: string;
   // groups
   groupsObjectList: { [group_id: string]: Group };
+  groupsToJoin: string[];
+  newGroupToJoin: string;
   createGroupError: string;
   groupInvitations: GroupInvitation[];
   result_groupInvitation: string;
-  clearChatBoard: boolean;
   // layout
   loadingStatus: string;
   authErrors: AuthErrors;
@@ -81,7 +92,8 @@ const initialState: UserState = {
   groupInvitations: [],
   result_groupInvitation: "",
   groupsObjectList: {},
-  clearChatBoard: false,
+  groupsToJoin: [],
+  newGroupToJoin: "",
   createGroupError: "",
   loadingStatus: "idle",
   authErrors: {},
@@ -202,7 +214,7 @@ const userSlice = createSlice({
     //     }
     //   },
 
-    setLoadingStatus(state, action: PayloadAction<string>) {
+    setLoadingStatus_user(state, action: PayloadAction<string>) {
       state.loadingStatus = action.payload;
     },
     setFriendsOnlineStatus(
@@ -235,13 +247,13 @@ const userSlice = createSlice({
     },
     leaveGroup(
       state,
-      action: PayloadAction<{ group_id: string; clearChatBoard: boolean }>
+      action: PayloadAction<{ group_id: string; was_kicked: boolean }>
     ) {
-      const { group_id, clearChatBoard } = action.payload;
-      if (group_id !== "") {
-        delete state.groupsObjectList[group_id];
-      }
-      state.clearChatBoard = clearChatBoard;
+      state.groupsObjectList[action.payload.group_id].was_kicked =
+        action.payload.was_kicked;
+      state.groupsObjectList[action.payload.group_id].user_left = true;
+      state.groupsObjectList[action.payload.group_id].user_left_at =
+        new Date().toString();
     },
     clearLeftMember(
       state,
@@ -254,8 +266,8 @@ const userSlice = createSlice({
         return member.user_id !== member_user_id;
       });
     },
-    setKickedMember(state, action: PayloadAction<string>) {
-      state.groupsObjectList[action.payload].user_kicked = true;
+    removeGroup(state, action: PayloadAction<{ group_id: string }>) {
+      delete state.groupsObjectList[action.payload.group_id];
     },
   },
 
@@ -272,6 +284,9 @@ const userSlice = createSlice({
         // the group_members in the respective group when user enters a group room
         for (let group of action.payload.groupsList) {
           state.groupsObjectList[group.group_id] = group;
+          if (!group.user_left) {
+            state.groupsToJoin.push(group.group_id);
+          }
         }
         if (action.payload.require_initialize) {
           for (let f of action.payload.friendsList) {
@@ -289,6 +304,9 @@ const userSlice = createSlice({
 
         for (let group of action.payload.groupsList) {
           state.groupsObjectList[group.group_id] = group;
+          if (!group.user_left) {
+            state.groupsToJoin.push(group.group_id);
+          }
         }
 
         // initialize the friendsOnlineStatus
@@ -328,17 +346,18 @@ const userSlice = createSlice({
       /***************  CREATE A NEW GROUP  ***************/
       .addCase(createNewGroup.fulfilled, (state, action): void => {
         state.groupsObjectList[action.payload.group_id] = action.payload;
-        state.loadingStatus = "succeeded";
+        state.loadingStatus = "createNewGroup_succeeded";
+        state.newGroupToJoin = action.payload.group_id;
       })
       .addCase(createNewGroup.pending, (state): void => {
-        state.loadingStatus = "loading";
+        state.loadingStatus = "createNewGroup_loading";
       })
       .addCase(
         createNewGroup.rejected,
         (state, action: PayloadAction<any>): void => {
           // each user can only create 5 groups (for demo)
           state.createGroupError = action.payload.errors[0].message;
-          state.loadingStatus = "failed";
+          state.loadingStatus = "createNewGroup_failed";
         }
       )
 
@@ -346,8 +365,12 @@ const userSlice = createSlice({
       .addCase(
         getGroupMembersList_database.fulfilled,
         (state, action): void => {
-          const { group_id, group_members } = action.payload;
+          const { group_id, group_members, wasMembersListLoaded } =
+            action.payload;
+          if (wasMembersListLoaded) return;
+
           state.groupsObjectList[group_id].group_members = group_members;
+          state.groupsObjectList[group_id].wasMembersListLoaded = true;
           state.loadingStatus = "succeeded";
         }
       );
@@ -421,7 +444,7 @@ const userSlice = createSlice({
 
 export const {
   //   clearAuthErrors,
-  setLoadingStatus,
+  setLoadingStatus_user,
   setFriendsOnlineStatus,
   setAddFriendRequests,
   setResult_addFriendRequest,
@@ -431,7 +454,7 @@ export const {
   updateGroupsList,
   leaveGroup,
   clearLeftMember,
-  setKickedMember,
+  removeGroup,
   //   setPageLoading_user,
 } = userSlice.actions;
 
@@ -498,7 +521,15 @@ export const selectGroupInvitations = createSelector(
 export const selectTargetGroup = (group_id: string) =>
   createSelector([selectGroupsObjectList], (groups) => groups[group_id]);
 
-export const selectClearChatBoard = createSelector(
+export const selectGroupsToJoin = createSelector(
   [selectUser],
-  (userState) => userState.clearChatBoard
+  (userState) => userState.groupsToJoin
+);
+export const selectNewGroupToJoin = createSelector(
+  [selectUser],
+  (userState) => userState.newGroupToJoin
+);
+export const selectLoadingStatus_user = createSelector(
+  [selectUser],
+  (userState) => userState.loadingStatus
 );

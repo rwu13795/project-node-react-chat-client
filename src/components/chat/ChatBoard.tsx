@@ -22,7 +22,6 @@ import {
   setInfiniteScrollStats,
 } from "../../redux/message/messageSlice";
 import {
-  selectClearChatBoard,
   selectTargetGroup,
   selectUserId,
   selectUsername,
@@ -48,16 +47,15 @@ function ChatBoard({ socket }: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const infiniteScrollStats = useSelector(selectInfiniteScrollStats);
-  const clearChatBoard = useSelector(selectClearChatBoard);
 
   const MSG_PER_PAGE = 10;
 
   console.log("chatHistory.length", chatHistory.length);
 
   const fetchMoreData = useCallback(async () => {
-    const room_id = `${targetChatRoom.type}_${targetChatRoom.id}`;
-    const { hasMore, pageNum } =
-      infiniteScrollStats[`${targetChatRoom.type}_${targetChatRoom.id}`];
+    const { type, id, date_limit } = targetChatRoom;
+    const room_id = `${type}_${id}`;
+    const { hasMore, pageNum } = infiniteScrollStats[`${type}_${id}`];
     if (hasMore && chatHistory.length >= MSG_PER_PAGE) {
       // have to put "chatHistory.length >= MSG_PER_PAGE" in the condition
       // otherwise, whenever user enters a room, the "fetchMoreData" will be triggered
@@ -71,7 +69,8 @@ function ChatBoard({ socket }: Props): JSX.Element {
       try {
         const { data } = await client.get<MessageObject[]>(
           "http://localhost:5000/api" +
-            `/chat/chat-history?id_1=${currentUserId}&id_2=${targetChatRoom.id}&page=${pageNum}&type=${targetChatRoom.type}`
+            `/chat/chat-history?
+            id_1=${currentUserId}&id_2=${id}&page=${pageNum}&type=${type}&date_limit=${date_limit}`
         );
         dispatch(
           setInfiniteScrollStats({ hasMore: data.length >= MSG_PER_PAGE })
@@ -86,9 +85,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
         );
         dispatch(
           setInfiniteScrollStats({
-            pageNum:
-              infiniteScrollStats[`${targetChatRoom.type}_${targetChatRoom.id}`]
-                .pageNum + 1,
+            pageNum: infiniteScrollStats[`${type}_${id}`].pageNum + 1,
           })
         );
       } catch (err) {
@@ -96,8 +93,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
       }
     }
   }, [
-    targetChatRoom.id,
-    targetChatRoom.type,
+    targetChatRoom,
     currentUsername,
     currentUserId,
     dispatch,
@@ -110,13 +106,14 @@ function ChatBoard({ socket }: Props): JSX.Element {
     <main>
       <h1>I am the ChatBoard</h1>
 
-      {clearChatBoard ? (
-        <div>You just left a group, the UI should show something here</div>
+      {targetChatRoom.id === "" ? (
+        <h2>Empty chatBoard</h2>
       ) : (
         <div>
           <h3>
             Chatting with {targetChatRoom.name}-{targetChatRoom.id}
           </h3>
+
           <div
             style={{
               width: "90%",
@@ -161,9 +158,20 @@ function ChatBoard({ socket }: Props): JSX.Element {
                   folder = "groups";
                   folder_id = targetChatRoom.id;
                 }
-                if (targetChatRoom.type === chatType.public) {
-                  folder = "public";
-                  folder_id = targetChatRoom.id;
+
+                let warning = "";
+                if (
+                  targetGroup &&
+                  targetGroup.user_left_at &&
+                  msg.sender_id === currentUserId &&
+                  new Date(msg.created_at).getTime() >
+                    new Date(targetGroup.user_left_at).getTime()
+                ) {
+                  warning = `You ${
+                    targetGroup.was_kicked
+                      ? "were kicked out from"
+                      : "have left"
+                  } the group, the other group members cannot see this message`;
                 }
 
                 return (
@@ -192,14 +200,8 @@ function ChatBoard({ socket }: Props): JSX.Element {
                         </div>
                       </div>
                     )}
-                    {targetGroup &&
-                      targetGroup.user_kicked &&
-                      msg.sender_id === currentUserId && (
-                        <div style={{ color: "red" }}>
-                          You were kicked out from the group, the other group
-                          members cannot see this message
-                        </div>
-                      )}
+
+                    <div style={{ color: "red" }}>{warning}</div>
                   </div>
                 );
               })}

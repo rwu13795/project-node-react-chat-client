@@ -16,11 +16,16 @@ function MembersList({ socket }: Props): JSX.Element {
 
   return (
     <main>
-      {targetGroup.group_members &&
+      {targetGroup &&
+        targetGroup.group_members &&
+        !targetGroup.user_left &&
         targetGroup.group_members.map((member, index) => {
           return (
             <div key={index}>
-              Username: {member.username}
+              Username: {member.username} @ID{member.user_id}
+              {targetGroup.creator_user_id === member.user_id && (
+                <span style={{ color: "red" }}>Group Admin</span>
+              )}
               {currentUserId === targetGroup.creator_user_id && (
                 <KickMember
                   socket={socket}

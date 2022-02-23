@@ -14,9 +14,7 @@ import {
 
 interface Props {
   messageObject_res: MessageObject & RoomType;
-  note_type: string;
   group_id: string;
-  member_user_id: string;
 }
 
 export function groupAdminNotification_listener(
@@ -25,21 +23,22 @@ export function groupAdminNotification_listener(
 ) {
   socket.on(
     "group-admin-notification",
-    ({ messageObject_res, note_type, group_id, member_user_id }: Props) => {
-      console.log("note_type", note_type, group_id, member_user_id);
-      console.log("messageObject", messageObject_res);
-
+    ({ messageObject_res, group_id }: Props) => {
       dispatch(
         addNewMessageToHistory_memory({
           ...messageObject_res,
         })
       );
 
-      if (note_type === "left") {
-        dispatch(clearLeftMember({ group_id, member_user_id }));
-      } else {
-        dispatch(getGroupMembersList_database({ group_id }));
-      }
+      // if (note === "left") {
+      //   // remove the user from membersList who just left or was kicked
+      //   dispatch(clearLeftMember({ group_id, member_user_id }));
+      // } else {
+      //   // fetch a new membersList after a new member has joined
+      //   console.log("getting new group members list");
+
+      dispatch(getGroupMembersList_database({ group_id, initialize: true }));
+      // }
     }
   );
 }

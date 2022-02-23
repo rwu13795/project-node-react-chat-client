@@ -6,6 +6,7 @@ import {
   selectTargetChatRoom,
 } from "../../redux/message/messageSlice";
 import MembersList from "../group/MembersList";
+import RemoveGroup from "../group/RemoveGroup";
 
 interface Props {
   socket: Socket | undefined;
@@ -23,7 +24,10 @@ function ChatRoomMenu({ socket }: Props): JSX.Element {
     <main>
       <h1>Chat Room Menu</h1>
       {targetChatRoom.type === chatType.group && (
-        <button onClick={openMembersListHandler}>Members list</button>
+        <div>
+          <button onClick={openMembersListHandler}>Members list</button>
+          <RemoveGroup />
+        </div>
       )}
       {openMembersList && <MembersList socket={socket} />}
     </main>

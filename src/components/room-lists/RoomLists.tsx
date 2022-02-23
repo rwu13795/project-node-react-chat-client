@@ -26,11 +26,11 @@ function RoomLists({ socket }: Props): JSX.Element {
   function selectTargetChatRoomHandler(
     nextRoom_id: string,
     nextRoom_name: string,
-    nextRoom_type: string
+    nextRoom_type: string,
+    date_limit?: string | null
   ) {
     // let elem = document.getElementById("chat-board");
     // if (elem) elem.scrollTo({ top: elem.scrollHeight, behavior: "auto" });
-    dispatch(leaveGroup({ group_id: "", clearChatBoard: false }));
 
     // clear the notifications of the previous room in database, only when the user
     // enters the next room
@@ -41,6 +41,7 @@ function RoomLists({ socket }: Props): JSX.Element {
         id: nextRoom_id,
         name: nextRoom_name,
         type: nextRoom_type,
+        date_limit: date_limit || "",
       })
     );
     // load the latest 20 chat messages from server in the specific room only once
@@ -49,10 +50,11 @@ function RoomLists({ socket }: Props): JSX.Element {
         targetRoom_type: nextRoom_type,
         targetRoom_id: nextRoom_id,
         currentUserId,
+        date_limit: date_limit || "",
       })
     );
     // this clearNotifications will clear the notifications of previous room in database,
-    // then clear notifications of next room in the store.
+    // then clear notifications of next room in the redux-store.
     dispatch(
       clearNotifications({
         previousRoom_id,
@@ -64,7 +66,12 @@ function RoomLists({ socket }: Props): JSX.Element {
     // if the target room is a group, then fetch the member list from DB for that group
     if (nextRoom_type === chatType.group) {
       console.log("getting member list", nextRoom_id);
-      dispatch(getGroupMembersList_database({ group_id: nextRoom_id }));
+      dispatch(
+        getGroupMembersList_database({
+          group_id: nextRoom_id,
+          initialize: false,
+        })
+      );
     }
 
     // (1) //

@@ -37,6 +37,9 @@ export interface TargetChatRoom {
   id: string; // friend_id or group_id
   name: string; // friend_name or group_name
   type: string; // private | group | public
+  // if the user has left or was kicked out of a group, only show the messages on the days
+  // when the user was still a member
+  date_limit: string; // the Posgres timestamp
 }
 
 interface ChatHistory {
@@ -57,7 +60,7 @@ interface MessageState {
 }
 
 const initialState: MessageState = {
-  targetChatRoom: { id: "", name: "", type: "" },
+  targetChatRoom: { id: "", name: "", type: "", date_limit: "" },
   chatHistory: {},
   messageNotifications: {},
   visitedRoom: {},
@@ -214,6 +217,15 @@ const messageSlice = createSlice({
         ...oldChatHistoy,
       ];
     },
+
+    resetVisitedRoom(
+      state,
+      action: PayloadAction<{ room_id: string; visited: boolean }>
+    ): void {
+      const { room_id, visited } = action.payload;
+      state.visitedRoom[room_id] = visited;
+      state.chatHistory[room_id] = [];
+    },
   },
 
   extraReducers: (builder) => {
@@ -275,6 +287,7 @@ export const {
   loadMoreOldChatHistory_database,
   setCurrentUserId_message,
   setInfiniteScrollStats,
+  resetVisitedRoom,
 } = messageSlice.actions;
 
 export default messageSlice.reducer;

@@ -8,6 +8,7 @@ import {
 } from "../redux/message/messageSlice";
 import {
   selectGroupsObjectList,
+  selectGroupsToJoin,
   selectIsLoggedIn,
   selectUserId,
   selectUsername,
@@ -44,7 +45,7 @@ function MainPage(): JSX.Element {
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const currentUserId = useSelector(selectUserId);
   const currentUsername = useSelector(selectUsername);
-  const groupsObjectList = useSelector(selectGroupsObjectList);
+  const groupsToJoin = useSelector(selectGroupsToJoin);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -62,7 +63,7 @@ function MainPage(): JSX.Element {
       // each user will join his/her private room and all the groups room after signing in
       newSocket.emit("join-room", {
         private_id: `${chatType.private}_${currentUserId}`,
-        group_ids: Object.keys(groupsObjectList),
+        group_ids: groupsToJoin,
       });
       // let all the friends know this user is online
       newSocket.emit("online");
@@ -85,7 +86,7 @@ function MainPage(): JSX.Element {
 
       console.log("user signed, socket connected");
     }
-  }, [isLoggedIn, navigate, socket, currentUserId, dispatch, setSocket]);
+  }, [isLoggedIn, socket]);
 
   return (
     <main>

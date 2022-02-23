@@ -9,28 +9,24 @@ import { getGroupMembersList_database } from "../../redux/user/asyncThunk/get-me
 
 import {
   clearLeftMember,
+  leaveGroup,
   setGroupInvitation,
-  setKickedMember,
 } from "../../redux/user/userSlice";
 
 interface Props {
   group_id: string;
-  member_user_id: string;
 }
 
 export function kickedOutOfGroup_listener(
   socket: Socket,
   dispatch: Dispatch<any>
 ) {
-  socket.on("kicked-out-of-group", ({ group_id, member_user_id }: Props) => {
-    console.log(
-      `You, member ${member_user_id} was kicked out from group ${group_id}`
-    );
-
+  socket.on("kicked-out-of-group", ({ group_id }: Props) => {
     // let the server know this user was kicked out from the group
     // use socket.leave(room) in the server to disconnect this user from the group
     socket.emit("kicked-out-of-group", group_id);
-
-    dispatch(setKickedMember(group_id));
+    // when the user is kicked, the server will mark this user as from the users_in_groups
+    // table. The next time this long
+    dispatch(leaveGroup({ group_id, was_kicked: true }));
   });
 }

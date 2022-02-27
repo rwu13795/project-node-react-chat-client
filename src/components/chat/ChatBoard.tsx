@@ -22,6 +22,9 @@ import {
   setInfiniteScrollStats,
 } from "../../redux/message/messageSlice";
 import {
+  Friend,
+  Group,
+  selectTargetFriend,
   selectTargetGroup,
   selectUserId,
   selectUsername,
@@ -46,6 +49,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
   const currentUsername = useSelector(selectUsername);
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
+  const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
   const infiniteScrollStats = useSelector(selectInfiniteScrollStats);
 
   const MSG_PER_PAGE = 10;
@@ -158,21 +162,13 @@ function ChatBoard({ socket }: Props): JSX.Element {
                   folder = "groups";
                   folder_id = targetChatRoom.id;
                 }
-
-                let warning = "";
-                if (
-                  targetGroup &&
-                  targetGroup.user_left_at &&
-                  msg.sender_id === currentUserId &&
-                  new Date(msg.created_at).getTime() >
-                    new Date(targetGroup.user_left_at).getTime()
-                ) {
-                  warning = `You ${
-                    targetGroup.was_kicked
-                      ? "were kicked out from"
-                      : "have left"
-                  } the group, the other group members cannot see this message`;
-                }
+                const warning = warningHandler(
+                  targetGroup,
+                  targetFriend,
+                  targetChatRoom.type,
+                  msg,
+                  currentUserId
+                );
 
                 return (
                   <div key={index}>
@@ -219,3 +215,42 @@ function ChatBoard({ socket }: Props): JSX.Element {
 }
 
 export default memo(ChatBoard);
+
+function warningHandler(
+  targetGroup: Group,
+  targetFriend: Friend,
+  targetChatRoom_type: string,
+  msg: MessageObject,
+  currentUserId: string
+) {
+  if (targetChatRoom_type === chatType.group) {
+    if (
+      targetGroup &&
+      targetGroup.user_left_at &&
+      msg.sender_id === currentUserId &&
+      new Date(msg.created_at).getTime() >
+        new Date(targetGroup.user_left_at).getTime()
+    ) {
+      return `You ${
+        targetGroup.was_kicked ? "were kicked out from" : "have left"
+      } the group, the other group members cannot see this message`;
+    } else {
+      return "";
+    }
+  } else {
+    if (
+      (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend) &&
+      (new Date(msg.created_at).getTime() >
+        new Date(targetFriend.friend_blocked_user_at).getTime() ||
+        new Date(msg.created_at).getTime() >
+          new Date(targetFriend.user_blocked_friend_at).getTime())
+    ) {
+      return `You ${
+        targetFriend.user_blocked_friend ? "blocked" : "were blocked by"
+      }
+              this friend, you cannot send any message to him/her!`;
+    } else {
+      return "";
+    }
+  }
+}

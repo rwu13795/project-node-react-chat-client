@@ -8,7 +8,7 @@ import {
 } from "../../redux/message/messageSlice";
 import {
   selectGroupInvitations,
-  selectGroupsObjectList,
+  selectGroupsList,
   selectUserId,
 } from "../../redux/user/userSlice";
 import CreateGroup from "../group/CreateGroup";
@@ -30,7 +30,7 @@ function GroupsList({
   socket,
   selectTargetChatRoomHandler,
 }: Props): JSX.Element {
-  const groupsObjectList = useSelector(selectGroupsObjectList);
+  const groupsList = useSelector(selectGroupsList);
   const messageNotifications = useSelector(selectMessageNotifications);
   const currentUserId = useSelector(selectUserId);
   const groupInvitations = useSelector(selectGroupInvitations);
@@ -68,7 +68,7 @@ function GroupsList({
         />
       </div>
       <div>
-        {Object.values(groupsObjectList).map((group) => {
+        {Object.values(groupsList).map((group) => {
           // choose which friend to send message
           // pass the friend_id inside the message body, and the server
           // will emit the messsage to the room where the friend is in

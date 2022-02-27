@@ -6,11 +6,9 @@ import {
   chatType,
   selectMessageNotifications,
 } from "../../redux/message/messageSlice";
-import {
-  selectFriendsList,
-  selectFriendsOnlineStatus,
-} from "../../redux/user/userSlice";
-import AddFriendRequest from "../user/AddFriendRequest";
+import { selectFriendsList } from "../../redux/user/userSlice";
+import AddFriendRequest from "../friend/AddFriendRequest";
+import BlockFriend from "../friend/BlockFriend";
 
 interface Props {
   socket: Socket | undefined;
@@ -23,13 +21,12 @@ function FriendsList({
 }: Props): JSX.Element {
   const friendsList = useSelector(selectFriendsList);
   const messageNotifications = useSelector(selectMessageNotifications);
-  const friendsOnlineStatus = useSelector(selectFriendsOnlineStatus);
 
   return (
     <main>
       <h3>FriendsList</h3>
       <div>
-        {friendsList.map((friend) => {
+        {Object.values(friendsList).map((friend) => {
           // choose which friend to send message
           // pass the friend_id inside the message body, and the server
           // will emit the messsage to the room where the friend is in
@@ -53,8 +50,10 @@ function FriendsList({
               </div>
               <div>
                 friend {friend_username} is online:{" "}
-                {friendsOnlineStatus[friend_id] ? "yes" : "no"}
+                {friendsList[friend_id].online ? "yes" : "no"}
               </div>
+
+              <hr />
             </div>
           );
         })}

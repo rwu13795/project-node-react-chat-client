@@ -5,8 +5,11 @@ import {
   chatType,
   selectTargetChatRoom,
 } from "../../redux/message/messageSlice";
+import DeleteFriend from "../friend/DeleteFriend";
 import MembersList from "../group/MembersList";
 import RemoveGroup from "../group/RemoveGroup";
+import GroupChatMenu from "./GroupChatMenu";
+import PrivateChatMenu from "./PrivateChatMenu";
 
 interface Props {
   socket: Socket | undefined;
@@ -15,21 +18,15 @@ interface Props {
 function ChatRoomMenu({ socket }: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
 
-  const [openMembersList, setOpenMembersList] = useState<boolean>(false);
-
-  function openMembersListHandler() {
-    setOpenMembersList((prev) => !prev);
-  }
   return (
     <main>
       <h1>Chat Room Menu</h1>
       {targetChatRoom.type === chatType.group && (
-        <div>
-          <button onClick={openMembersListHandler}>Members list</button>
-          <RemoveGroup />
-        </div>
+        <GroupChatMenu group_id={targetChatRoom.id} socket={socket} />
       )}
-      {openMembersList && <MembersList socket={socket} />}
+      {targetChatRoom.type === chatType.private && (
+        <PrivateChatMenu friend_id={targetChatRoom.id} socket={socket} />
+      )}
     </main>
   );
 }

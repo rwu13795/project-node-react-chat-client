@@ -66,7 +66,7 @@ function InviteFriendToGroup({
             horizontal: "left",
           }}
         >
-          {friendsList.map((friend) => {
+          {Object.values(friendsList).map((friend) => {
             return (
               <div key={friend.friend_id}>
                 <div>

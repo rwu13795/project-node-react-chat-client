@@ -42,8 +42,11 @@ export interface Friend {
   friend_username: string;
   friend_email: string;
   avatar_url?: string;
-  block_friend: boolean;
-  is_blocked: boolean;
+  user_blocked_friend: boolean;
+  user_blocked_friend_at: string;
+  friend_blocked_user: boolean;
+  friend_blocked_user_at: string;
+  online: boolean;
 }
 export interface GroupMember {
   user_id: string;
@@ -67,12 +70,12 @@ export interface Group {
 export interface UserState {
   currentUser: CurrentUser;
   // friends
-  friendsList: Friend[];
-  friendsOnlineStatus: { [friend_id: string]: boolean };
+  friendsList: { [friend_id: string]: Friend };
+  // friendsOnlineStatus: { [friend_id: string]: boolean };
   addFriendRequests: AddFriendRequest[];
   result_addFriendRequest: string;
   // groups
-  groupsObjectList: { [group_id: string]: Group };
+  groupsList: { [group_id: string]: Group };
   groupsToJoin: string[];
   newGroupToJoin: string;
   createGroupError: string;
@@ -85,13 +88,13 @@ export interface UserState {
 
 const initialState: UserState = {
   currentUser: { username: "", email: "", user_id: "", isLoggedIn: false },
-  friendsList: [],
-  friendsOnlineStatus: {},
+  friendsList: {},
+  // friendsOnlineStatus: {},
   addFriendRequests: [],
   result_addFriendRequest: "",
   groupInvitations: [],
   result_groupInvitation: "",
-  groupsObjectList: {},
+  groupsList: {},
   groupsToJoin: [],
   newGroupToJoin: "",
   createGroupError: "",
@@ -221,9 +224,8 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<{ friend_id: string; online: boolean }>
     ) {
-      console.log("setting online status", action.payload);
       const { friend_id, online } = action.payload;
-      state.friendsOnlineStatus[friend_id] = online;
+      state.friendsList[friend_id].online = online;
     },
     setAddFriendRequests(state, action: PayloadAction<AddFriendRequest>) {
       state.addFriendRequests.push(action.payload);
@@ -242,17 +244,17 @@ const userSlice = createSlice({
     },
     updateGroupsList(state, action: PayloadAction<Group[]>) {
       for (let group of action.payload) {
-        state.groupsObjectList[group.group_id] = group;
+        state.groupsList[group.group_id] = group;
       }
     },
     leaveGroup(
       state,
       action: PayloadAction<{ group_id: string; was_kicked: boolean }>
     ) {
-      state.groupsObjectList[action.payload.group_id].was_kicked =
+      state.groupsList[action.payload.group_id].was_kicked =
         action.payload.was_kicked;
-      state.groupsObjectList[action.payload.group_id].user_left = true;
-      state.groupsObjectList[action.payload.group_id].user_left_at =
+      state.groupsList[action.payload.group_id].user_left = true;
+      state.groupsList[action.payload.group_id].user_left_at =
         new Date().toString();
     },
     clearLeftMember(
@@ -260,14 +262,33 @@ const userSlice = createSlice({
       action: PayloadAction<{ group_id: string; member_user_id: string }>
     ) {
       const { group_id, member_user_id } = action.payload;
-      state.groupsObjectList[group_id].group_members = state.groupsObjectList[
+      state.groupsList[group_id].group_members = state.groupsList[
         group_id
       ].group_members?.filter((member) => {
         return member.user_id !== member_user_id;
       });
     },
     removeGroup(state, action: PayloadAction<{ group_id: string }>) {
-      delete state.groupsObjectList[action.payload.group_id];
+      delete state.groupsList[action.payload.group_id];
+    },
+    setBlockFriend(
+      state,
+      action: PayloadAction<{
+        friend_id: string;
+        block: boolean;
+        being_blocked: boolean;
+      }>
+    ) {
+      const { friend_id, block, being_blocked } = action.payload;
+      if (being_blocked) {
+        state.friendsList[friend_id].friend_blocked_user = block;
+        state.friendsList[friend_id].friend_blocked_user_at =
+          new Date().toString();
+      } else {
+        state.friendsList[friend_id].user_blocked_friend = block;
+        state.friendsList[friend_id].user_blocked_friend_at =
+          new Date().toString();
+      }
     },
   },
 
@@ -277,20 +298,21 @@ const userSlice = createSlice({
       .addCase(getUserAuth.fulfilled, (state, action): void => {
         // remember to add the state type as return type
         state.currentUser = action.payload.currentUser;
-        state.friendsList = action.payload.friendsList;
         state.addFriendRequests = action.payload.addFriendRequests;
         state.groupInvitations = action.payload.groupInvitations;
-        // map the groupsList into groupsObjectList. It would be easier to put
+        // map the groupsList into groupsList. It would be easier to put
         // the group_members in the respective group when user enters a group room
         for (let group of action.payload.groupsList) {
-          state.groupsObjectList[group.group_id] = group;
+          state.groupsList[group.group_id] = group;
           if (!group.user_left) {
             state.groupsToJoin.push(group.group_id);
           }
         }
-        if (action.payload.require_initialize) {
-          for (let f of action.payload.friendsList) {
-            state.friendsOnlineStatus[f.friend_id] = false;
+
+        for (let friend of action.payload.friendsList) {
+          state.friendsList[friend.friend_id] = friend;
+          if (action.payload.require_initialize) {
+            state.friendsList[friend.friend_id].online = false;
           }
         }
       })
@@ -298,20 +320,20 @@ const userSlice = createSlice({
       /***************  SIGN IN  ***************/
       .addCase(signIn.fulfilled, (state, action): void => {
         state.currentUser = action.payload.currentUser;
-        state.friendsList = action.payload.friendsList;
+
         state.addFriendRequests = action.payload.addFriendRequests;
         state.groupInvitations = action.payload.groupInvitations;
 
         for (let group of action.payload.groupsList) {
-          state.groupsObjectList[group.group_id] = group;
+          state.groupsList[group.group_id] = group;
           if (!group.user_left) {
             state.groupsToJoin.push(group.group_id);
           }
         }
 
-        // initialize the friendsOnlineStatus
-        for (let f of action.payload.friendsList) {
-          state.friendsOnlineStatus[f.friend_id] = false;
+        for (let friend of action.payload.friendsList) {
+          state.friendsList[friend.friend_id] = friend;
+          state.friendsList[friend.friend_id].online = false;
         }
         state.loadingStatus = "succeeded";
       })
@@ -345,7 +367,7 @@ const userSlice = createSlice({
 
       /***************  CREATE A NEW GROUP  ***************/
       .addCase(createNewGroup.fulfilled, (state, action): void => {
-        state.groupsObjectList[action.payload.group_id] = action.payload;
+        state.groupsList[action.payload.group_id] = action.payload;
         state.loadingStatus = "createNewGroup_succeeded";
         state.newGroupToJoin = action.payload.group_id;
       })
@@ -369,8 +391,8 @@ const userSlice = createSlice({
             action.payload;
           if (wasMembersListLoaded) return;
 
-          state.groupsObjectList[group_id].group_members = group_members;
-          state.groupsObjectList[group_id].wasMembersListLoaded = true;
+          state.groupsList[group_id].group_members = group_members;
+          state.groupsList[group_id].wasMembersListLoaded = true;
           state.loadingStatus = "succeeded";
         }
       );
@@ -455,6 +477,7 @@ export const {
   leaveGroup,
   clearLeftMember,
   removeGroup,
+  setBlockFriend,
   //   setPageLoading_user,
 } = userSlice.actions;
 
@@ -489,10 +512,7 @@ export const selectFriendsList = createSelector(
   [selectUser],
   (userState) => userState.friendsList
 );
-export const selectFriendsOnlineStatus = createSelector(
-  [selectUser],
-  (userState) => userState.friendsOnlineStatus
-);
+
 export const selectAddFriendRequests = createSelector(
   [selectUser],
   (userState) => userState.addFriendRequests
@@ -509,9 +529,9 @@ export const selectCreateGroupError = createSelector(
   [selectUser],
   (userState) => userState.createGroupError
 );
-export const selectGroupsObjectList = createSelector(
+export const selectGroupsList = createSelector(
   [selectUser],
-  (userState) => userState.groupsObjectList
+  (userState) => userState.groupsList
 );
 export const selectGroupInvitations = createSelector(
   [selectUser],
@@ -519,7 +539,9 @@ export const selectGroupInvitations = createSelector(
 );
 
 export const selectTargetGroup = (group_id: string) =>
-  createSelector([selectGroupsObjectList], (groups) => groups[group_id]);
+  createSelector([selectGroupsList], (groups) => groups[group_id]);
+export const selectTargetFriend = (friend_id: string) =>
+  createSelector([selectFriendsList], (friends) => friends[friend_id]);
 
 export const selectGroupsToJoin = createSelector(
   [selectUser],

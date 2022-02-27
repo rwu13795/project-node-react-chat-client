@@ -4,11 +4,13 @@ import { Socket } from "socket.io-client";
 
 import {
   addNewMessageToHistory_memory,
+  chatType,
   MessageObject,
   msgType,
   selectTargetChatRoom,
 } from "../../redux/message/messageSlice";
 import {
+  selectTargetFriend,
   selectTargetGroup,
   selectUserId,
   selectUsername,
@@ -25,6 +27,7 @@ function MessageInput({ socket }: Props): JSX.Element {
   const currentUsername = useSelector(selectUsername);
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
+  const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
 
   const [msg, setMsg] = useState<string>("");
 
@@ -53,9 +56,17 @@ function MessageInput({ socket }: Props): JSX.Element {
       })
     );
     // check if the user was kicked out of the group or blocked by a friend
-    if (targetGroup && targetGroup.user_left) return;
-    // if blocked_by_friend return
+    if (targetChatRoom.type === chatType.group) {
+      if (targetGroup && targetGroup.user_left) return;
+    } else {
+      if (
+        targetFriend &&
+        (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend)
+      )
+        return;
+    }
 
+    // if blocked_by_friend return
     if (socket) {
       socket.emit("messageToServer", {
         ...messageObject,

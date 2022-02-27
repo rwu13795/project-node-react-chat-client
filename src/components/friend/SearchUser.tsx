@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 import {
   selectCurrentUser,
-  selectFriendsOnlineStatus,
+  selectFriendsList,
   selectResult_addFriendRequest,
   selectUserId,
   setResult_addFriendRequest,
@@ -20,7 +20,7 @@ function SearchUser({ socket }: Props): JSX.Element {
   const client = axios_client();
   const dispatch = useDispatch();
 
-  const friendsOnlineStatus = useSelector(selectFriendsOnlineStatus);
+  const friendsList = useSelector(selectFriendsList);
   const currentUser = useSelector(selectCurrentUser);
   const result_addFriendRequest = useSelector(selectResult_addFriendRequest);
 
@@ -145,16 +145,15 @@ function SearchUser({ socket }: Props): JSX.Element {
 
       <h4>
         User Found: {foundUser.username}
-        {friendsOnlineStatus[foundUser.user_id] !== undefined &&
+        {friendsList[foundUser.user_id] !== undefined &&
           " This user is your friend already"}
-        {friendsOnlineStatus[foundUser.user_id] === undefined &&
-          foundUser.found && (
-            <span>
-              <button onClick={addFriendRequestHandler}>Add Friend</button>
-              <button onClick={cancelAddFriendHandler}>cancel</button>
-              <input type="text" value={message} onChange={setMessageHandler} />
-            </span>
-          )}
+        {friendsList[foundUser.user_id] === undefined && foundUser.found && (
+          <span>
+            <button onClick={addFriendRequestHandler}>Add Friend</button>
+            <button onClick={cancelAddFriendHandler}>cancel</button>
+            <input type="text" value={message} onChange={setMessageHandler} />
+          </span>
+        )}
       </h4>
 
       <div>Result: {result_addFriendRequest}</div>

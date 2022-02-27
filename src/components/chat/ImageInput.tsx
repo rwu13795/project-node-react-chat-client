@@ -3,10 +3,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 import {
   addNewMessageToHistory_memory,
+  chatType,
   MessageObject,
   selectTargetChatRoom,
 } from "../../redux/message/messageSlice";
 import {
+  selectTargetFriend,
   selectTargetGroup,
   selectUserId,
   selectUsername,
@@ -23,6 +25,7 @@ function ImageInput({ socket }: Props): JSX.Element {
   const currentUsername = useSelector(selectUsername);
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
+  const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
 
   const [imageFile, setImageFile] = useState<File>();
 
@@ -41,14 +44,23 @@ function ImageInput({ socket }: Props): JSX.Element {
       created_at: new Date().toString(),
     };
 
+    // check if the user was kicked out of the group or blocked by a friend
+    if (targetChatRoom.type === chatType.group) {
+      if (targetGroup && targetGroup.user_left) return;
+    } else {
+      if (
+        targetFriend &&
+        (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend)
+      )
+        return;
+    }
+
     dispatch(
       addNewMessageToHistory_memory({
         ...messageObject,
         targetChatRoom_type: targetChatRoom.type,
       })
     );
-    // check if the user was kicked out of the group or blocked by a friend
-    if (targetGroup && targetGroup.user_left) return;
 
     if (socket) {
       socket.emit("messageToServer", {

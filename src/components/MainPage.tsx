@@ -7,7 +7,6 @@ import {
   setCurrentUserId_message,
 } from "../redux/message/messageSlice";
 import {
-  selectGroupsObjectList,
   selectGroupsToJoin,
   selectIsLoggedIn,
   selectUserId,
@@ -18,7 +17,7 @@ import ChatBoard from "./chat/ChatBoard";
 import { message_listener } from "../socket-io/listeners/message-listener";
 import { getNotifications } from "../redux/message/asyncThunk/get-notifications";
 
-import SearchUser from "./user/SearchUser";
+import SearchUser from "./friend/SearchUser";
 import { addFriendRequest_listener } from "../socket-io/listeners/add-friend-request-listener";
 import { check_addFriendRequest_listener } from "../socket-io/listeners/check-add-friend-request-listener";
 import { addFriendResponse_listener } from "../socket-io/listeners/add-friend-response-listener";
@@ -35,6 +34,7 @@ import { groupInvitation_listener } from "../socket-io/listeners/group-invitatio
 import ChatRoomMenu from "./menu/ChatRoomMenu";
 import { groupAdminNotification_listener } from "../socket-io/listeners/group-admin-notification-listener";
 import { kickedOutOfGroup_listener } from "../socket-io/listeners/kicked-out-of-group-listener";
+import { blockFriend_listener } from "../socket-io/listeners/block-friend-listener";
 
 function MainPage(): JSX.Element {
   const [socket, setSocket] = useState<Socket>();
@@ -74,6 +74,7 @@ function MainPage(): JSX.Element {
       addFriendRequest_listener(newSocket, dispatch);
       check_addFriendRequest_listener(newSocket, dispatch);
       addFriendResponse_listener(newSocket, dispatch, currentUserId);
+      blockFriend_listener(newSocket, dispatch);
 
       groupInvitation_listener(newSocket, dispatch);
       check_groupInvitation_listener(newSocket, dispatch);

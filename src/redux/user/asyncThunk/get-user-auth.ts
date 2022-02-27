@@ -26,7 +26,5 @@ export const getUserAuth = createAsyncThunk<
     serverUrl + `/auth/user-auth-status?initialize=${initialize ? "yes" : "no"}`
   );
 
-  console.log(response.data);
-
   return response.data;
 });

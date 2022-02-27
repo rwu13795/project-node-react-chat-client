@@ -25,8 +25,6 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
   function responseHandler(
     sender_id: string,
     sender_username: string,
-    target_id: string,
-    target_username: string,
     accept: boolean
   ) {
     if (socket) {
@@ -34,8 +32,8 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
       socket.emit("add-friend-response", {
         sender_id,
         sender_username,
-        target_id,
-        target_username,
+        target_id: currentUserId,
+        target_username: currentUsername,
         accept,
       });
     }
@@ -73,26 +71,14 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
               <div>Message: {req.message}</div>
               <button
                 onClick={() =>
-                  responseHandler(
-                    req.sender_id,
-                    req.sender_username,
-                    currentUserId,
-                    currentUsername,
-                    true
-                  )
+                  responseHandler(req.sender_id, req.sender_username, true)
                 }
               >
                 Accept
               </button>
               <button
                 onClick={() =>
-                  responseHandler(
-                    req.sender_id,
-                    req.sender_username,
-                    currentUserId,
-                    currentUsername,
-                    false
-                  )
+                  responseHandler(req.sender_id, req.sender_username, false)
                 }
               >
                 Reject

@@ -8,7 +8,6 @@ import {
 } from "../../redux/message/messageSlice";
 import { selectFriendsList } from "../../redux/user/userSlice";
 import AddFriendRequest from "../friend/AddFriendRequest";
-import BlockFriend from "../friend/BlockFriend";
 
 interface Props {
   socket: Socket | undefined;
@@ -49,8 +48,8 @@ function FriendsList({
                 {messageNotifications[`${chatType.private}_${friend_id}`]}{" "}
               </div>
               <div>
-                friend {friend_username} is online:{" "}
-                {friendsList[friend_id].online ? "yes" : "no"}
+                friend {friend_username} online-status:{" "}
+                {friendsList[friend_id].onlineStatus}
               </div>
 
               <hr />

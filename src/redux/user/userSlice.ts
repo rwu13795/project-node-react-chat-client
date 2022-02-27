@@ -13,6 +13,12 @@ export enum UserLoadingStatus {
   createNewGroup_loading = "createNewGroup_loading",
   createNewGroup_failed = "createNewGroup_failed",
 }
+export enum onlineStatus_enum {
+  available = "Available",
+  away = "Away",
+  busy = "Busy",
+  offline = "Offline",
+}
 
 export interface CurrentUser {
   username: string;
@@ -20,6 +26,7 @@ export interface CurrentUser {
   user_id: string;
   avatar_url?: string;
   isLoggedIn?: boolean;
+  onlineStatus: string;
 }
 export interface AuthErrors {
   [inputName: string]: string;
@@ -46,7 +53,7 @@ export interface Friend {
   user_blocked_friend_at: string;
   friend_blocked_user: boolean;
   friend_blocked_user_at: string;
-  online: boolean;
+  onlineStatus: string;
 }
 export interface GroupMember {
   user_id: string;
@@ -87,9 +94,14 @@ export interface UserState {
 }
 
 const initialState: UserState = {
-  currentUser: { username: "", email: "", user_id: "", isLoggedIn: false },
+  currentUser: {
+    username: "",
+    email: "",
+    user_id: "",
+    isLoggedIn: false,
+    onlineStatus: onlineStatus_enum.available,
+  },
   friendsList: {},
-  // friendsOnlineStatus: {},
   addFriendRequests: [],
   result_addFriendRequest: "",
   groupInvitations: [],
@@ -222,10 +234,10 @@ const userSlice = createSlice({
     },
     setFriendsOnlineStatus(
       state,
-      action: PayloadAction<{ friend_id: string; online: boolean }>
+      action: PayloadAction<{ friend_id: string; status: string }>
     ) {
-      const { friend_id, online } = action.payload;
-      state.friendsList[friend_id].online = online;
+      const { friend_id, status } = action.payload;
+      state.friendsList[friend_id].onlineStatus = status;
     },
     setAddFriendRequests(state, action: PayloadAction<AddFriendRequest>) {
       state.addFriendRequests.push(action.payload);
@@ -290,6 +302,9 @@ const userSlice = createSlice({
           new Date().toString();
       }
     },
+    setUserOnlineStatus(state, action: PayloadAction<string>) {
+      state.currentUser.onlineStatus = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -312,7 +327,9 @@ const userSlice = createSlice({
         for (let friend of action.payload.friendsList) {
           state.friendsList[friend.friend_id] = friend;
           if (action.payload.require_initialize) {
-            state.friendsList[friend.friend_id].online = false;
+            state.friendsList[friend.friend_id].onlineStatus =
+              onlineStatus_enum.offline;
+            state.currentUser.onlineStatus = onlineStatus_enum.available;
           }
         }
       })
@@ -320,7 +337,7 @@ const userSlice = createSlice({
       /***************  SIGN IN  ***************/
       .addCase(signIn.fulfilled, (state, action): void => {
         state.currentUser = action.payload.currentUser;
-
+        state.currentUser.onlineStatus = onlineStatus_enum.available;
         state.addFriendRequests = action.payload.addFriendRequests;
         state.groupInvitations = action.payload.groupInvitations;
 
@@ -333,7 +350,8 @@ const userSlice = createSlice({
 
         for (let friend of action.payload.friendsList) {
           state.friendsList[friend.friend_id] = friend;
-          state.friendsList[friend.friend_id].online = false;
+          state.friendsList[friend.friend_id].onlineStatus =
+            onlineStatus_enum.offline;
         }
         state.loadingStatus = "succeeded";
       })
@@ -478,6 +496,7 @@ export const {
   clearLeftMember,
   removeGroup,
   setBlockFriend,
+  setUserOnlineStatus,
   //   setPageLoading_user,
 } = userSlice.actions;
 

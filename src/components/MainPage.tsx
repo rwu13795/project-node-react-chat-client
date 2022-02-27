@@ -36,9 +36,12 @@ import { groupAdminNotification_listener } from "../socket-io/listeners/group-ad
 import { kickedOutOfGroup_listener } from "../socket-io/listeners/kicked-out-of-group-listener";
 import { blockFriend_listener } from "../socket-io/listeners/block-friend-listener";
 
-function MainPage(): JSX.Element {
-  const [socket, setSocket] = useState<Socket>();
+interface Props {
+  socket: Socket | undefined;
+  setSocket: React.Dispatch<React.SetStateAction<Socket | undefined>>;
+}
 
+function MainPage({ socket, setSocket }: Props): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 

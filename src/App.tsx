@@ -8,9 +8,12 @@ import Auth from "./components/Auth";
 import MainPage from "./components/MainPage";
 import { useDispatch } from "react-redux";
 import { getUserAuth } from "./redux/user/asyncThunk/get-user-auth";
+import { Socket } from "socket.io-client";
 
 function App(): JSX.Element {
   const dispatch = useDispatch();
+
+  const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
     dispatch(getUserAuth({ initialize: true }));
@@ -18,12 +21,15 @@ function App(): JSX.Element {
 
   return (
     <Router>
-      <MainNavbar />
+      <MainNavbar socket={socket} />
       <div className="App">
         <h1>TESTING</h1>
         <Routes>
           <Route path="/" element={<Auth />} />
-          <Route path="/chat" element={<MainPage />} />
+          <Route
+            path="/chat"
+            element={<MainPage setSocket={setSocket} socket={socket} />}
+          />
         </Routes>
       </div>
     </Router>

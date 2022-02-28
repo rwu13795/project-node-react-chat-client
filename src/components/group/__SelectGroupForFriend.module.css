@@ -1,0 +1,13 @@
+/* @import "../../index.css"; */
+/* I don't need to import the CSS if the variables are inside the root:{}  */
+
+.invite_button {
+  cursor: pointer;
+  width: var(--button-width);
+  height: var(--button-height);
+  transition: all 0.5s;
+}
+.invite_button:hover {
+  color: rgb(16, 13, 218);
+  transition: all 0.5s;
+}

@@ -21,16 +21,20 @@ function App(): JSX.Element {
 
   return (
     <Router>
-      <MainNavbar socket={socket} />
       <div className="App">
-        <h1>TESTING</h1>
-        <Routes>
-          <Route path="/" element={<Auth />} />
-          <Route
-            path="/chat"
-            element={<MainPage setSocket={setSocket} socket={socket} />}
-          />
-        </Routes>
+        <div className="navbar">
+          <MainNavbar socket={socket} />
+        </div>
+
+        <div className="body">
+          <Routes>
+            <Route path="/" element={<Auth />} />
+            <Route
+              path="/chat"
+              element={<MainPage setSocket={setSocket} socket={socket} />}
+            />
+          </Routes>
+        </div>
       </div>
     </Router>
   );

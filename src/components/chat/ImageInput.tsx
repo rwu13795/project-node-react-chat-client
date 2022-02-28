@@ -57,16 +57,15 @@ function ImageInput({ socket }: Props): JSX.Element {
 
     dispatch(
       addNewMessageToHistory_memory({
-        ...messageObject,
-        targetChatRoom_type: targetChatRoom.type,
+        messageObject,
+        room_type: targetChatRoom.type,
       })
     );
 
     if (socket) {
       socket.emit("messageToServer", {
-        ...messageObject,
-        file_body: imageFile,
-        targetChatRoom_type: targetChatRoom.type,
+        messageObject: { ...messageObject, file_body: imageFile },
+        room_type: targetChatRoom.type,
       });
     }
 

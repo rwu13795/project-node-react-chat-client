@@ -242,6 +242,14 @@ const userSlice = createSlice({
     setAddFriendRequests(state, action: PayloadAction<AddFriendRequest>) {
       state.addFriendRequests.push(action.payload);
     },
+    clearAddFriendRequests(state, action: PayloadAction<number>) {
+      state.addFriendRequests = state.addFriendRequests.filter(
+        (value, index) => {
+          return index !== action.payload;
+        }
+      );
+    },
+
     setResult_addFriendRequest(state, action: PayloadAction<string>) {
       state.result_addFriendRequest = action.payload;
     },
@@ -487,6 +495,7 @@ export const {
   setLoadingStatus_user,
   setFriendsOnlineStatus,
   setAddFriendRequests,
+  clearAddFriendRequests,
   setResult_addFriendRequest,
   setResult_groupInvitation,
   setGroupInvitation,
@@ -497,6 +506,7 @@ export const {
   removeGroup,
   setBlockFriend,
   setUserOnlineStatus,
+
   //   setPageLoading_user,
 } = userSlice.actions;
 
@@ -544,6 +554,11 @@ export const selectResult_addFriendRequest = createSelector(
   [selectUser],
   (userState) => userState.result_addFriendRequest
 );
+export const selectResult_groupInvitation = createSelector(
+  [selectUser],
+  (userState) => userState.result_groupInvitation
+);
+
 export const selectCreateGroupError = createSelector(
   [selectUser],
   (userState) => userState.createGroupError

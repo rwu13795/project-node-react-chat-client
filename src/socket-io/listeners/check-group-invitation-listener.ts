@@ -47,6 +47,9 @@ export function check_groupInvitation_listener(
         }, 2000);
       } else {
         dispatch(setResult_groupInvitation(message));
+        // expand the <div> which contains the result_groupInvitation message
+        let elem = document.getElementById("invitation-result");
+        if (elem) elem.style.maxHeight = elem.scrollHeight + "px";
       }
     }
   );

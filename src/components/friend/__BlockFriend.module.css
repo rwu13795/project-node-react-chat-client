@@ -1,0 +1,17 @@
+.block_button {
+  cursor: pointer;
+  width: var(--button-width);
+  height: var(--button-height);
+  transition: all 0.5 ease-in-out;
+}
+.block_button:hover {
+  color: red;
+  transition: all 0.5 ease-in-out;
+}
+
+.unblock_button {
+  cursor: pointer;
+  width: var(--button-width);
+  height: var(--button-height);
+  color: red;
+}

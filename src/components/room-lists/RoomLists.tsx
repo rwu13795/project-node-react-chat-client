@@ -2,7 +2,11 @@ import { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { leaveGroup, selectUserId } from "../../redux/user/userSlice";
+import {
+  leaveGroup,
+  selectUserId,
+  setResult_groupInvitation,
+} from "../../redux/user/userSlice";
 import { clearNotifications } from "../../redux/message/asyncThunk/clear-notifications";
 import { loadChatHistory_database } from "../../redux/message/asyncThunk/load-chat-history";
 import {
@@ -13,6 +17,9 @@ import {
 import FriendsList from "./FriendsList";
 import GroupsList from "./GroupsList";
 import { getGroupMembersList_database } from "../../redux/user/asyncThunk/get-members-list";
+
+// UI //
+import styles from "./__RoomLists.module.css";
 
 interface Props {
   socket: Socket | undefined;
@@ -73,6 +80,7 @@ function RoomLists({ socket }: Props): JSX.Element {
         })
       );
     }
+    dispatch(setResult_groupInvitation(""));
 
     // (1) //
     if (socket)
@@ -80,8 +88,8 @@ function RoomLists({ socket }: Props): JSX.Element {
   }
 
   return (
-    <main>
-      <h3>RoomLists</h3>
+    <main className={styles.main}>
+      <h3>Chat Rooms</h3>
       <GroupsList
         socket={socket}
         selectTargetChatRoomHandler={selectTargetChatRoomHandler}

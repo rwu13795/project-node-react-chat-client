@@ -43,17 +43,19 @@ function LeaveGroup({ socket, group_id, group_name }: Props): JSX.Element {
     let msg_body = `Member ${currentUsername} has left the group...`;
     dispatch(
       addNewMessageToHistory_memory({
-        targetChatRoom_type: chatType.group,
-        sender_id: currentUserId,
-        sender_name: currentUsername,
-        recipient_id: group_id,
-        recipient_name: "",
-        msg_body,
-        msg_type: "admin",
-        created_at: new Date().toString(),
-        file_type: "none",
-        file_name: "none",
-        file_url: "none",
+        messageObject: {
+          sender_id: currentUserId,
+          sender_name: currentUsername,
+          recipient_id: group_id,
+          recipient_name: "",
+          msg_body,
+          msg_type: "admin",
+          created_at: new Date().toString(),
+          file_type: "none",
+          file_name: "none",
+          file_url: "none",
+        },
+        room_type: targetChatRoom.type,
       })
     );
   }

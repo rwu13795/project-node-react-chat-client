@@ -7,9 +7,7 @@ import {
 } from "../../redux/user/userSlice";
 
 export function addFriendRequest_listener(socket: Socket, dispatch: Dispatch) {
-  socket.on("add-friend-request", (data: AddFriendRequest) => {
-    console.log(data);
-
-    dispatch(setAddFriendRequests(data));
+  socket.on("add-friend-request", (request: AddFriendRequest) => {
+    dispatch(setAddFriendRequests(request));
   });
 }

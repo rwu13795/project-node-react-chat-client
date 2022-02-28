@@ -12,8 +12,7 @@ function MainNavbar({ socket }: Props): JSX.Element {
   const currentUser = useSelector(selectCurrentUser);
 
   return (
-    <nav>
-      <h1>I am the Navbar</h1>
+    <main>
       {currentUser.isLoggedIn && (
         <div>
           {" "}
@@ -24,7 +23,7 @@ function MainNavbar({ socket }: Props): JSX.Element {
           <ChangeOnlineStatus socket={socket} />
         </div>
       )}
-    </nav>
+    </main>
   );
 }
 

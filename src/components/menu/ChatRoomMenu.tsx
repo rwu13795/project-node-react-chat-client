@@ -11,6 +11,9 @@ import RemoveGroup from "../group/RemoveGroup";
 import GroupChatMenu from "./GroupChatMenu";
 import PrivateChatMenu from "./PrivateChatMenu";
 
+// UI //
+import styles from "./__common.module.css";
+
 interface Props {
   socket: Socket | undefined;
 }
@@ -20,7 +23,6 @@ function ChatRoomMenu({ socket }: Props): JSX.Element {
 
   return (
     <main>
-      <h1>Chat Room Menu</h1>
       {targetChatRoom.type === chatType.group && (
         <GroupChatMenu group_id={targetChatRoom.id} socket={socket} />
       )}

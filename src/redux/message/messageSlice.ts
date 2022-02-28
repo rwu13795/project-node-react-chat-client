@@ -28,11 +28,9 @@ export interface MessageObject {
   file_type?: string;
   file_name?: string;
   file_localUrl?: string;
+  warning?: boolean;
 }
 
-export interface RoomType {
-  targetChatRoom_type: string;
-}
 export interface TargetChatRoom {
   id: string; // friend_id or group_id
   name: string; // friend_name or group_name
@@ -113,60 +111,38 @@ const messageSlice = createSlice({
 
     addNewMessageToHistory_memory(
       state,
-      action: PayloadAction<MessageObject & RoomType>
+      action: PayloadAction<{ messageObject: MessageObject; room_type: string }>
     ) {
-      const {
-        sender_id,
-        sender_name,
-        recipient_id,
-        recipient_name,
-        msg_body,
-        msg_type,
-        file_name,
-        file_url,
-        file_localUrl,
-        created_at,
-        targetChatRoom_type,
-      } = action.payload;
+      const { messageObject, room_type } = action.payload;
+      const { sender_id, recipient_id } = messageObject;
 
       const currentUserId = state.currentUserId_message;
 
       // since this listener handles all types of live messages
       // have to figure out which room the live message is belonged to
       let room_id = "";
-      if (targetChatRoom_type === chatType.private) {
+      if (room_type === chatType.private) {
         // for private_messages
         // for exmaple, if user=1 is sends a message, then the sender_id=1 will be the
         // the room_id. if the current user sends a message to user=5, then the
         // recipient_id=5 will be the room_id
         if (sender_id === currentUserId) {
           // when the current user is the sender, then the recipient_id is the room_id
-          room_id = `${targetChatRoom_type}_${recipient_id}`;
+          room_id = `${room_type}_${recipient_id}`;
         } else {
           // when the current user is the recipient, then then sender_id is the room_id
-          room_id = `${targetChatRoom_type}_${sender_id}`;
+          room_id = `${room_type}_${sender_id}`;
         }
       } else {
         // all public and group rooms will always be the recipient
-        room_id = `${targetChatRoom_type}_${recipient_id}`;
+        room_id = `${room_type}_${recipient_id}`;
       }
 
       // add message to chat history for the specific room
       if (!state.chatHistory[room_id]) {
         state.chatHistory[room_id] = [];
       }
-      state.chatHistory[room_id].unshift({
-        sender_id,
-        sender_name,
-        recipient_id,
-        recipient_name,
-        msg_body,
-        msg_type,
-        file_name,
-        file_localUrl,
-        file_url,
-        created_at,
-      });
+      state.chatHistory[room_id].unshift(messageObject);
 
       // update the live message notification for private or group chat rooms
       if (!state.messageNotifications[room_id]) {

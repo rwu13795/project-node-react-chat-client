@@ -108,16 +108,10 @@ function ChatBoard({ socket }: Props): JSX.Element {
 
   return (
     <main>
-      <h1>I am the ChatBoard</h1>
-
       {targetChatRoom.id === "" ? (
         <h2>Empty chatBoard</h2>
       ) : (
         <div>
-          <h3>
-            Chatting with {targetChatRoom.name}-{targetChatRoom.id}
-          </h3>
-
           <div
             style={{
               width: "90%",
@@ -162,13 +156,8 @@ function ChatBoard({ socket }: Props): JSX.Element {
                   folder = "groups";
                   folder_id = targetChatRoom.id;
                 }
-                const warning = warningHandler(
-                  targetGroup,
-                  targetFriend,
-                  targetChatRoom.type,
-                  msg,
-                  currentUserId
-                );
+
+                console.log("msg.warning", msg.warning);
 
                 return (
                   <div key={index}>
@@ -191,13 +180,11 @@ function ChatBoard({ socket }: Props): JSX.Element {
                         <div>
                           User {msg.sender_id} sent to User {msg.recipient_id}
                         </div>
-                        <div>
+                        <div style={{ color: msg.warning ? "red" : "black" }}>
                           {msg.msg_body} @ {msg.created_at}
                         </div>
                       </div>
                     )}
-
-                    <div style={{ color: "red" }}>{warning}</div>
                   </div>
                 );
               })}
@@ -215,42 +202,3 @@ function ChatBoard({ socket }: Props): JSX.Element {
 }
 
 export default memo(ChatBoard);
-
-function warningHandler(
-  targetGroup: Group,
-  targetFriend: Friend,
-  targetChatRoom_type: string,
-  msg: MessageObject,
-  currentUserId: string
-) {
-  if (targetChatRoom_type === chatType.group) {
-    if (
-      targetGroup &&
-      targetGroup.user_left_at &&
-      msg.sender_id === currentUserId &&
-      new Date(msg.created_at).getTime() >
-        new Date(targetGroup.user_left_at).getTime()
-    ) {
-      return `You ${
-        targetGroup.was_kicked ? "were kicked out from" : "have left"
-      } the group, the other group members cannot see this message`;
-    } else {
-      return "";
-    }
-  } else {
-    if (
-      (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend) &&
-      (new Date(msg.created_at).getTime() >
-        new Date(targetFriend.friend_blocked_user_at).getTime() ||
-        new Date(msg.created_at).getTime() >
-          new Date(targetFriend.user_blocked_friend_at).getTime())
-    ) {
-      return `You ${
-        targetFriend.user_blocked_friend ? "blocked" : "were blocked by"
-      }
-              this friend, you cannot send any message to him/her!`;
-    } else {
-      return "";
-    }
-  }
-}

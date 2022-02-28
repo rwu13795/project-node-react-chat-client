@@ -36,9 +36,8 @@ function RemoveGroup(): JSX.Element {
       was_kicked,
     });
 
-    window.alert("group removed!");
-    dispatch(removeGroup({ group_id }));
     dispatch(setTargetChatRoom({ id: "", name: "", type: "", date_limit: "" }));
+    dispatch(removeGroup({ group_id }));
   }
 
   return (

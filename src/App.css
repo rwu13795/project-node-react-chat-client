@@ -2,7 +2,19 @@
   text-align: center;
 }
 
-.App-logo {
+.navbar {
+  height: 100px;
+  width: 100vw;
+  padding: 20px;
+  background-color: #61dafb8f;
+}
+.body {
+  max-height: calc(100vh - 160px);
+  width: 100vw;
+  overflow-y: hidden;
+}
+
+/* .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
@@ -35,4 +47,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */

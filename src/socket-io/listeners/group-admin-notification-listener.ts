@@ -3,7 +3,6 @@ import { Socket } from "socket.io-client";
 import {
   addNewMessageToHistory_memory,
   MessageObject,
-  RoomType,
 } from "../../redux/message/messageSlice";
 import { getGroupMembersList_database } from "../../redux/user/asyncThunk/get-members-list";
 
@@ -13,7 +12,8 @@ import {
 } from "../../redux/user/userSlice";
 
 interface Props {
-  messageObject_res: MessageObject & RoomType;
+  messageObject: MessageObject;
+  room_type: string;
   group_id: string;
 }
 
@@ -23,10 +23,11 @@ export function groupAdminNotification_listener(
 ) {
   socket.on(
     "group-admin-notification",
-    ({ messageObject_res, group_id }: Props) => {
+    ({ messageObject, room_type, group_id }: Props) => {
       dispatch(
         addNewMessageToHistory_memory({
-          ...messageObject_res,
+          messageObject,
+          room_type,
         })
       );
 

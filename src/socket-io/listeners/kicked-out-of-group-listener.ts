@@ -3,7 +3,6 @@ import { Socket } from "socket.io-client";
 import {
   addNewMessageToHistory_memory,
   MessageObject,
-  RoomType,
 } from "../../redux/message/messageSlice";
 import { getGroupMembersList_database } from "../../redux/user/asyncThunk/get-members-list";
 

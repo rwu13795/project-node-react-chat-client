@@ -5,9 +5,11 @@ import { Socket } from "socket.io-client";
 import { getNotifications } from "../../redux/message/asyncThunk/get-notifications";
 import { getUserAuth } from "../../redux/user/asyncThunk/get-user-auth";
 import {
+  clearAddFriendRequests,
   selectAddFriendRequests,
   selectUserId,
   selectUsername,
+  setAddFriendRequests,
 } from "../../redux/user/userSlice";
 
 interface Props {
@@ -25,7 +27,8 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
   function responseHandler(
     sender_id: string,
     sender_username: string,
-    accept: boolean
+    accept: boolean,
+    index: number
   ) {
     if (socket) {
       // update the friends_pair and notificaiton if request is accepted
@@ -55,6 +58,8 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
           socket.emit("online", sender_id);
         }
       }, 6000);
+    } else {
+      clearAddFriendRequests(index);
     }
   }
 
@@ -71,14 +76,24 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
               <div>Message: {req.message}</div>
               <button
                 onClick={() =>
-                  responseHandler(req.sender_id, req.sender_username, true)
+                  responseHandler(
+                    req.sender_id,
+                    req.sender_username,
+                    true,
+                    index
+                  )
                 }
               >
                 Accept
               </button>
               <button
                 onClick={() =>
-                  responseHandler(req.sender_id, req.sender_username, false)
+                  responseHandler(
+                    req.sender_id,
+                    req.sender_username,
+                    false,
+                    index
+                  )
                 }
               >
                 Reject

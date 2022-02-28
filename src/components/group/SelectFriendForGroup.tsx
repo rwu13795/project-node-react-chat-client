@@ -9,6 +9,7 @@ import {
   selectFriendsList,
   selectUserId,
   selectUsername,
+  setResult_groupInvitation,
 } from "../../redux/user/userSlice";
 
 interface Props {
@@ -46,7 +47,10 @@ function InviteFriendToGroup({
         group_name,
         inviter_name: currentUsername,
       });
-    console.log(`inviting friend ${friend_id} to group ${group_id}`);
+    handleClose();
+    setTimeout(() => {
+      dispatch(setResult_groupInvitation(""));
+    }, 10000);
   }
 
   return (

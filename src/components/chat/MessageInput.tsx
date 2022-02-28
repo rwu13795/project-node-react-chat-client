@@ -1,3 +1,4 @@
+import { Dispatch } from "@reduxjs/toolkit";
 import { ChangeEvent, FormEvent, memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
@@ -10,6 +11,8 @@ import {
   selectTargetChatRoom,
 } from "../../redux/message/messageSlice";
 import {
+  Friend,
+  Group,
   selectTargetFriend,
   selectTargetGroup,
   selectUserId,
@@ -49,28 +52,47 @@ function MessageInput({ socket }: Props): JSX.Element {
     };
 
     // (1) //
+
+    // check if the user was kicked out of the group or blocked by a friend
+    // if (targetChatRoom.type === chatType.group) {
+    //   if (targetGroup && targetGroup.user_left) return;
+    // } else {
+    //   if (
+    //     targetFriend &&
+    //     (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend)
+    //   ) {
+    //     messageObject.msg_body = `You ${
+    //       targetFriend.user_blocked_friend ? "blocked" : "were blocked by"
+    //     }
+    //             this friend, you cannot send any message to him/her!`;
+    //     dispatch(
+    //       addNewMessageToHistory_memory({
+    //         ...messageObject,
+    //         targetChatRoom_type: targetChatRoom.type,
+    //       })
+    //     );
+    //     return;
+    //   }
+    // }
+    const warning = inputWarningHandler(
+      targetGroup,
+      targetFriend,
+      targetChatRoom.type,
+      messageObject,
+      dispatch
+    );
+    if (warning) return;
+
     dispatch(
       addNewMessageToHistory_memory({
-        ...messageObject,
-        targetChatRoom_type: targetChatRoom.type,
+        messageObject,
+        room_type: targetChatRoom.type,
       })
     );
-    // check if the user was kicked out of the group or blocked by a friend
-    if (targetChatRoom.type === chatType.group) {
-      if (targetGroup && targetGroup.user_left) return;
-    } else {
-      if (
-        targetFriend &&
-        (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend)
-      )
-        return;
-    }
-
-    // if blocked_by_friend return
     if (socket) {
       socket.emit("messageToServer", {
-        ...messageObject,
-        targetChatRoom_type: targetChatRoom.type,
+        messageObject,
+        room_type: targetChatRoom.type,
       });
     }
   }
@@ -98,3 +120,36 @@ export default memo(MessageInput);
   room can listen to that message using the "messageToClients" event listener,
   that is where I add the new message in group chat
 */
+
+function inputWarningHandler(
+  targetGroup: Group,
+  targetFriend: Friend,
+  room_type: string,
+  messageObject: MessageObject,
+  dispatch: Dispatch
+): boolean {
+  if (room_type === chatType.group) {
+    if (targetGroup && targetGroup.user_left) return true;
+    else return false;
+  } else {
+    if (
+      targetFriend &&
+      (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend)
+    ) {
+      messageObject.msg_body = `You ${
+        targetFriend.user_blocked_friend ? "blocked" : "were blocked by"
+      } this friend, you cannot send any message to him/her!`;
+      messageObject.warning = true;
+      console.log("messageObject", messageObject);
+      dispatch(
+        addNewMessageToHistory_memory({
+          messageObject,
+          room_type,
+        })
+      );
+      return true;
+    } else {
+      return false;
+    }
+  }
+}

@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
@@ -49,6 +49,7 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
   const currentUserId = useSelector(selectUserId);
   const currentUsername = useSelector(selectUsername);
   const groupsToJoin = useSelector(selectGroupsToJoin);
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (!isLoggedIn) {
@@ -92,22 +93,30 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
     }
   }, [isLoggedIn, socket]);
 
+  useLayoutEffect(() => {
+    if (isLoggedIn === undefined) {
+      setLoading(true);
+    } else {
+      setLoading(false);
+    }
+  }, [isLoggedIn]);
+
   return (
     <main>
-      <div className={styles.main_grid}>
-        <div className={styles.left_grid}>
-          <br />
-          <RoomLists socket={socket} />
-        </div>
+      {loading ? (
+        <h1>Loading ......</h1>
+      ) : (
+        <div className={styles.main_grid}>
+          <div className={styles.left_grid}>
+            <RoomLists socket={socket} />
+          </div>
 
-        <div className={styles.right_grid}>
-          <SearchUser socket={socket} />
-          <hr />
-          <ChatRoomMenu socket={socket} />
-          <hr />
-          <ChatBoard socket={socket} />
+          <div className={styles.right_grid}>
+            <ChatRoomMenu socket={socket} />
+            <ChatBoard socket={socket} />
+          </div>
         </div>
-      </div>
+      )}
     </main>
   );
 }

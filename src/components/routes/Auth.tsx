@@ -8,10 +8,10 @@ import {
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { signIn } from "../redux/user/asyncThunk/sign-in";
-import { signUp } from "../redux/user/asyncThunk/sign-up";
+import { signIn } from "../../redux/user/asyncThunk/sign-in";
+import { signUp } from "../../redux/user/asyncThunk/sign-up";
 
-import { selectAuthErrors, selectIsLoggedIn } from "../redux/user/userSlice";
+import { selectAuthErrors, selectIsLoggedIn } from "../../redux/user/userSlice";
 
 interface InputValues {
   [inputNames: string]: string;

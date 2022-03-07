@@ -5,36 +5,37 @@ import { Socket } from "socket.io-client";
 import {
   chatType,
   setCurrentUserId_message,
-} from "../redux/message/messageSlice";
+} from "../../redux/message/messageSlice";
 import {
   selectGroupsToJoin,
   selectIsLoggedIn,
   selectUserId,
   selectUsername,
-} from "../redux/user/userSlice";
-import { connectSocket } from "../socket-io/socketConnection";
-import ChatBoard from "./chat/ChatBoard";
-import { message_listener } from "../socket-io/listeners/message-listener";
-import { getNotifications } from "../redux/message/asyncThunk/get-notifications";
+} from "../../redux/user/userSlice";
+import { getNotifications } from "../../redux/message/asyncThunk/get-notifications";
 
-import SearchUser from "./friend/SearchUser";
-import { addFriendRequest_listener } from "../socket-io/listeners/add-friend-request-listener";
-import { check_addFriendRequest_listener } from "../socket-io/listeners/check-add-friend-request-listener";
-import { addFriendResponse_listener } from "../socket-io/listeners/add-friend-response-listener";
+import ChatBoard from "./../chat/ChatBoard";
+import RoomLists from "./../room-lists/RoomLists";
+import ChatRoomMenu from "./../menu/ChatRoomMenu";
 
-import { online_listener } from "../socket-io/listeners/online-listener";
-import { onlineEcho_listener } from "../socket-io/listeners/online-echo-listener";
-import { offline_listener } from "../socket-io/listeners/offline-listener";
+import { connectSocket } from "../../socket-io/socketConnection";
+import {
+  addFriendRequest_listener,
+  addFriendResponse_listener,
+  blockFriend_listener,
+  check_addFriendRequest_listener,
+  check_groupInvitation_listener,
+  groupAdminNotification_listener,
+  groupInvitation_listener,
+  kickedOutOfGroup_listener,
+  message_listener,
+  offline_listener,
+  onlineEcho_listener,
+  online_listener,
+} from "../../socket-io/listeners/__index";
 
 // UI //
 import styles from "./__MainPage.module.css";
-import RoomLists from "./room-lists/RoomLists";
-import { check_groupInvitation_listener } from "../socket-io/listeners/check-group-invitation-listener";
-import { groupInvitation_listener } from "../socket-io/listeners/group-invitation-listener";
-import ChatRoomMenu from "./menu/ChatRoomMenu";
-import { groupAdminNotification_listener } from "../socket-io/listeners/group-admin-notification-listener";
-import { kickedOutOfGroup_listener } from "../socket-io/listeners/kicked-out-of-group-listener";
-import { blockFriend_listener } from "../socket-io/listeners/block-friend-listener";
 
 interface Props {
   socket: Socket | undefined;

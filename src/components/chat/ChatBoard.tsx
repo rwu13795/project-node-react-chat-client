@@ -30,7 +30,7 @@ import {
   selectUsername,
 } from "../../redux/user/userSlice";
 
-import browserClient from "../../utils/axios-client";
+import browserClient from "../../utils/helpers/axios-client";
 import InfiniteScroll from "react-infinite-scroll-component";
 import MessageInput from "./MessageInput";
 import ImageInput from "./ImageInput";
@@ -54,8 +54,6 @@ function ChatBoard({ socket }: Props): JSX.Element {
 
   const MSG_PER_PAGE = 10;
 
-  console.log("chatHistory.length", chatHistory.length);
-
   const fetchMoreData = useCallback(async () => {
     const { type, id, date_limit } = targetChatRoom;
     const room_id = `${type}_${id}`;
@@ -73,9 +71,9 @@ function ChatBoard({ socket }: Props): JSX.Element {
       try {
         const { data } = await client.get<MessageObject[]>(
           "http://localhost:5000/api" +
-            `/chat/chat-history?
-            id_1=${currentUserId}&id_2=${id}&page=${pageNum}&type=${type}&date_limit=${date_limit}`
+            `/chat/chat-history?id_1=${currentUserId}&id_2=${id}&page=${pageNum}&type=${type}&date_limit=${date_limit}`
         );
+
         dispatch(
           setInfiniteScrollStats({ hasMore: data.length >= MSG_PER_PAGE })
         );
@@ -157,7 +155,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
                   folder_id = targetChatRoom.id;
                 }
 
-                console.log("msg.warning", msg.warning);
+                // console.log("msg.warning", msg.warning);
 
                 return (
                   <div key={index}>

@@ -39,8 +39,8 @@ function ImageInput({ socket }: Props): JSX.Element {
       recipient_name: targetChatRoom.name,
       msg_body: "",
       msg_type: "image",
-      file_localUrl: URL.createObjectURL(imageFile!),
-      file_name: imageFile!.name,
+      file_localUrl: imageFile ? URL.createObjectURL(imageFile) : "",
+      file_name: imageFile ? imageFile.name : "",
       created_at: new Date().toString(),
     };
 
@@ -63,7 +63,7 @@ function ImageInput({ socket }: Props): JSX.Element {
     );
 
     if (socket) {
-      socket.emit("messageToServer", {
+      socket.emit("message-to-server", {
         messageObject: { ...messageObject, file_body: imageFile },
         room_type: targetChatRoom.type,
       });
@@ -88,7 +88,10 @@ function ImageInput({ socket }: Props): JSX.Element {
       // check the extension of the file, if not txt, docx, pdf, don't let user send
       // check the type of the file, if it is not of image, don't let user send
       console.log(newImage.name.split(".")[1]);
-      console.log(URL.createObjectURL(newImage));
+
+      // check the size
+      console.log("newImage size", newImage.size);
+
       setImageFile(newImage);
     }
   };

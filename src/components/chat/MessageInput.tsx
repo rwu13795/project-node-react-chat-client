@@ -90,7 +90,7 @@ function MessageInput({ socket }: Props): JSX.Element {
       })
     );
     if (socket) {
-      socket.emit("messageToServer", {
+      socket.emit("message-to-server", {
         messageObject,
         room_type: targetChatRoom.type,
       });

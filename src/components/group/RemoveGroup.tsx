@@ -18,7 +18,7 @@ import {
   selectUserId,
   selectUsername,
 } from "../../redux/user/userSlice";
-import axios_client from "../../utils/axios-client";
+import axios_client from "../../utils/helpers/axios-client";
 
 function RemoveGroup(): JSX.Element {
   const dispatch = useDispatch();

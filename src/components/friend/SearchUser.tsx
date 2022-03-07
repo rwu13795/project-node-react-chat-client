@@ -10,7 +10,7 @@ import {
 } from "../../redux/user/userSlice";
 import { serverUrl } from "../../redux/utils";
 
-import axios_client from "../../utils/axios-client";
+import axios_client from "../../utils/helpers/axios-client";
 
 interface Props {
   socket: Socket | undefined;

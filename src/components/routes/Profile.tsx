@@ -2,6 +2,7 @@ import { memo } from "react";
 import { useSelector } from "react-redux";
 
 import { selectCurrentUser } from "../../redux/user/userSlice";
+import AddAvatar from "../user/AddAvatar";
 
 function UserProfile(): JSX.Element {
   const currentUser = useSelector(selectCurrentUser);
@@ -13,6 +14,7 @@ function UserProfile(): JSX.Element {
       <div>User ID: {currentUser.user_id}</div>
       <div>User Email: {currentUser.email}</div>
       <div>Avatar: {currentUser.avatar_url}</div>
+      <AddAvatar />
     </main>
   );
 }

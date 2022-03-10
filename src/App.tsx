@@ -34,7 +34,7 @@ function App(): JSX.Element {
               path="/chat"
               element={<MainPage setSocket={setSocket} socket={socket} />}
             />
-            <Route path="profile" element={<UserProfile />} />
+            <Route path="profile" element={<UserProfile socket={socket} />} />
           </Routes>
         </div>
       </div>

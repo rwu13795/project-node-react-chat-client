@@ -32,6 +32,13 @@ function ImageInput({ socket }: Props): JSX.Element {
   function sendImageHandler(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
+    //////////////////////////
+
+    // check image type here
+    console.log(imageFile);
+
+    ////////////////////////
+
     const messageObject: MessageObject = {
       sender_id: currentUserId,
       sender_name: currentUsername,
@@ -41,6 +48,7 @@ function ImageInput({ socket }: Props): JSX.Element {
       msg_type: "image",
       file_localUrl: imageFile ? URL.createObjectURL(imageFile) : "",
       file_name: imageFile ? imageFile.name : "",
+      file_type: imageFile ? imageFile.type : "",
       created_at: new Date().toString(),
     };
 

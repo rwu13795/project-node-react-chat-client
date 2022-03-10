@@ -313,28 +313,42 @@ const userSlice = createSlice({
     setUserOnlineStatus(state, action: PayloadAction<string>) {
       state.currentUser.onlineStatus = action.payload;
     },
+    changeAvatar(state, action: PayloadAction<string>) {
+      state.currentUser.avatar_url = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
     builder
       /***************  GET AUTH  ***************/
       .addCase(getUserAuth.fulfilled, (state, action): void => {
-        // remember to add the state type as return type
-        state.currentUser = action.payload.currentUser;
-        state.addFriendRequests = action.payload.addFriendRequests;
-        state.groupInvitations = action.payload.groupInvitations;
+        if (!action.payload.currentUser.isLoggedIn) {
+          return;
+        }
+        const {
+          currentUser,
+          addFriendRequests,
+          groupInvitations,
+          groupsList,
+          friendsList,
+          require_initialize,
+        } = action.payload;
+
+        state.currentUser = currentUser;
+        state.addFriendRequests = addFriendRequests;
+        state.groupInvitations = groupInvitations;
         // map the groupsList into groupsList. It would be easier to put
         // the group_members in the respective group when user enters a group room
-        for (let group of action.payload.groupsList) {
+        for (let group of groupsList) {
           state.groupsList[group.group_id] = group;
           if (!group.user_left) {
             state.groupsToJoin.push(group.group_id);
           }
         }
 
-        for (let friend of action.payload.friendsList) {
+        for (let friend of friendsList) {
           state.friendsList[friend.friend_id] = friend;
-          if (action.payload.require_initialize) {
+          if (require_initialize) {
             state.friendsList[friend.friend_id].onlineStatus =
               onlineStatus_enum.offline;
             state.currentUser.onlineStatus = onlineStatus_enum.available;
@@ -506,6 +520,7 @@ export const {
   removeGroup,
   setBlockFriend,
   setUserOnlineStatus,
+  changeAvatar,
 
   //   setPageLoading_user,
 } = userSlice.actions;

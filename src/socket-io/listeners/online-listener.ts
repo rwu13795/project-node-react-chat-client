@@ -14,7 +14,7 @@ export function online_listener(socket: Socket, dispatch: Dispatch) {
       setFriendsOnlineStatus({
         friend_id,
         // since the friend just logged in, the status should be set as "available" as default
-        status: onlineStatus_enum.available,
+        status: onlineStatus_enum.online,
       })
     );
 

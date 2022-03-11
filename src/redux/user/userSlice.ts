@@ -14,7 +14,7 @@ export enum UserLoadingStatus {
   createNewGroup_failed = "createNewGroup_failed",
 }
 export enum onlineStatus_enum {
-  available = "Available",
+  online = "Online",
   away = "Away",
   busy = "Busy",
   offline = "Offline",
@@ -99,7 +99,7 @@ const initialState: UserState = {
     email: "",
     user_id: "",
     isLoggedIn: false,
-    onlineStatus: onlineStatus_enum.available,
+    onlineStatus: onlineStatus_enum.online,
   },
   friendsList: {},
   addFriendRequests: [],
@@ -351,7 +351,7 @@ const userSlice = createSlice({
           if (require_initialize) {
             state.friendsList[friend.friend_id].onlineStatus =
               onlineStatus_enum.offline;
-            state.currentUser.onlineStatus = onlineStatus_enum.available;
+            state.currentUser.onlineStatus = onlineStatus_enum.online;
           }
         }
       })
@@ -359,7 +359,7 @@ const userSlice = createSlice({
       /***************  SIGN IN  ***************/
       .addCase(signIn.fulfilled, (state, action): void => {
         state.currentUser = action.payload.currentUser;
-        state.currentUser.onlineStatus = onlineStatus_enum.available;
+        state.currentUser.onlineStatus = onlineStatus_enum.online;
         state.addFriendRequests = action.payload.addFriendRequests;
         state.groupInvitations = action.payload.groupInvitations;
 

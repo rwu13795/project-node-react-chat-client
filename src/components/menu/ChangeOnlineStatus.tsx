@@ -1,4 +1,4 @@
-import { Popover } from "@mui/material";
+import { Button, Popover } from "@mui/material";
 import { ChangeEvent, memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
@@ -9,11 +9,20 @@ import {
   setUserOnlineStatus,
 } from "../../redux/user/userSlice";
 
+// UI //
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+
 interface Props {
   socket: Socket | undefined;
+  onlineStatus: string;
+  username: string;
 }
 
-function ChangeOnlineStatus({ socket }: Props): JSX.Element {
+function ChangeOnlineStatus({
+  socket,
+  onlineStatus,
+  username,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -34,18 +43,22 @@ function ChangeOnlineStatus({ socket }: Props): JSX.Element {
   return (
     <main>
       <div>
-        <button onClick={openListHandler}>Change Status</button>
+        <Button onClick={openListHandler} style={{ textTransform: "none" }}>
+          {username}
+          <KeyboardArrowDownIcon />
+        </Button>
+        <div>{onlineStatus}</div>
         <Popover
           open={open}
           anchorEl={anchorEl}
           onClose={handleClose}
           anchorOrigin={{
-            vertical: "top",
+            vertical: "bottom",
             horizontal: "right",
           }}
           transformOrigin={{
             vertical: "top",
-            horizontal: "left",
+            horizontal: "center",
           }}
         >
           {Object.values(onlineStatus_enum).map((status) => {
@@ -53,7 +66,9 @@ function ChangeOnlineStatus({ socket }: Props): JSX.Element {
               <div key={status}>
                 <div>
                   <button onClick={() => selectHandler(status)}>
-                    {status}
+                    {status === onlineStatus_enum.offline
+                      ? "Invisible"
+                      : status}
                   </button>
                 </div>
               </div>

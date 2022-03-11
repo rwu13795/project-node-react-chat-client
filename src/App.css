@@ -3,10 +3,10 @@
 }
 
 .navbar {
-  height: 100px;
+  height: 60px;
   width: 100vw;
   padding: 20px;
-  background-color: #61dafb8f;
+  background: linear-gradient(270deg, transparent, #00ccff8f);
 }
 .body {
   max-height: calc(100vh - 160px);

@@ -1,7 +1,4 @@
-:root {
-  --button-width: 34px;
-  --button-height: 34px;
-}
+@import url("https://fonts.googleapis.com/css2?family=Quantico&display=swap");
 
 body {
   margin: 0;
@@ -10,6 +7,10 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+main {
+  font-family: "Quantico", sans-serif;
 }
 
 code {

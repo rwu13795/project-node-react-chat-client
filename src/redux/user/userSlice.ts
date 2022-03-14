@@ -6,6 +6,7 @@ import { signIn } from "./asyncThunk/sign-in";
 import { signUp } from "./asyncThunk/sign-up";
 import { getGroupMembersList_database } from "./asyncThunk/get-members-list";
 import { createNewGroup } from "./asyncThunk/create-new-group";
+import { signOut } from "./asyncThunk/sign-out";
 
 export enum UserLoadingStatus {
   idle = "idle",
@@ -28,8 +29,8 @@ export interface CurrentUser {
   isLoggedIn?: boolean;
   onlineStatus: string;
 }
-export interface AuthErrors {
-  [inputName: string]: string;
+export interface RequestErrors {
+  [inputField: string]: string;
 }
 export interface AddFriendRequest {
   sender_id: string;
@@ -90,7 +91,7 @@ export interface UserState {
   result_groupInvitation: string;
   // layout
   loadingStatus: string;
-  authErrors: AuthErrors;
+  requestErrors: RequestErrors;
 }
 
 const initialState: UserState = {
@@ -99,7 +100,7 @@ const initialState: UserState = {
     email: "",
     user_id: "",
     isLoggedIn: false,
-    onlineStatus: onlineStatus_enum.online,
+    onlineStatus: onlineStatus_enum.offline,
   },
   friendsList: {},
   addFriendRequests: [],
@@ -111,7 +112,7 @@ const initialState: UserState = {
   newGroupToJoin: "",
   createGroupError: "",
   loadingStatus: "idle",
-  authErrors: {},
+  requestErrors: {},
 };
 
 //////////////
@@ -131,7 +132,7 @@ const initialState: UserState = {
 //   { state: RootState }
 // >("user/updateUserInfo", async ({ inputValues }, thunkAPI) => {
 //   // compare the values before sending them to server, if nothing changes
-//   // return an "no_change" authErrors to the "fullfilled"
+//   // return an "no_change" requestErrors to the "fullfilled"
 //   let userInfo = thunkAPI.getState().user.currentUser.userInfo;
 //   if (userInfo !== undefined) {
 //     let noChange = true;
@@ -142,7 +143,7 @@ const initialState: UserState = {
 //       }
 //     }
 //     if (noChange) {
-//       return { authErrors: { no_change: "no_change" } };
+//       return { requestErrors: { no_change: "no_change" } };
 //     }
 //   }
 
@@ -221,11 +222,11 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    //   clearAuthErrors(state, action: PayloadAction<string>) {
+    //   clearrequestErrors(state, action: PayloadAction<string>) {
     //     if (action.payload === "all") {
-    //       state.authErrors = {};
+    //       state.requestErrors = {};
     //     } else {
-    //       state.authErrors[action.payload] = "";
+    //       state.requestErrors[action.payload] = "";
     //     }
     //   },
 
@@ -316,6 +317,9 @@ const userSlice = createSlice({
     changeAvatar(state, action: PayloadAction<string>) {
       state.currentUser.avatar_url = action.payload;
     },
+    clearRequestError(state, action: PayloadAction<string>) {
+      state.requestErrors[action.payload] = "";
+    },
   },
 
   extraReducers: (builder) => {
@@ -346,12 +350,14 @@ const userSlice = createSlice({
           }
         }
 
+        if (require_initialize) {
+          state.currentUser.onlineStatus = onlineStatus_enum.online;
+        }
         for (let friend of friendsList) {
           state.friendsList[friend.friend_id] = friend;
           if (require_initialize) {
             state.friendsList[friend.friend_id].onlineStatus =
               onlineStatus_enum.offline;
-            state.currentUser.onlineStatus = onlineStatus_enum.online;
           }
         }
       })
@@ -382,7 +388,7 @@ const userSlice = createSlice({
       })
       .addCase(signIn.rejected, (state, action: PayloadAction<any>): void => {
         for (let err of action.payload.errors) {
-          state.authErrors[err.field] = err.message;
+          state.requestErrors[err.field] = err.message;
         }
         state.loadingStatus = "failed";
       })
@@ -392,6 +398,7 @@ const userSlice = createSlice({
         signUp.fulfilled,
         (state, action: PayloadAction<CurrentUser>): void => {
           state.currentUser = action.payload;
+          state.currentUser.onlineStatus = onlineStatus_enum.online;
           state.loadingStatus = "succeeded";
         }
       )
@@ -400,9 +407,15 @@ const userSlice = createSlice({
       })
       .addCase(signUp.rejected, (state, action: PayloadAction<any>): void => {
         for (let err of action.payload.errors) {
-          state.authErrors[err.field] = err.message;
+          state.requestErrors[err.field] = err.message;
         }
         state.loadingStatus = "failed";
+      })
+
+      /***************  SIGN OUT  ***************/
+      .addCase(signOut.fulfilled, (state, action): void => {
+        state.currentUser = { ...initialState.currentUser };
+        state.loadingStatus = "idle";
       })
 
       /***************  CREATE A NEW GROUP  ***************/
@@ -458,7 +471,7 @@ const userSlice = createSlice({
     //     resetPassword.rejected,
     //     (state, action: PayloadAction<any>): void => {
     //       for (let err of action.payload.errors) {
-    //         state.authErrors[err.field] = err.message;
+    //         state.requestErrors[err.field] = err.message;
     //       }
     //       state.loadingStatus = loadingStatus.failed;
     //     }
@@ -477,7 +490,7 @@ const userSlice = createSlice({
     //     (state, action: PayloadAction<any>): void => {
     //       state.loadingStatus = loadingStatus.failed;
     //       for (let err of action.payload.errors) {
-    //         state.authErrors[err.field] = err.message;
+    //         state.requestErrors[err.field] = err.message;
     //       }
     //     }
     //   )
@@ -491,7 +504,7 @@ const userSlice = createSlice({
     //     forgotPassword_Reset.rejected,
     //     (state, action: PayloadAction<any>): void => {
     //       for (let err of action.payload.errors) {
-    //         state.authErrors[err.field] = err.message;
+    //         state.requestErrors[err.field] = err.message;
     //         if (err.field === "expired-link") {
     //           state.loadingStatus = loadingStatus.time_out;
     //         }
@@ -505,7 +518,6 @@ const userSlice = createSlice({
 });
 
 export const {
-  //   clearAuthErrors,
   setLoadingStatus_user,
   setFriendsOnlineStatus,
   setAddFriendRequests,
@@ -521,8 +533,7 @@ export const {
   setBlockFriend,
   setUserOnlineStatus,
   changeAvatar,
-
-  //   setPageLoading_user,
+  clearRequestError,
 } = userSlice.actions;
 
 export default userSlice.reducer;
@@ -561,9 +572,9 @@ export const selectAddFriendRequests = createSelector(
   [selectUser],
   (userState) => userState.addFriendRequests
 );
-export const selectAuthErrors = createSelector(
+export const selectRequestErrors = createSelector(
   [selectUser],
-  (userState) => userState.authErrors
+  (userState) => userState.requestErrors
 );
 export const selectResult_addFriendRequest = createSelector(
   [selectUser],

@@ -1,0 +1,49 @@
+.main {
+  flex-flow: row nowrap;
+  display: flex;
+  min-width: 60px;
+  height: 60px;
+}
+
+.avatar_wrapper {
+  min-width: 100%;
+  height: 100%;
+}
+
+.avatar {
+  border: solid 4px #008badc2;
+  min-width: 90%;
+  height: 90%;
+  cursor: pointer;
+  transition: 0.5s;
+}
+.avatar:hover {
+  transition: 0.5s;
+  border: solid 4px #002a798f;
+  box-shadow: 0 0 10px var(--main-color-1), 0 0 20px var(--main-color-1);
+  transform: scale(1.1);
+  z-index: 3;
+}
+
+.popover_box {
+  border: solid var(--navbar-color) 3px;
+  border-radius: 4px;
+  background: linear-gradient(to top, var(--navbar-color) 0%, white 50%);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: space-around;
+  align-items: center;
+  min-width: 180px;
+  min-height: 100px;
+}
+.button {
+  text-transform: none;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  gap: 14px;
+  font-family: "Quantico", sans-serif;
+  color: var(--main-color-3);
+  font-size: 16px;
+  width: 160px;
+}

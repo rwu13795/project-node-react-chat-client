@@ -5,16 +5,16 @@ import {
   selectResult_groupInvitation,
   selectTargetFriend,
   setBlockFriend,
-} from "../../redux/user/userSlice";
-import BlockFriend from "../friend/BlockFriend";
-import DeleteFriend from "../friend/DeleteFriend";
-import UnblockFriend from "../friend/UnblockFriend";
+} from "../../../redux/user/userSlice";
+import BlockFriend from "../../friend/BlockFriend";
+import DeleteFriend from "../../friend/DeleteFriend";
+import UnblockFriend from "../../friend/UnblockFriend";
 
 // UI //
-import styles from "./__ChatRoomMenu.module.css";
+import styles from "./ChatRoomMenu.module.css";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import { selectTargetChatRoom } from "../../redux/message/messageSlice";
-import SelectGroupForFriend from "../group/SelectGroupForFriend";
+import { selectTargetChatRoom } from "../../../redux/message/messageSlice";
+import SelectGroupForFriend from "../../group/SelectGroupForFriend";
 
 interface Props {
   friend_id: string;

@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // (1)
 
-import "./App.css";
+import "./styles/App.css";
 
-import MainNavbar from "./components/menu/MainNavbar";
+import MainNavbar from "./components/menu/top/MainNavbar";
 import Auth from "./components/routes/Auth";
 import MainPage from "./components/routes/MainPage";
 import UserProfile from "./components/routes/Profile";
 import { useDispatch } from "react-redux";
 import { getUserAuth } from "./redux/user/asyncThunk/get-user-auth";
 import { Socket } from "socket.io-client";
+import Page404 from "./components/routes/Page404";
 
 function App(): JSX.Element {
   const dispatch = useDispatch();
@@ -35,6 +36,8 @@ function App(): JSX.Element {
               element={<MainPage setSocket={setSocket} socket={socket} />}
             />
             <Route path="profile" element={<UserProfile socket={socket} />} />
+
+            <Route path="/*" element={<Page404 />} />
           </Routes>
         </div>
       </div>

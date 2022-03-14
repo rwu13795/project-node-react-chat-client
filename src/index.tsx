@@ -1,14 +1,16 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import "./styles/index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
 import createCache from "@emotion/cache";
 import { CacheProvider } from "@emotion/react";
+import { ThemeProvider } from "@mui/material/styles";
 
 import { Provider } from "react-redux";
 import store from "./redux";
+import { theme } from "./styles/mui-theme";
 
 // I have to use the <CacheProvider> instead of the <StylesProvider injectFirst>>
 // when using Typescript, in order to load the MUI default styles before the CSS modules
@@ -21,7 +23,9 @@ ReactDOM.render(
   <React.StrictMode>
     <CacheProvider value={muiCache}>
       <Provider store={store}>
-        <App />
+        <ThemeProvider theme={theme}>
+          <App />
+        </ThemeProvider>
       </Provider>
     </CacheProvider>
   </React.StrictMode>,

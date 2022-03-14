@@ -16,7 +16,7 @@ import { getNotifications } from "../../redux/message/asyncThunk/get-notificatio
 
 import ChatBoard from "./../chat/ChatBoard";
 import RoomLists from "./../room-lists/RoomLists";
-import ChatRoomMenu from "./../menu/ChatRoomMenu";
+import ChatRoomMenu from "./../menu/right/ChatRoomMenu";
 
 import { connectSocket } from "../../socket-io/socketConnection";
 import {

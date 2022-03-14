@@ -1,0 +1,45 @@
+.button_wrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+.button {
+  text-transform: none;
+  font-family: "Quantico", sans-serif;
+  color: var(--main-color-3);
+  font-size: 18px;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+.button:hover {
+  box-shadow: 0 0 4px var(--main-color-3);
+}
+
+.popover_box {
+  border: solid var(--navbar-color) 3px;
+  border-radius: 4px;
+  background: linear-gradient(to top, var(--navbar-color) 0%, white 66%);
+  min-width: 134px;
+}
+
+.status_selection_wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 0 6px;
+}
+.status {
+  margin-left: 10px;
+  color: var(--main-color-1);
+  font-size: 14px;
+}
+
+.status_button {
+  text-transform: none;
+  font-family: "Quantico", sans-serif;
+  color: var(--main-color-3);
+  font-size: 14px;
+  min-width: 100px;
+}

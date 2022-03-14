@@ -8,4 +8,6 @@ export enum inputNames {
   confirm_new_password = "confirm_new_password",
   first_name = "first_name",
   last_name = "last_name",
+  username = "username",
+  message = "message",
 }

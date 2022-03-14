@@ -19,12 +19,7 @@ export const signUp = createAsyncThunk<
   try {
     const response = await client.post<CurrentUser>(
       serverUrl + "/auth/sign-up",
-      {
-        req_email: signUpBody.email,
-        req_username: signUpBody.username,
-        req_password: signUpBody.password,
-        req_confirm_password: signUpBody.confirm_password,
-      }
+      signUpBody
     );
     return response.data;
   } catch (err: any) {

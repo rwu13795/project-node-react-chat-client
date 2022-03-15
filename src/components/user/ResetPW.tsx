@@ -2,10 +2,7 @@ import { FormEvent, memo, MouseEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
-// UI //
-import styles from "./ResetPW.module.css";
-import styles_2 from "./SignIn.module.css";
-import background_2 from "../../images/background_2.jpg";
+import InputField, { InputErrors, InputValues } from "../input/InputField";
 import {
   clearRequestError,
   selectLoadingStatus_user,
@@ -15,26 +12,28 @@ import {
 import { loadingStatusEnum } from "../../utils/enums/loading-status";
 import RedirectToSignIn from "../menu/RedirectToSignIn";
 import { inputNames } from "../../utils/enums/input-names";
-import { InputErrors, InputValues } from "../input/InputField";
 import { LoadingButton } from "@mui/lab";
 import { onSubmitCheck } from "../../utils/helpers/input-check/__index";
 
+// UI //
+import styles from "./ResetPW.module.css";
+import styles_2 from "./SignIn.module.css";
+import { forgotPasswordReset } from "../../redux/user/asyncThunk/forgot-pw-reset";
+
 interface Props {
   expirationInMS: number;
+  token: string | null;
+  user_id: string | null;
 }
 
-function ResetPassword({ expirationInMS }: Props): JSX.Element {
+function ResetPassword({ expirationInMS, token, user_id }: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const requestErrors = useSelector(selectRequestErrors);
   const loading = useSelector(selectLoadingStatus_user);
 
-  const [second, setSecond] = useState<number>(
-    Math.floor((expirationInMS / 1000) % 60) - 1
-  );
-  const [minute, setMinute] = useState<number>(
-    Math.floor(expirationInMS / 1000 / 60)
-  );
+  const [second, setSecond] = useState<number>(0);
+  const [minute, setMinute] = useState<number>(0);
   const [isExpired, setIsExpired] = useState<boolean>(false);
 
   const [inputValues, setInputValues] = useState<InputValues>({
@@ -47,11 +46,12 @@ function ResetPassword({ expirationInMS }: Props): JSX.Element {
   });
 
   useEffect(() => {
+    setSecond(Math.floor((expirationInMS / 1000) % 60));
+    setMinute(Math.floor(expirationInMS / 1000 / 60));
     return () => {
       dispatch(clearRequestError("all"));
-      dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
     };
-  }, []);
+  }, [expirationInMS]);
 
   useEffect(() => {
     const countDown = () => {
@@ -74,7 +74,7 @@ function ResetPassword({ expirationInMS }: Props): JSX.Element {
     return () => {
       clearInterval(timerId);
     };
-  }, [second, minute, expirationInMS]);
+  }, [second, minute]);
 
   function onSubmitHandler(
     e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
@@ -83,23 +83,42 @@ function ResetPassword({ expirationInMS }: Props): JSX.Element {
 
     const hasError = onSubmitCheck(inputValues, setInputErrors);
     if (hasError) return;
+
+    if (!token || !user_id) return;
+    dispatch(
+      forgotPasswordReset({
+        token,
+        user_id,
+        new_password: inputValues[inputNames.new_password],
+        confirm_new_password: inputValues[inputNames.confirm_new_password],
+      })
+    );
   }
 
-  // function backToSignInHandler() {
-  //   navigate("/");
-  // }
-
   return (
-    <main className={styles.main} id="main_body">
-      <form onSubmit={onSubmitHandler}>
+    <main className={styles.main}>
+      <form onSubmit={onSubmitHandler} id="input_fields">
+        {Object.entries(inputValues).map(([name, value]) => {
+          return (
+            <InputField
+              key={name}
+              inputName={name}
+              inputValue={value}
+              inputError={inputErrors[name]}
+              requestError={requestErrors[name]}
+              setInputValues={setInputValues}
+              setInputErrors={setInputErrors}
+              isDisabled={loading === loadingStatusEnum.succeeded || isExpired}
+            />
+          );
+        })}
+
         <LoadingButton
           type="submit"
           variant="contained"
           color="secondary"
           onClick={onSubmitHandler}
-          // disabled={
-          //   loading === loadingStatus.succeeded || isExpired
-          // }
+          disabled={loading === loadingStatusEnum.succeeded || isExpired}
           sx={{ mb: "30px", width: "min(200px, 50vw)" }}
         >
           SUBMIT
@@ -111,7 +130,7 @@ function ResetPassword({ expirationInMS }: Props): JSX.Element {
           <RedirectToSignIn />
         ) : (
           <div className={styles.expired_link}>
-            {isExpired ? (
+            {isExpired || loading === loadingStatusEnum.time_out ? (
               <>
                 Session time out, please make a{" "}
                 <Link to={"/auth/forgot-password"}>NEW REQUEST</Link> again.

@@ -1,3 +1,10 @@
+.main {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
 .expired_link {
   font-size: 26px;
 }

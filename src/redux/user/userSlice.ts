@@ -5,6 +5,7 @@ import { loadingStatusEnum } from "../../utils/enums/loading-status";
 import {
   createNewGroup,
   forgotPasswordRequest,
+  forgotPasswordReset,
   getGroupMembersList_database,
   getUserAuth,
   signIn,
@@ -180,7 +181,7 @@ const initialState: UserState = {
 // FORGOT PASSWORD //
 /////////////////////
 
-// const forgotPassword_Reset = createAsyncThunk<
+// const forgotPasswordReset = createAsyncThunk<
 //   void,
 //   {
 //     new_password: string;
@@ -189,7 +190,7 @@ const initialState: UserState = {
 //     userId: string;
 //   },
 //   { state: RootState }
-// >("user/forgotPassword_Reset", async (body, thunkAPI) => {
+// >("user/forgotPasswordReset", async (body, thunkAPI) => {
 //   try {
 //     await client.post(serverUrl + "/auth/forgot-password-reset", {
 //       ...body,
@@ -304,6 +305,7 @@ const userSlice = createSlice({
     clearRequestError(state, action: PayloadAction<string>) {
       if (action.payload === "all") {
         state.requestErrors = {};
+        return;
       }
       state.requestErrors[action.payload] = "";
     },
@@ -452,46 +454,46 @@ const userSlice = createSlice({
             state.requestErrors[err.field] = err.message;
           }
         }
+      )
+
+      /***************  RESET PASSWORD  ***************/
+      .addCase(forgotPasswordReset.fulfilled, (state): void => {
+        state.loadingStatus = loadingStatusEnum.succeeded;
+      })
+      .addCase(forgotPasswordReset.pending, (state): void => {
+        state.loadingStatus = loadingStatusEnum.loading;
+      })
+      .addCase(
+        forgotPasswordReset.rejected,
+        (state, action: PayloadAction<any>): void => {
+          for (let err of action.payload.errors) {
+            state.requestErrors[err.field] = err.message;
+            if (err.field === "expired_link") {
+              state.loadingStatus = loadingStatusEnum.time_out;
+            }
+          }
+          if (state.loadingStatus !== loadingStatusEnum.time_out) {
+            state.loadingStatus = loadingStatusEnum.failed;
+          }
+        }
       );
 
-    ////////////////////
-    // RESET PASSWORD //
-    ////////////////////
-    //   .addCase(resetPassword.fulfilled, (state, action): void => {
-    //     state.loadingStatus = "reset_password_succeeded";
-    //   })
-    //   .addCase(resetPassword.pending, (state, action): void => {
-    //     state.loadingStatus = loadingStatusEnum.loading;
-    //   })
-    //   .addCase(
-    //     resetPassword.rejected,
-    //     (state, action: PayloadAction<any>): void => {
-    //       for (let err of action.payload.errors) {
-    //         state.requestErrors[err.field] = err.message;
-    //       }
-    //       state.loadingStatus = loadingStatusEnum.failed;
-    //     }
-    //   )
-    // .addCase(forgotPassword_Reset.fulfilled, (state): void => {
-    //   state.loadingStatus = loadingStatusEnum.succeeded;
+    /***************  CHANGE PASSWORD  ***************/
+    // .addCase(resetPassword.fulfilled, (state, action): void => {
+    //   state.loadingStatus = "reset_password_succeeded";
     // })
-    // .addCase(forgotPassword_Reset.pending, (state): void => {
+    // .addCase(resetPassword.pending, (state, action): void => {
     //   state.loadingStatus = loadingStatusEnum.loading;
     // })
     // .addCase(
-    //   forgotPassword_Reset.rejected,
+    //   resetPassword.rejected,
     //   (state, action: PayloadAction<any>): void => {
     //     for (let err of action.payload.errors) {
     //       state.requestErrors[err.field] = err.message;
-    //       if (err.field === "expired-link") {
-    //         state.loadingStatus = loadingStatusEnum.time_out;
-    //       }
     //     }
-    //     if (state.loadingStatus !== loadingStatusEnum.time_out) {
-    //       state.loadingStatus = loadingStatusEnum.failed;
-    //     }
+    //     state.loadingStatus = loadingStatusEnum.failed;
     //   }
-    // );
+    // )
   },
 });
 

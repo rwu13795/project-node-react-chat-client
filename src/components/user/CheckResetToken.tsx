@@ -29,7 +29,11 @@ function CheckResetToken(): JSX.Element {
           <Link to="/auth/forgot-password">NEW REQUEST</Link> again.
         </div>
       ) : (
-        <ResetPW expirationInMS={expirationInMS} />
+        <ResetPW
+          expirationInMS={expirationInMS}
+          token={searchParams.get("token")}
+          user_id={searchParams.get("user_id")}
+        />
       )}
       <img src={background_3} alt="bg" className={styles_2.img_wrapper} />
     </main>

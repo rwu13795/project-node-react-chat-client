@@ -1,13 +1,4 @@
-import {
-  ChangeEvent,
-  memo,
-  useState,
-  FormEvent,
-  MouseEvent,
-  useRef,
-  useEffect,
-  useCallback,
-} from "react";
+import { memo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
@@ -15,26 +6,22 @@ import {
   MessageObject,
   selectTargetChatRoom,
   selectTargetChatRoom_history,
-  addNewMessageToHistory_memory,
   loadMoreOldChatHistory_database,
   chatType,
   selectInfiniteScrollStats,
   setInfiniteScrollStats,
 } from "../../redux/message/messageSlice";
 import {
-  Friend,
-  Group,
   selectTargetFriend,
   selectTargetGroup,
   selectUserId,
   selectUsername,
 } from "../../redux/user/userSlice";
 
-import browserClient from "../../utils/helpers/axios-client";
 import InfiniteScroll from "react-infinite-scroll-component";
 import MessageInput from "./MessageInput";
 import ImageInput from "./ImageInput";
-/////////////
+import { client } from "../../redux/utils";
 
 interface Props {
   socket: Socket | undefined;
@@ -42,7 +29,6 @@ interface Props {
 
 function ChatBoard({ socket }: Props): JSX.Element {
   const dispatch = useDispatch();
-  const client = browserClient();
 
   const chatHistory = useSelector(selectTargetChatRoom_history);
   const currentUserId = useSelector(selectUserId);

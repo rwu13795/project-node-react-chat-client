@@ -7,19 +7,17 @@ import {
   selectLoadingStatus_user,
   selectRequestErrors,
   setLoadingStatus_user,
-} from "../../redux/user/userSlice";
-import { inputNames } from "../../utils/enums/input-names";
-import InputField, { InputValues, InputErrors } from "../input/InputField";
+} from "../../../redux/user/userSlice";
+import InputField, { InputValues, InputErrors } from "../../input/InputField";
+import { forgotPasswordRequest } from "../../../redux/user/asyncThunk";
+import { inputNames, loadingStatusEnum, onSubmitCheck } from "../../../utils";
 
 // UI //
 import styles from "./ForgotPW.module.css";
 import styles_2 from "./SignIn.module.css";
-import background_2 from "../../images/background_2.jpg";
+import background_2 from "../../../images/background_2.jpg";
 import { Button } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
-import { onSubmitCheck } from "../../utils/helpers/input-check/on-submit-check";
-import { forgotPasswordRequest } from "../../redux/user/asyncThunk/__index";
-import { loadingStatusEnum } from "../../utils/enums/loading-status";
 
 function ForgotPassword(): JSX.Element {
   const dispatch = useDispatch();
@@ -117,7 +115,7 @@ function ForgotPassword(): JSX.Element {
       {succeeded && (
         <div className={styles.reset_text}>
           A link for resetting the password has been sent to the email you
-          provided
+          provided.
         </div>
       )}
 

@@ -10,6 +10,7 @@ import { selectFriendsList } from "../../redux/user/userSlice";
 import SearchUser from "../friend/SearchUser";
 
 // UI //
+import styles from "./RoomLists.module.css";
 import AddFriendRequest from "../friend/AddFriendRequest";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
@@ -23,7 +24,6 @@ import {
   Modal,
 } from "@mui/material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import styles from "./__RoomLists.module.css";
 
 interface Props {
   socket: Socket | undefined;

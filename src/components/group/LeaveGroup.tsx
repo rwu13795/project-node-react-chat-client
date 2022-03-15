@@ -1,18 +1,13 @@
-import { Popover } from "@mui/material";
 import { ChangeEvent, memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
-import {
-  addNewMessageToHistory_memory,
-  chatType,
-  selectTargetChatRoom,
-} from "../../redux/message/messageSlice";
-import { createNewGroup } from "../../redux/user/asyncThunk/create-new-group";
 
 import {
+  addNewMessageToHistory_memory,
+  selectTargetChatRoom,
+} from "../../redux/message/messageSlice";
+import {
   leaveGroup,
-  selectCreateGroupError,
-  selectFriendsList,
   selectUserId,
   selectUsername,
 } from "../../redux/user/userSlice";

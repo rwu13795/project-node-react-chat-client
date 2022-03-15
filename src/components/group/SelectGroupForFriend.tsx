@@ -1,8 +1,6 @@
-import { Popover, Tooltip } from "@mui/material";
-import { ChangeEvent, memo, useState } from "react";
+import { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
-import { createNewGroup } from "../../redux/user/asyncThunk/create-new-group";
 
 import {
   selectGroupsList,
@@ -11,7 +9,8 @@ import {
 } from "../../redux/user/userSlice";
 
 // UI //
-import styles from "./__SelectGroupForFriend.module.css";
+import styles from "./SelectGroupForFriend.module.css";
+import { Popover, Tooltip } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 interface Props {

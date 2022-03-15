@@ -1,9 +1,11 @@
 import { useState, useEffect, memo } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { setLoadingStatus_user } from "../../redux/user/userSlice";
-import { loadingStatusEnum } from "../../utils/enums/loading-status";
 
+import { setLoadingStatus_user } from "../../redux/user/userSlice";
+import { loadingStatusEnum } from "../../utils";
+
+// UI //
 import styles from "./RedirectToSignIn.module.css";
 
 function RedirectToSignIn(): JSX.Element {

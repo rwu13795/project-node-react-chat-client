@@ -1,25 +1,20 @@
 import { useEffect, memo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
-import {
-  selectRequestErrors,
-  selectIsLoggedIn,
-} from "../../redux/user/userSlice";
-import SignIn from "../user/SignIn";
-import SignUp from "../user/SignUp";
+import { selectIsLoggedIn } from "../../../redux/user/userSlice";
+import SignIn from "./SignIn";
+import SignUp from "./SignUp";
 
 // UI //
 import styles from "./Auth.module.css";
-import background from "../../images/background.jpg";
+import background from "../../../images/background.jpg";
 import { Button } from "@mui/material";
 
 function Auth(): JSX.Element {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const isLoggedIn = useSelector(selectIsLoggedIn);
-  const requestErrors = useSelector(selectRequestErrors);
 
   const [showSignIn, setShowSignIn] = useState<boolean>(true);
 

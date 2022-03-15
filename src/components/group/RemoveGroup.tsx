@@ -1,15 +1,10 @@
-import { Popover } from "@mui/material";
 import { ChangeEvent, memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Socket } from "socket.io-client";
+
 import {
-  addNewMessageToHistory_memory,
-  chatType,
   selectTargetChatRoom,
   setTargetChatRoom,
 } from "../../redux/message/messageSlice";
-import { createNewGroup } from "../../redux/user/asyncThunk/create-new-group";
-
 import {
   removeGroup,
   selectCreateGroupError,
@@ -18,11 +13,10 @@ import {
   selectUserId,
   selectUsername,
 } from "../../redux/user/userSlice";
-import axios_client from "../../utils/helpers/axios-client";
+import { client } from "../../redux/utils";
 
 function RemoveGroup(): JSX.Element {
   const dispatch = useDispatch();
-  const client = axios_client();
 
   const currentUserId = useSelector(selectUserId);
   const targetChatRoom = useSelector(selectTargetChatRoom);

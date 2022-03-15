@@ -8,7 +8,7 @@ function toBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
   });
 }
 
-export default async function cropImage(
+export async function cropImage(
   image: HTMLImageElement,
   crop: PixelCrop | undefined,
   scale = 1,

@@ -7,11 +7,11 @@ import {
   onlineStatus_enum,
   setUserOnlineStatus,
 } from "../../../redux/user/userSlice";
+import StatusDot from "./StatusDot";
 
 // UI //
 import styles from "./ChangeOnlineStatus.module.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import StatusDot from "./StatusDot";
 
 interface Props {
   socket: Socket | undefined;

@@ -1,22 +1,24 @@
-import { Button } from "@mui/material";
 import { FormEvent, MouseEvent, memo, useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { signIn } from "../../redux/user/asyncThunk/sign-in";
+import { Link } from "react-router-dom";
+
+import { signIn } from "../../../redux/user/asyncThunk";
 import {
   clearRequestError,
   selectLoadingStatus_user,
   selectRequestErrors,
-} from "../../redux/user/userSlice";
-import { inputNames } from "../../utils/enums/input-names";
-import { initializeValues } from "../../utils/helpers/input-check/initialize-values";
-import { onSubmitCheck } from "../../utils/helpers/input-check/on-submit-check";
-import InputField, { InputErrors, InputValues } from "../input/InputField";
-import { loadingStatusEnum } from "../../utils/enums/loading-status";
+} from "../../../redux/user/userSlice";
+import {
+  inputNames,
+  loadingStatusEnum,
+  onSubmitCheck,
+  initializeValues,
+} from "../../../utils";
+import InputField, { InputErrors, InputValues } from "../../input/InputField";
 
 // UI //
 import styles from "./SignIn.module.css";
 import { LoadingButton } from "@mui/lab";
-import { Link } from "react-router-dom";
 
 const inputFields = [inputNames.email, inputNames.password];
 

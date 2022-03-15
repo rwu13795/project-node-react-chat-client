@@ -1,9 +1,9 @@
 import { ChangeEvent, memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
-import { chatType } from "../../redux/message/messageSlice";
-import { createNewGroup } from "../../redux/user/asyncThunk/create-new-group";
 
+import { chatType } from "../../redux/message/messageSlice";
+import { createNewGroup } from "../../redux/user/asyncThunk";
 import {
   selectCreateGroupError,
   selectLoadingStatus_user,
@@ -11,7 +11,7 @@ import {
   selectUserId,
   setLoadingStatus_user,
 } from "../../redux/user/userSlice";
-import { loadingStatusEnum } from "../../utils/enums/loading-status";
+import { loadingStatusEnum } from "../../utils";
 
 interface Props {
   socket: Socket | undefined;

@@ -1,6 +1,9 @@
 import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Socket } from "socket.io-client";
+import { useDispatch } from "react-redux";
 
+import { signOut } from "../../../redux/user/asyncThunk";
 import StatusDot from "./StatusDot";
 
 // UI //
@@ -8,9 +11,6 @@ import styles from "./UserAvatar.module.css";
 import { Avatar, Button, Popover } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { useDispatch } from "react-redux";
-import { signOut } from "../../../redux/user/asyncThunk/sign-out";
-import { Socket } from "socket.io-client";
 
 interface Props {
   username: string;

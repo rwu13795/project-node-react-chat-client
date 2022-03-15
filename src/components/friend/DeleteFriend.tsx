@@ -1,7 +1,6 @@
 import { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
-import { selectTargetFriend, setBlockFriend } from "../../redux/user/userSlice";
 
 interface Props {
   friend_id: string;

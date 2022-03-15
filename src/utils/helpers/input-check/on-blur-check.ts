@@ -59,6 +59,18 @@ export function onBlurCheck(
         }
         break;
       }
+      case inputNames.username: {
+        if (inputValue.length > 20) {
+          setInputErrors((prev) => {
+            return {
+              ...prev,
+              [inputName]: "Your username cannot be longer than 20 characters",
+            };
+          });
+          hasError = true;
+        }
+        break;
+      }
 
       default:
         break;

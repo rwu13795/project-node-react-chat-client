@@ -2,15 +2,14 @@ import { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { getNotifications } from "../../redux/message/asyncThunk/get-notifications";
-import { getUserAuth } from "../../redux/user/asyncThunk/get-user-auth";
 import {
   clearAddFriendRequests,
   selectAddFriendRequests,
   selectUserId,
   selectUsername,
-  setAddFriendRequests,
 } from "../../redux/user/userSlice";
+import { getNotifications } from "../../redux/message/asyncThunk";
+import { getUserAuth } from "../../redux/user/asyncThunk";
 
 interface Props {
   socket: Socket | undefined;

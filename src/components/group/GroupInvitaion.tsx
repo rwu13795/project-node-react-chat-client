@@ -1,7 +1,7 @@
 import { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
-import { getUserAuth } from "../../redux/user/asyncThunk/get-user-auth";
+
 import {
   respondToGroupInvitation,
   selectGroupInvitations,

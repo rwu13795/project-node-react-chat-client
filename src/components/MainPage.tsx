@@ -2,6 +2,7 @@ import { memo, useEffect, useLayoutEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
+
 import {
   chatType,
   setCurrentUserId_message,
@@ -12,12 +13,10 @@ import {
   selectUserId,
   selectUsername,
 } from "../redux/user/userSlice";
-import { getNotifications } from "../redux/message/asyncThunk/get-notifications";
-
+import { getNotifications } from "../redux/message/asyncThunk";
 import ChatBoard from "./chat/ChatBoard";
 import RoomLists from "./room-lists/RoomLists";
 import ChatRoomMenu from "./menu/right/ChatRoomMenu";
-
 import { connectSocket } from "../socket-io/socketConnection";
 import {
   addFriendRequest_listener,
@@ -32,10 +31,10 @@ import {
   offline_listener,
   onlineEcho_listener,
   online_listener,
-} from "../socket-io/listeners/__index";
+} from "../socket-io/listeners";
 
 // UI //
-import styles from "./__MainPage.module.css";
+import styles from "./MainPage.module.css";
 
 interface Props {
   socket: Socket | undefined;

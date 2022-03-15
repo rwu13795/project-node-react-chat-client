@@ -1,7 +1,7 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import type { RootState } from "../index";
-import { loadingStatusEnum } from "../../utils/enums/loading-status";
+import { inputNames, loadingStatusEnum } from "../../utils";
 import {
   createNewGroup,
   forgotPasswordRequest,
@@ -11,7 +11,7 @@ import {
   signIn,
   signOut,
   signUp,
-} from "./asyncThunk/__index";
+} from "./asyncThunk";
 
 export enum onlineStatus_enum {
   online = "Online",
@@ -303,11 +303,28 @@ const userSlice = createSlice({
       state.currentUser.avatar_url = action.payload;
     },
     clearRequestError(state, action: PayloadAction<string>) {
-      if (action.payload === "all") {
+      const name = action.payload;
+      if (name === "all") {
         state.requestErrors = {};
         return;
       }
-      state.requestErrors[action.payload] = "";
+      if (
+        name === inputNames.password ||
+        name === inputNames.confirm_password
+      ) {
+        state.requestErrors[inputNames.password] = "";
+        state.requestErrors[inputNames.confirm_password] = "";
+        return;
+      }
+      if (
+        name === inputNames.new_password ||
+        name === inputNames.confirm_new_password
+      ) {
+        state.requestErrors[inputNames.new_password] = "";
+        state.requestErrors[inputNames.confirm_new_password] = "";
+        return;
+      }
+      state.requestErrors[name] = "";
     },
   },
 

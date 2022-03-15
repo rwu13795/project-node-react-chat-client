@@ -1,24 +1,22 @@
 import { FormEvent, memo, MouseEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-import InputField, { InputErrors, InputValues } from "../input/InputField";
+import InputField, { InputErrors, InputValues } from "../../input/InputField";
 import {
   clearRequestError,
   selectLoadingStatus_user,
   selectRequestErrors,
   setLoadingStatus_user,
-} from "../../redux/user/userSlice";
-import { loadingStatusEnum } from "../../utils/enums/loading-status";
-import RedirectToSignIn from "../menu/RedirectToSignIn";
-import { inputNames } from "../../utils/enums/input-names";
-import { LoadingButton } from "@mui/lab";
-import { onSubmitCheck } from "../../utils/helpers/input-check/__index";
+} from "../../../redux/user/userSlice";
+import { forgotPasswordReset } from "../../../redux/user/asyncThunk";
+import { inputNames, loadingStatusEnum, onSubmitCheck } from "../../../utils";
+import RedirectToSignIn from "../../menu/RedirectToSignIn";
 
 // UI //
 import styles from "./ResetPW.module.css";
 import styles_2 from "./SignIn.module.css";
-import { forgotPasswordReset } from "../../redux/user/asyncThunk/forgot-pw-reset";
+import { LoadingButton } from "@mui/lab";
 
 interface Props {
   expirationInMS: number;

@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import ReactCrop, {
   centerCrop,
@@ -6,17 +5,12 @@ import ReactCrop, {
   Crop,
   PixelCrop,
 } from "react-image-crop";
-// import { cropPreview } from './cropPreview'
-// import { debounce } from './debounce'
-
 import "react-image-crop/dist/ReactCrop.css";
 import { useDispatch } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { getUserAuth } from "../../redux/user/asyncThunk/get-user-auth";
-import { changeAvatar } from "../../redux/user/userSlice";
-import axios_client from "../../utils/helpers/axios-client";
-import cropImage from "../../utils/helpers/crop-image";
+import { changeAvatar } from "../../../redux/user/userSlice";
+import { cropImage } from "../../../utils";
 
 interface Props {
   socket: Socket | undefined;

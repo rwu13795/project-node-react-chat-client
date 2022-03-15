@@ -1,23 +1,20 @@
 import { ChangeEvent, FormEvent, memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
+
 import {
   selectCurrentUser,
   selectFriendsList,
   selectResult_addFriendRequest,
-  selectUserId,
   setResult_addFriendRequest,
 } from "../../redux/user/userSlice";
-import { serverUrl } from "../../redux/utils";
-
-import axios_client from "../../utils/helpers/axios-client";
+import { client, serverUrl } from "../../redux/utils";
 
 interface Props {
   socket: Socket | undefined;
 }
 
 function SearchUser({ socket }: Props): JSX.Element {
-  const client = axios_client();
   const dispatch = useDispatch();
 
   const friendsList = useSelector(selectFriendsList);

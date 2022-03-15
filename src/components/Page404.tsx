@@ -1,7 +1,5 @@
 import { memo } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { Socket } from "socket.io-client";
 
 function Page404(): JSX.Element {
   const navigate = useNavigate();

@@ -4,17 +4,16 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // (1
 import "./styles/App.css";
 
 import MainNavbar from "./components/menu/top/MainNavbar";
-import Auth from "./components/user/Auth";
+import Auth from "./components/user/auth/Auth";
 import MainPage from "./components/MainPage";
-import UserProfile from "./components/user/Profile";
+import UserProfile from "./components/user/profile/UserProfile";
 import { useDispatch } from "react-redux";
 import { getUserAuth } from "./redux/user/asyncThunk/get-user-auth";
 import { Socket } from "socket.io-client";
 import Page404 from "./components/Page404";
 import Footer from "./components/menu/bottom/Footer";
-import ForgotPassword from "./components/user/ForgotPW";
-import CheckResetToken from "./components/user/CheckResetToken";
-import ResetPW from "./components/user/ResetPW";
+import ForgotPassword from "./components/user/auth/ForgotPW";
+import CheckResetToken from "./components/user/auth/CheckResetToken";
 
 function App(): JSX.Element {
   const dispatch = useDispatch();

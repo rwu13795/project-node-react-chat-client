@@ -7,19 +7,21 @@ import {
   selectUserId,
   setResult_groupInvitation,
 } from "../../redux/user/userSlice";
-import { clearNotifications } from "../../redux/message/asyncThunk/clear-notifications";
-import { loadChatHistory_database } from "../../redux/message/asyncThunk/load-chat-history";
 import {
   chatType,
   selectTargetChatRoom,
   setTargetChatRoom,
 } from "../../redux/message/messageSlice";
+import { getGroupMembersList_database } from "../../redux/user/asyncThunk";
+import {
+  clearNotifications,
+  loadChatHistory_database,
+} from "../../redux/message/asyncThunk";
 import FriendsList from "./FriendsList";
 import GroupsList from "./GroupsList";
-import { getGroupMembersList_database } from "../../redux/user/asyncThunk/get-members-list";
 
 // UI //
-import styles from "./__RoomLists.module.css";
+import styles from "./RoomLists.module.css";
 
 interface Props {
   socket: Socket | undefined;

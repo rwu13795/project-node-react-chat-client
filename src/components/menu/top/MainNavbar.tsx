@@ -2,14 +2,16 @@ import { memo } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
+
 import { selectCurrentUser } from "../../../redux/user/userSlice";
 import ChangeOnlineStatus from "./ChangeOnlineStatus";
+import UserAvatar from "./UserAvatar";
 
 // UI //
 import styles from "./MainNavbar.module.css";
 import { Stack, Avatar, Badge } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import UserAvatar from "./UserAvatar";
+
 import logo from "../../../images/logo.svg";
 
 interface Props {

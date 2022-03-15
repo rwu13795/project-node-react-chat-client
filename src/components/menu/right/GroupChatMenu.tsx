@@ -1,20 +1,15 @@
 import { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
+
 import { selectTargetChatRoom } from "../../../redux/message/messageSlice";
 import {
   selectResult_groupInvitation,
-  selectTargetFriend,
   selectTargetGroup,
-  setBlockFriend,
 } from "../../../redux/user/userSlice";
-import BlockFriend from "../../friend/BlockFriend";
-import DeleteFriend from "../../friend/DeleteFriend";
-import UnblockFriend from "../../friend/UnblockFriend";
+
 import MembersList from "../../group/MembersList";
 import RemoveGroup from "../../group/RemoveGroup";
-
-import styles from "./__chatMenu.module.css";
 
 interface Props {
   group_id: string;

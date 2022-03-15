@@ -1,28 +1,24 @@
 import { ChangeEvent, FocusEvent, memo, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 
-// UI //
+import { clearRequestError } from "../../redux/user/userSlice";
+import { capFirstLetter } from "../../utils/helpers/cap-first-letter";
 import {
-  FormControl,
-  FormHelperText,
-  Grid,
-  OutlinedInput,
-  InputLabel,
-  GridSize,
-  useMediaQuery,
-} from "@mui/material";
-
-import {
+  inputNames,
+  onFocusCheck,
   onBlurCheck,
   onChangeCheck,
-  onFocusCheck,
-} from "../../utils/helpers/input-check/__index";
-import { inputNames } from "../../utils/enums/input-names";
-import { useDispatch } from "react-redux";
-import { clearRequestError } from "../../redux/user/userSlice";
+} from "../../utils";
 
 // UI //
 import styles from "./InputField.module.css";
-import { capFirstLetter } from "../../utils/helpers/cap-first-letter";
+import {
+  FormControl,
+  FormHelperText,
+  OutlinedInput,
+  InputLabel,
+  useMediaQuery,
+} from "@mui/material";
 
 export interface InputValues {
   [inputName: string]: string;
@@ -55,6 +51,8 @@ function InputField({
 
   const [touched, setTouched] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);
+
+  console.log("inputValue", inputValue);
 
   const regex = /[_]/g;
   const inputLabel = capFirstLetter(inputName.replace(regex, " "));

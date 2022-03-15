@@ -6,10 +6,7 @@ interface Res_props {
   expirationInMS: number;
 }
 
-export default function useCheckToken(
-  token: string | null,
-  user_id: string | null
-) {
+export function useCheckToken(token: string | null, user_id: string | null) {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isValid, setIsValid] = useState<boolean>(false);
   const [expirationInMS, setExpirationInMS] = useState<number>(0);

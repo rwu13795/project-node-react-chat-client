@@ -5,7 +5,7 @@ import {
   loadChatHistory_database,
   clearNotifications,
   getNotifications,
-} from "./asyncThunk/__index";
+} from "./asyncThunk";
 
 export enum chatType {
   group = "group",

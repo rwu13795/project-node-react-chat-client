@@ -1,10 +1,10 @@
 import { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
-import { selectTargetFriend, setBlockFriend } from "../../redux/user/userSlice";
 
+import { selectTargetFriend, setBlockFriend } from "../../redux/user/userSlice";
 // UI //
-import styles from "./__BlockFriend.module.css";
+import styles from "./BlockFriend.module.css";
 import BlockIcon from "@mui/icons-material/Block";
 import { Tooltip } from "@mui/material";
 

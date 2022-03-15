@@ -1,14 +1,3 @@
-:root {
-  --button-width: 34px;
-  --button-height: 34px;
-
-  /* colors */
-  --main-color-1: #00586e;
-  --main-color-2: #00ccff;
-  --main-color-3: #003b49;
-  --navbar-color: #00ccff8f;
-}
-
 .App {
   text-align: center;
 }
@@ -21,9 +10,19 @@
   overflow: hidden;
 }
 .body {
-  max-height: calc(100vh - 100px);
+  min-height: calc(100vh - 100px);
   max-width: 100vw;
   overflow-x: hidden;
+  /* background-image: url("../images/envelope-bg.jpg");
+  background-repeat: no-repeat;
+  background-size: contain; */
+}
+.footer {
+  height: 60px;
+  max-width: 100vw;
+  padding: 20px;
+  background: linear-gradient(90deg, transparent, var(--navbar-color));
+  overflow: hidden;
 }
 
 /* .App-logo {

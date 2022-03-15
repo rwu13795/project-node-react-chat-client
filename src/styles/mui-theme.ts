@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
-let theme = createTheme({
+const theme = createTheme({
   palette: {
     // type: 'light',
     primary: { main: "#00586e" },
@@ -10,10 +10,10 @@ let theme = createTheme({
     info: { main: "#00789e", contrastText: "#ffffff" },
   },
   typography: {
+    fontFamily: ["Quantico", "sans-serif"].join(","),
     // body1 controls all default MUI component's text font-size
     body1: {
-      fontSize: "2rem",
-      fontFamily: ["Quantico", "sans-serif"].join(","),
+      fontSize: "1.8rem",
     },
     h3: {
       fontSize: "3vw",
@@ -23,7 +23,7 @@ let theme = createTheme({
       // "@media (min-width:770px)": {
       //   fontSize: "3vw",
       // },
-      fontFamily: ["Quantico", "sans-serif"].join(","),
+      // fontFamily: ["Quantico", "sans-serif"].join(","),
     },
   },
   breakpoints: {

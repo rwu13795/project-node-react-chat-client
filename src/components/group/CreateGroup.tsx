@@ -10,8 +10,8 @@ import {
   selectNewGroupToJoin,
   selectUserId,
   setLoadingStatus_user,
-  UserLoadingStatus,
 } from "../../redux/user/userSlice";
+import { loadingStatusEnum } from "../../utils/enums/loading-status";
 
 interface Props {
   socket: Socket | undefined;
@@ -32,7 +32,7 @@ function CreateGroup({
 
   useEffect(() => {
     if (
-      loadingStatus === UserLoadingStatus.createNewGroup_succeeded &&
+      loadingStatus === loadingStatusEnum.createNewGroup_succeeded &&
       socket
     ) {
       dispatch(setLoadingStatus_user("idle"));

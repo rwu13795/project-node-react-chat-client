@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import { selectCurrentUser } from "../../redux/user/userSlice";
-import AddAvatar from "../user/AddAvatar";
+import AddAvatar from "./AddAvatar";
 
 interface Props {
   socket: Socket | undefined;

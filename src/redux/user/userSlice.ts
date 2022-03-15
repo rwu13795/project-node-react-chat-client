@@ -1,19 +1,17 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import type { RootState } from "../index";
-import { getUserAuth } from "./asyncThunk/get-user-auth";
-import { signIn } from "./asyncThunk/sign-in";
-import { signUp } from "./asyncThunk/sign-up";
-import { getGroupMembersList_database } from "./asyncThunk/get-members-list";
-import { createNewGroup } from "./asyncThunk/create-new-group";
-import { signOut } from "./asyncThunk/sign-out";
+import { loadingStatusEnum } from "../../utils/enums/loading-status";
+import {
+  createNewGroup,
+  forgotPasswordRequest,
+  getGroupMembersList_database,
+  getUserAuth,
+  signIn,
+  signOut,
+  signUp,
+} from "./asyncThunk/__index";
 
-export enum UserLoadingStatus {
-  idle = "idle",
-  createNewGroup_succeeded = "createNewGroup_succeeded",
-  createNewGroup_loading = "createNewGroup_loading",
-  createNewGroup_failed = "createNewGroup_failed",
-}
 export enum onlineStatus_enum {
   online = "Online",
   away = "Away",
@@ -111,7 +109,7 @@ const initialState: UserState = {
   groupsToJoin: [],
   newGroupToJoin: "",
   createGroupError: "",
-  loadingStatus: "idle",
+  loadingStatus: loadingStatusEnum.idle,
   requestErrors: {},
 };
 
@@ -181,20 +179,6 @@ const initialState: UserState = {
 /////////////////////
 // FORGOT PASSWORD //
 /////////////////////
-// const forgotPassword_Request = createAsyncThunk<
-//   void,
-//   string,
-//   { state: RootState }
-// >("user/forgotPassword_Request", async (email, thunkAPI) => {
-//   try {
-//     await client.post(serverUrl + "/auth/forgot-password-request", {
-//       email,
-//     });
-//     return;
-//   } catch (err: any) {
-//     return thunkAPI.rejectWithValue(err.response.data);
-//   }
-// });
 
 // const forgotPassword_Reset = createAsyncThunk<
 //   void,
@@ -318,6 +302,9 @@ const userSlice = createSlice({
       state.currentUser.avatar_url = action.payload;
     },
     clearRequestError(state, action: PayloadAction<string>) {
+      if (action.payload === "all") {
+        state.requestErrors = {};
+      }
       state.requestErrors[action.payload] = "";
     },
   },
@@ -381,16 +368,16 @@ const userSlice = createSlice({
           state.friendsList[friend.friend_id].onlineStatus =
             onlineStatus_enum.offline;
         }
-        state.loadingStatus = "succeeded";
+        state.loadingStatus = loadingStatusEnum.idle;
       })
       .addCase(signIn.pending, (state): void => {
-        state.loadingStatus = "loading";
+        state.loadingStatus = loadingStatusEnum.loading;
       })
       .addCase(signIn.rejected, (state, action: PayloadAction<any>): void => {
         for (let err of action.payload.errors) {
           state.requestErrors[err.field] = err.message;
         }
-        state.loadingStatus = "failed";
+        state.loadingStatus = loadingStatusEnum.failed;
       })
 
       /***************  SIGN UP  ***************/
@@ -399,40 +386,40 @@ const userSlice = createSlice({
         (state, action: PayloadAction<CurrentUser>): void => {
           state.currentUser = action.payload;
           state.currentUser.onlineStatus = onlineStatus_enum.online;
-          state.loadingStatus = "succeeded";
+          state.loadingStatus = loadingStatusEnum.idle;
         }
       )
       .addCase(signUp.pending, (state): void => {
-        state.loadingStatus = "loading";
+        state.loadingStatus = loadingStatusEnum.loading;
       })
       .addCase(signUp.rejected, (state, action: PayloadAction<any>): void => {
         for (let err of action.payload.errors) {
           state.requestErrors[err.field] = err.message;
         }
-        state.loadingStatus = "failed";
+        state.loadingStatus = loadingStatusEnum.failed;
       })
 
       /***************  SIGN OUT  ***************/
       .addCase(signOut.fulfilled, (state, action): void => {
         state.currentUser = { ...initialState.currentUser };
-        state.loadingStatus = "idle";
+        state.loadingStatus = loadingStatusEnum.idle;
       })
 
       /***************  CREATE A NEW GROUP  ***************/
       .addCase(createNewGroup.fulfilled, (state, action): void => {
         state.groupsList[action.payload.group_id] = action.payload;
-        state.loadingStatus = "createNewGroup_succeeded";
+        state.loadingStatus = loadingStatusEnum.createNewGroup_succeeded;
         state.newGroupToJoin = action.payload.group_id;
       })
       .addCase(createNewGroup.pending, (state): void => {
-        state.loadingStatus = "createNewGroup_loading";
+        state.loadingStatus = loadingStatusEnum.createNewGroup_loading;
       })
       .addCase(
         createNewGroup.rejected,
         (state, action: PayloadAction<any>): void => {
           // each user can only create 5 groups (for demo)
           state.createGroupError = action.payload.errors[0].message;
-          state.loadingStatus = "createNewGroup_failed";
+          state.loadingStatus = loadingStatusEnum.failed;
         }
       )
 
@@ -446,17 +433,26 @@ const userSlice = createSlice({
 
           state.groupsList[group_id].group_members = group_members;
           state.groupsList[group_id].wasMembersListLoaded = true;
-          state.loadingStatus = "succeeded";
+          // state.loadingStatus = "succeeded";
+        }
+      )
+
+      /***************  FORGOT PASSWORD REQUEST  ***************/
+      .addCase(forgotPasswordRequest.fulfilled, (state): void => {
+        state.loadingStatus = loadingStatusEnum.succeeded;
+      })
+      .addCase(forgotPasswordRequest.pending, (state): void => {
+        state.loadingStatus = loadingStatusEnum.loading;
+      })
+      .addCase(
+        forgotPasswordRequest.rejected,
+        (state, action: PayloadAction<any>): void => {
+          state.loadingStatus = loadingStatusEnum.failed;
+          for (let err of action.payload.errors) {
+            state.requestErrors[err.field] = err.message;
+          }
         }
       );
-
-    //////////////
-    // SIGN OUT //
-    //////////////
-    // .addCase(signOut.fulfilled, (state, action): void => {
-    //   state.currentUser.isLoggedIn = false;
-    //   state.loadingStatus = "idle";
-    // })
 
     ////////////////////
     // RESET PASSWORD //
@@ -465,7 +461,7 @@ const userSlice = createSlice({
     //     state.loadingStatus = "reset_password_succeeded";
     //   })
     //   .addCase(resetPassword.pending, (state, action): void => {
-    //     state.loadingStatus = "loading";
+    //     state.loadingStatus = loadingStatusEnum.loading;
     //   })
     //   .addCase(
     //     resetPassword.rejected,
@@ -473,47 +469,29 @@ const userSlice = createSlice({
     //       for (let err of action.payload.errors) {
     //         state.requestErrors[err.field] = err.message;
     //       }
-    //       state.loadingStatus = loadingStatus.failed;
+    //       state.loadingStatus = loadingStatusEnum.failed;
     //     }
     //   )
-    ////////////////////
-    // FORGOT PASSWORD //
-    ////////////////////
-    //   .addCase(forgotPassword_Request.fulfilled, (state): void => {
-    //     state.loadingStatus = loadingStatus.succeeded;
-    //   })
-    //   .addCase(forgotPassword_Request.pending, (state): void => {
-    //     state.loadingStatus = loadingStatus.loading;
-    //   })
-    //   .addCase(
-    //     forgotPassword_Request.rejected,
-    //     (state, action: PayloadAction<any>): void => {
-    //       state.loadingStatus = loadingStatus.failed;
-    //       for (let err of action.payload.errors) {
-    //         state.requestErrors[err.field] = err.message;
+    // .addCase(forgotPassword_Reset.fulfilled, (state): void => {
+    //   state.loadingStatus = loadingStatusEnum.succeeded;
+    // })
+    // .addCase(forgotPassword_Reset.pending, (state): void => {
+    //   state.loadingStatus = loadingStatusEnum.loading;
+    // })
+    // .addCase(
+    //   forgotPassword_Reset.rejected,
+    //   (state, action: PayloadAction<any>): void => {
+    //     for (let err of action.payload.errors) {
+    //       state.requestErrors[err.field] = err.message;
+    //       if (err.field === "expired-link") {
+    //         state.loadingStatus = loadingStatusEnum.time_out;
     //       }
     //     }
-    //   )
-    //   .addCase(forgotPassword_Reset.fulfilled, (state): void => {
-    //     state.loadingStatus = loadingStatus.succeeded;
-    //   })
-    //   .addCase(forgotPassword_Reset.pending, (state): void => {
-    //     state.loadingStatus = loadingStatus.loading;
-    //   })
-    //   .addCase(
-    //     forgotPassword_Reset.rejected,
-    //     (state, action: PayloadAction<any>): void => {
-    //       for (let err of action.payload.errors) {
-    //         state.requestErrors[err.field] = err.message;
-    //         if (err.field === "expired-link") {
-    //           state.loadingStatus = loadingStatus.time_out;
-    //         }
-    //       }
-    //       if (state.loadingStatus !== loadingStatus.time_out) {
-    //         state.loadingStatus = loadingStatus.failed;
-    //       }
+    //     if (state.loadingStatus !== loadingStatusEnum.time_out) {
+    //       state.loadingStatus = loadingStatusEnum.failed;
     //     }
-    //   );
+    //   }
+    // );
   },
 });
 

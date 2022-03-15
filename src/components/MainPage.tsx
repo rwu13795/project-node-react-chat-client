@@ -5,20 +5,20 @@ import { Socket } from "socket.io-client";
 import {
   chatType,
   setCurrentUserId_message,
-} from "../../redux/message/messageSlice";
+} from "../redux/message/messageSlice";
 import {
   selectGroupsToJoin,
   selectIsLoggedIn,
   selectUserId,
   selectUsername,
-} from "../../redux/user/userSlice";
-import { getNotifications } from "../../redux/message/asyncThunk/get-notifications";
+} from "../redux/user/userSlice";
+import { getNotifications } from "../redux/message/asyncThunk/get-notifications";
 
-import ChatBoard from "./../chat/ChatBoard";
-import RoomLists from "./../room-lists/RoomLists";
-import ChatRoomMenu from "./../menu/right/ChatRoomMenu";
+import ChatBoard from "./chat/ChatBoard";
+import RoomLists from "./room-lists/RoomLists";
+import ChatRoomMenu from "./menu/right/ChatRoomMenu";
 
-import { connectSocket } from "../../socket-io/socketConnection";
+import { connectSocket } from "../socket-io/socketConnection";
 import {
   addFriendRequest_listener,
   addFriendResponse_listener,
@@ -32,7 +32,7 @@ import {
   offline_listener,
   onlineEcho_listener,
   online_listener,
-} from "../../socket-io/listeners/__index";
+} from "../socket-io/listeners/__index";
 
 // UI //
 import styles from "./__MainPage.module.css";

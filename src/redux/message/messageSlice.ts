@@ -1,12 +1,13 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../index";
 
-import { loadChatHistory_database } from "./asyncThunk/load-chat-history";
-import { clearNotifications } from "./asyncThunk/clear-notifications";
-import { getNotifications } from "./asyncThunk/get-notifications";
+import {
+  loadChatHistory_database,
+  clearNotifications,
+  getNotifications,
+} from "./asyncThunk/__index";
 
 export enum chatType {
-  public = "public",
   group = "group",
   private = "private",
 }

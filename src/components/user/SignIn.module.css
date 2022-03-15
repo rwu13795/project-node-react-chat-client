@@ -1,0 +1,43 @@
+.main {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.title {
+  text-align: left;
+  width: 90vw;
+  max-width: 600px;
+  padding-bottom: 6px;
+  margin-bottom: 20px;
+  border-bottom: solid 5px var(--main-color-4);
+}
+
+.buttons_group {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: baseline;
+  font-size: 20px;
+}
+.button {
+  width: 44%;
+  min-width: 200px;
+  max-width: 300px;
+  background: linear-gradient(90deg, transparent, var(--main-color-2));
+  font-size: 18px;
+}
+.button_wrapper {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.link {
+  color: var(--main-color-4);
+}
+.link:hover {
+  background: linear-gradient(270deg, transparent, var(--main-color-2));
+}

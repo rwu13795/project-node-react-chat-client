@@ -1,0 +1,47 @@
+.main {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.text_grid {
+  width: 70%;
+  max-width: 550px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 20px;
+  gap: 6px;
+  font-size: 20px;
+}
+.text {
+  width: 100%;
+  display: flex;
+}
+
+.input_field {
+  margin-bottom: 10px;
+}
+
+.button_wrapper {
+  width: 90vw;
+  max-width: 600px;
+  margin-top: 20px;
+
+  padding-top: 10px;
+  border-top: 5px solid var(--main-color-4);
+}
+
+.img_wrapper {
+  margin-top: 30px;
+  width: 90vw;
+  max-width: 640px;
+  object-fit: contain;
+}
+
+.reset_text {
+  margin-top: 20px;
+  font-size: 22px;
+}

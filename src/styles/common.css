@@ -1,0 +1,17 @@
+#main_body {
+  width: 100%;
+  margin-top: 60px;
+  margin-bottom: 60px;
+}
+
+#main_title {
+  font-size: 50px;
+  font-weight: bold;
+  color: var(--main-color-4);
+}
+
+#input_fields {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 10px;
+}

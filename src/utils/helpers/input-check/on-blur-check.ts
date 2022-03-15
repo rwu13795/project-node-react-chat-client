@@ -34,7 +34,7 @@ export function onBlurCheck(
         break;
       }
       case inputNames.password: {
-        if (inputValue.length < 8) {
+        if (inputValue.length < 4) {
           setInputErrors((prev) => {
             return {
               ...prev,
@@ -47,7 +47,7 @@ export function onBlurCheck(
         break;
       }
       case inputNames.confirm_password: {
-        if (inputValue.length < 8) {
+        if (inputValue.length < 4) {
           setInputErrors((prev) => {
             return {
               ...prev,

@@ -3,9 +3,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 
-import { selectCurrentUser } from "../../redux/user/userSlice";
-import AddAvatar from "../user/AddAvatar";
-
 function Page404(): JSX.Element {
   const navigate = useNavigate();
 

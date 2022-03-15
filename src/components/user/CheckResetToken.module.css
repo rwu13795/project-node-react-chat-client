@@ -1,0 +1,6 @@
+.expired_link {
+  font-size: 26px;
+}
+.loading {
+  color: var(--main-color-2);
+}

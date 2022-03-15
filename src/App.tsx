@@ -4,13 +4,17 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // (1
 import "./styles/App.css";
 
 import MainNavbar from "./components/menu/top/MainNavbar";
-import Auth from "./components/routes/Auth";
-import MainPage from "./components/routes/MainPage";
-import UserProfile from "./components/routes/Profile";
+import Auth from "./components/user/Auth";
+import MainPage from "./components/MainPage";
+import UserProfile from "./components/user/Profile";
 import { useDispatch } from "react-redux";
 import { getUserAuth } from "./redux/user/asyncThunk/get-user-auth";
 import { Socket } from "socket.io-client";
-import Page404 from "./components/routes/Page404";
+import Page404 from "./components/Page404";
+import Footer from "./components/menu/bottom/Footer";
+import ForgotPassword from "./components/user/ForgotPW";
+import CheckResetToken from "./components/user/CheckResetToken";
+import ResetPW from "./components/user/ResetPW";
 
 function App(): JSX.Element {
   const dispatch = useDispatch();
@@ -31,6 +35,9 @@ function App(): JSX.Element {
         <div className="body">
           <Routes>
             <Route path="/" element={<Auth />} />
+            <Route path="/auth/forgot-password" element={<ForgotPassword />} />
+            <Route path="/auth/reset-password" element={<CheckResetToken />} />
+
             <Route
               path="/chat"
               element={<MainPage setSocket={setSocket} socket={socket} />}
@@ -39,6 +46,9 @@ function App(): JSX.Element {
 
             <Route path="/*" element={<Page404 />} />
           </Routes>
+        </div>
+        <div className="footer">
+          <Footer />
         </div>
       </div>
     </Router>

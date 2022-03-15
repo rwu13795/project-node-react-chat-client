@@ -10,7 +10,7 @@ import {
   GridSize,
   useMediaQuery,
 } from "@mui/material";
-import styles from "./__form-input-field.module.css";
+
 import {
   onBlurCheck,
   onChangeCheck,
@@ -19,6 +19,10 @@ import {
 import { inputNames } from "../../utils/enums/input-names";
 import { useDispatch } from "react-redux";
 import { clearRequestError } from "../../redux/user/userSlice";
+
+// UI //
+import styles from "./InputField.module.css";
+import { capFirstLetter } from "../../utils/helpers/cap-first-letter";
 
 export interface InputValues {
   [inputName: string]: string;
@@ -34,15 +38,17 @@ interface Props {
   requestError: string;
   setInputValues: React.Dispatch<React.SetStateAction<InputValues>>;
   setInputErrors: React.Dispatch<React.SetStateAction<InputErrors>>;
+  isDisabled?: boolean;
 }
 
-function InputModule({
+function InputField({
   inputName,
   inputValue,
   inputError,
   requestError = "",
   setInputValues,
   setInputErrors,
+  isDisabled,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
   const isSmall = useMediaQuery("(max-width: 765px)");
@@ -51,7 +57,7 @@ function InputModule({
   const [showError, setShowError] = useState<boolean>(false);
 
   const regex = /[_]/g;
-  const inputLabel = inputName.replace(regex, " ").toUpperCase();
+  const inputLabel = capFirstLetter(inputName.replace(regex, " "));
 
   let inputType = inputName;
   if (
@@ -95,14 +101,9 @@ function InputModule({
   }, [inputError, requestError]);
 
   return (
-    <div
-    // className={form_control}
-    >
+    <main className={styles.main}>
       <FormControl error={showError}>
-        <InputLabel
-          htmlFor={inputLabel}
-          sx={{ fontSize: isSmall ? "14px" : "20px" }}
-        >
+        <InputLabel htmlFor={inputLabel} className={styles.input_label}>
           {inputLabel}
         </InputLabel>
         <OutlinedInput
@@ -114,18 +115,18 @@ function InputModule({
           onFocus={onFocusHandler}
           onBlur={onBlurHandler}
           onChange={onChangeHandler}
-          // disabled={isDisabled}
+          disabled={isDisabled}
           label={inputLabel}
           error={showError}
-          // className={styles.input_box_shadow}
+          className={styles.input_field}
         />
       </FormControl>
-      <FormHelperText>
+      <FormHelperText className={styles.error_text}>
         {requestError}
         {inputError}
       </FormHelperText>
-    </div>
+    </main>
   );
 }
 
-export default memo(InputModule);
+export default memo(InputField);

@@ -11,6 +11,7 @@ import styles from "./UserAvatar.module.css";
 import { Avatar, Button, Popover } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import LogoutIcon from "@mui/icons-material/Logout";
+import { setIsLoggedIn } from "../../../redux/user/userSlice";
 
 interface Props {
   username: string;
@@ -48,6 +49,7 @@ function UserAvatar({
       socket.emit("log-out");
     }
     dispatch(signOut());
+    dispatch(setIsLoggedIn(false));
     navigate("/");
   }
 

@@ -3,6 +3,8 @@ import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import type { RootState } from "../index";
 import { inputNames, loadingStatusEnum } from "../../utils";
 import {
+  changePassword,
+  changeUsername,
   createNewGroup,
   forgotPasswordRequest,
   forgotPasswordReset,
@@ -98,7 +100,7 @@ const initialState: UserState = {
     username: "",
     email: "",
     user_id: "",
-    isLoggedIn: false,
+    isLoggedIn: undefined,
     onlineStatus: onlineStatus_enum.offline,
   },
   friendsList: {},
@@ -114,107 +116,10 @@ const initialState: UserState = {
   requestErrors: {},
 };
 
-//////////////
-// SIGN OUT //
-//////////////
-// const signOut = createAsyncThunk("user/signOut", async () => {
-//   await client.post(serverUrl + "/auth/sign-out");
-//   return;
-// });
-
-/////////////////
-// UPDATE INFO //
-/////////////////
-// const updateUserInfo = createAsyncThunk<
-//   UserState,
-//   { inputValues: InputValues },
-//   { state: RootState }
-// >("user/updateUserInfo", async ({ inputValues }, thunkAPI) => {
-//   // compare the values before sending them to server, if nothing changes
-//   // return an "no_change" requestErrors to the "fullfilled"
-//   let userInfo = thunkAPI.getState().user.currentUser.userInfo;
-//   if (userInfo !== undefined) {
-//     let noChange = true;
-//     for (let [key, value] of Object.entries(userInfo)) {
-//       if (value !== inputValues[key]) {
-//         noChange = false;
-//         break;
-//       }
-//     }
-//     if (noChange) {
-//       return { requestErrors: { no_change: "no_change" } };
-//     }
-//   }
-
-//   const response = await client.post(serverUrl + "/auth/update-info", {
-//     update: inputValues,
-//     csrfToken: thunkAPI.getState().user.csrfToken,
-//     userId: thunkAPI.getState().user.currentUser.userId,
-//   });
-//   return response.data;
-// });
-
-////////////////////
-// RESET PASSWORD //
-////////////////////
-// const resetPassword = createAsyncThunk<
-//   void,
-//   {
-//     old_password: string;
-//     new_password: string;
-//     confirm_new_password: string;
-//   },
-//   { state: RootState }
-// >("user/resetPassword", async (body, thunkAPI) => {
-//   try {
-//     const csrfToken = thunkAPI.getState().user.csrfToken;
-//     await client.post(serverUrl + "/auth/reset-password", {
-//       ...body,
-//       csrfToken,
-//     });
-//   } catch (err: any) {
-//     return thunkAPI.rejectWithValue(err.response.data);
-//   }
-// });
-
-/////////////////////
-// FORGOT PASSWORD //
-/////////////////////
-
-// const forgotPasswordReset = createAsyncThunk<
-//   void,
-//   {
-//     new_password: string;
-//     confirm_new_password: string;
-//     token: string;
-//     userId: string;
-//   },
-//   { state: RootState }
-// >("user/forgotPasswordReset", async (body, thunkAPI) => {
-//   try {
-//     await client.post(serverUrl + "/auth/forgot-password-reset", {
-//       ...body,
-//     });
-//     return;
-//   } catch (err: any) {
-//     return thunkAPI.rejectWithValue(err.response.data);
-//   }
-// });
-
-////////////////////////////////////////////////////////////////////////////////
-
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    //   clearrequestErrors(state, action: PayloadAction<string>) {
-    //     if (action.payload === "all") {
-    //       state.requestErrors = {};
-    //     } else {
-    //       state.requestErrors[action.payload] = "";
-    //     }
-    //   },
-
     setLoadingStatus_user(state, action: PayloadAction<string>) {
       state.loadingStatus = action.payload;
     },
@@ -326,6 +231,9 @@ const userSlice = createSlice({
       }
       state.requestErrors[name] = "";
     },
+    setIsLoggedIn(state, action: PayloadAction<boolean>) {
+      state.currentUser.isLoggedIn = action.payload;
+    },
   },
 
   extraReducers: (builder) => {
@@ -333,6 +241,7 @@ const userSlice = createSlice({
       /***************  GET AUTH  ***************/
       .addCase(getUserAuth.fulfilled, (state, action): void => {
         if (!action.payload.currentUser.isLoggedIn) {
+          state.currentUser = action.payload.currentUser;
           return;
         }
         const {
@@ -457,7 +366,7 @@ const userSlice = createSlice({
       )
 
       /***************  FORGOT PASSWORD REQUEST  ***************/
-      .addCase(forgotPasswordRequest.fulfilled, (state): void => {
+      .addCase(forgotPasswordRequest.fulfilled, (state, action): void => {
         state.loadingStatus = loadingStatusEnum.succeeded;
       })
       .addCase(forgotPasswordRequest.pending, (state): void => {
@@ -493,24 +402,41 @@ const userSlice = createSlice({
             state.loadingStatus = loadingStatusEnum.failed;
           }
         }
-      );
+      )
 
-    /***************  CHANGE PASSWORD  ***************/
-    // .addCase(resetPassword.fulfilled, (state, action): void => {
-    //   state.loadingStatus = "reset_password_succeeded";
-    // })
-    // .addCase(resetPassword.pending, (state, action): void => {
-    //   state.loadingStatus = loadingStatusEnum.loading;
-    // })
-    // .addCase(
-    //   resetPassword.rejected,
-    //   (state, action: PayloadAction<any>): void => {
-    //     for (let err of action.payload.errors) {
-    //       state.requestErrors[err.field] = err.message;
-    //     }
-    //     state.loadingStatus = loadingStatusEnum.failed;
-    //   }
-    // )
+      /***************  CHANGE PASSWORD  ***************/
+      .addCase(changePassword.fulfilled, (state): void => {
+        state.loadingStatus = loadingStatusEnum.resetPW_succeeded;
+      })
+      .addCase(changePassword.pending, (state): void => {
+        state.loadingStatus = loadingStatusEnum.resetPW_loading;
+      })
+      .addCase(
+        changePassword.rejected,
+        (state, action: PayloadAction<any>): void => {
+          for (let err of action.payload.errors) {
+            state.requestErrors[err.field] = err.message;
+          }
+          state.loadingStatus = loadingStatusEnum.resetPW_failed;
+        }
+      )
+
+      /***************  CHANGE USERNAME  ***************/
+      .addCase(changeUsername.fulfilled, (state, action): void => {
+        state.currentUser.username = action.payload.username;
+        state.loadingStatus = loadingStatusEnum.succeeded;
+      })
+      .addCase(changeUsername.pending, (state): void => {
+        state.loadingStatus = loadingStatusEnum.loading;
+      })
+      .addCase(
+        changeUsername.rejected,
+        (state, action: PayloadAction<any>): void => {
+          for (let err of action.payload.errors) {
+            state.requestErrors[err.field] = err.message;
+          }
+        }
+      );
   },
 });
 
@@ -531,6 +457,7 @@ export const {
   setUserOnlineStatus,
   changeAvatar,
   clearRequestError,
+  setIsLoggedIn,
 } = userSlice.actions;
 
 export default userSlice.reducer;

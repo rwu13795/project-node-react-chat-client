@@ -18,6 +18,7 @@ import {
   OutlinedInput,
   InputLabel,
   useMediaQuery,
+  TextField,
 } from "@mui/material";
 
 export interface InputValues {
@@ -25,6 +26,11 @@ export interface InputValues {
 }
 export interface InputErrors {
   [inputField: string]: string;
+}
+
+export enum customStyleOptions {
+  default = "default",
+  change_user_name = "change_user_name",
 }
 
 interface Props {
@@ -35,6 +41,7 @@ interface Props {
   setInputValues: React.Dispatch<React.SetStateAction<InputValues>>;
   setInputErrors: React.Dispatch<React.SetStateAction<InputErrors>>;
   isDisabled?: boolean;
+  customStyle?: customStyleOptions;
 }
 
 function InputField({
@@ -45,14 +52,13 @@ function InputField({
   setInputValues,
   setInputErrors,
   isDisabled,
+  customStyle = customStyleOptions.default,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
   const isSmall = useMediaQuery("(max-width: 765px)");
 
   const [touched, setTouched] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);
-
-  console.log("inputValue", inputValue);
 
   const regex = /[_]/g;
   const inputLabel = capFirstLetter(inputName.replace(regex, " "));
@@ -98,28 +104,62 @@ function InputField({
     }
   }, [inputError, requestError]);
 
+  let content: JSX.Element;
+  let error_text: string;
+  switch (customStyle) {
+    case customStyleOptions.default:
+      error_text = styles.error_text_default;
+      content = (
+        <>
+          <InputLabel htmlFor={inputLabel} className={styles.input_label}>
+            {inputLabel}
+          </InputLabel>
+          <OutlinedInput
+            type={inputType}
+            required={true}
+            multiline={inputName === inputNames.message}
+            name={inputName}
+            value={inputValue}
+            onFocus={onFocusHandler}
+            onBlur={onBlurHandler}
+            onChange={onChangeHandler}
+            disabled={isDisabled}
+            label={inputLabel}
+            error={showError}
+            className={styles.input_field_default}
+          />
+        </>
+      );
+      break;
+
+    case customStyleOptions.change_user_name:
+      error_text =
+        styles.error_text_default + " " + styles.error_text_change_user_name;
+      content = (
+        <>
+          <TextField
+            variant="standard"
+            type={inputType}
+            required={true}
+            multiline={true}
+            name={inputName}
+            value={inputValue}
+            onFocus={onFocusHandler}
+            onBlur={onBlurHandler}
+            onChange={onChangeHandler}
+            disabled={isDisabled}
+            error={showError}
+            className={styles.input_field_change_user_name}
+          />
+        </>
+      );
+      break;
+  }
+
   return (
     <main className={styles.main}>
-      <FormControl error={showError}>
-        <InputLabel htmlFor={inputLabel} className={styles.input_label}>
-          {inputLabel}
-        </InputLabel>
-        <OutlinedInput
-          type={inputType}
-          required={true}
-          multiline={inputName === inputNames.message}
-          name={inputName}
-          value={inputValue}
-          onFocus={onFocusHandler}
-          onBlur={onBlurHandler}
-          onChange={onChangeHandler}
-          disabled={isDisabled}
-          label={inputLabel}
-          error={showError}
-          className={styles.input_field}
-        />
-      </FormControl>
-      <FormHelperText className={styles.error_text}>
+      <FormControl error={showError}>{content}</FormControl>
+      <FormHelperText className={error_text}>
         {requestError}
         {inputError}
       </FormHelperText>

@@ -9,7 +9,7 @@
 .title {
   text-align: left;
   width: 90vw;
-  max-width: 900px;
+  max-width: 1100px;
   padding-bottom: 6px;
   margin-bottom: 30px;
   border-bottom: solid 5px var(--main-color-4);
@@ -22,12 +22,12 @@
 
 .upper_body {
   width: 90%;
-  max-width: 900px;
+  max-width: 1100px;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
-  margin-bottom: 60px;
+  margin-bottom: 80px;
 }
 .upper_left {
   min-width: 46%;
@@ -65,6 +65,11 @@
   gap: 6px;
   font-size: 34px;
 }
+.lower_body {
+  width: 90%;
+  max-width: 1100px;
+}
+
 .info_text {
   text-align: left;
   display: flex;
@@ -82,11 +87,7 @@
   );
   margin-bottom: 24px;
 }
-.change_name_wrapper {
-  display: flex;
-  flex-flow: row nowrap;
-  align-items: baseline;
-}
+
 .edit_button {
   max-height: 30px;
   background: linear-gradient(90deg, transparent, var(--main-color-2));

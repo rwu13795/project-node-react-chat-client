@@ -19,6 +19,22 @@ export function onChangeCheck(
     return (hasError = true);
   }
 
+  if (inputName === inputNames.username) {
+    if (inputValue.length > 20) {
+      setInputErrors((prev) => {
+        return {
+          ...prev,
+          [inputName]: "Your username cannot be longer than 20 characters",
+        };
+      });
+    } else {
+      setInputErrors((prev) => {
+        return { ...prev, [inputName]: "" };
+      });
+    }
+    return (hasError = false);
+  }
+
   if (inputValue !== "" || inputValue !== undefined) {
     setInputErrors((prev) => {
       return { ...prev, [inputName]: "" };

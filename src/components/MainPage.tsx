@@ -35,6 +35,7 @@ import {
 
 // UI //
 import styles from "./MainPage.module.css";
+import { CircularProgress } from "@mui/material";
 
 interface Props {
   socket: Socket | undefined;
@@ -104,7 +105,7 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
   return (
     <main>
       {loading ? (
-        <h1>Loading ......</h1>
+        <CircularProgress />
       ) : (
         <div className={styles.main_grid}>
           <div className={styles.left_grid}>

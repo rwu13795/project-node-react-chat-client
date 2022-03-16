@@ -8,13 +8,23 @@
 .input_label {
   font-size: 30px;
 }
-.input_field {
+.input_field_default {
   width: 90vw;
   max-width: 560px;
   background-color: rgba(240, 248, 255, 0.808);
 }
+.input_field_change_user_name {
+  min-height: 40px;
+  max-width: 300px;
+  background-color: rgba(240, 248, 255, 0.808);
+}
 
-.error_text {
+.error_text_default {
   color: red;
   font-size: 14px;
+  display: flex;
+  flex-flow: wrap;
+}
+.error_text_change_user_name {
+  max-width: 300px;
 }

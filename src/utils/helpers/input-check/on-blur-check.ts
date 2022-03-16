@@ -59,6 +59,32 @@ export function onBlurCheck(
         }
         break;
       }
+      case inputNames.new_password: {
+        if (inputValue.length < 8) {
+          setInputErrors((prev) => {
+            return {
+              ...prev,
+              [inputName]:
+                "Password must be between 8 and 20 characters in length",
+            };
+          });
+          hasError = true;
+        }
+        break;
+      }
+      case inputNames.confirm_new_password: {
+        if (inputValue.length < 8) {
+          setInputErrors((prev) => {
+            return {
+              ...prev,
+              [inputName]:
+                "Password must be between 8 and 20 characters in length",
+            };
+          });
+          hasError = true;
+        }
+        break;
+      }
       case inputNames.username: {
         if (inputValue.length > 20) {
           setInputErrors((prev) => {

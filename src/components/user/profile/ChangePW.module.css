@@ -1,0 +1,31 @@
+.main {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+  gap: 6px;
+}
+
+.button {
+  width: 44%;
+  min-width: 200px;
+  max-width: 300px;
+  font-size: 18px;
+  background: linear-gradient(90deg, transparent, var(--main-color-2));
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 6px;
+}
+
+.button_wrapper {
+  width: 100%;
+  max-width: 560px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.succeeded_text {
+  margin-top: 10px;
+  font-size: 18px;
+}

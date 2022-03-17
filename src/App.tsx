@@ -21,7 +21,7 @@ function App(): JSX.Element {
   const [socket, setSocket] = useState<Socket>();
 
   useEffect(() => {
-    dispatch(getUserAuth({ initialize: true }));
+    dispatch(getUserAuth());
   }, [dispatch]);
 
   return (

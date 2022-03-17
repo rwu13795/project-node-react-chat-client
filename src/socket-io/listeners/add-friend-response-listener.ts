@@ -16,7 +16,7 @@ export function addFriendResponse_listener(
     // after the invitee accepted the request, server will emit the "add-friend-response"
     // get the updated friends_pair, private_message and notification from server for this inviter.
     // don't initialize the onlineStatus, otherwise all friends will be marked as offline
-    dispatch(getUserAuth({ initialize: false }));
-    dispatch(getNotifications(currentUserId));
+    dispatch(getUserAuth());
+    dispatch(getNotifications({ currentUserId }));
   });
 }

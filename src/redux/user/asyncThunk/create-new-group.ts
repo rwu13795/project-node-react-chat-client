@@ -4,15 +4,21 @@ import { RootState } from "../..";
 import { client, serverUrl } from "../../utils";
 import { Group } from "../userSlice";
 
+interface Res_body {
+  group_name: string;
+  creator_user_id: string;
+}
+interface Payload extends Group {}
+
 export const createNewGroup = createAsyncThunk<
-  Group,
-  { group_name: string; creator_user_id: string },
+  Payload,
+  Res_body,
   { state: RootState }
->("user/createNewGroup", async ({ group_name, creator_user_id }, thunkAPI) => {
+>("user/createNewGroup", async (body, thunkAPI) => {
   try {
-    const response = await client.post<Group>(
+    const response = await client.post<Payload>(
       serverUrl + `/user/create-new-group`,
-      { group_name, creator_user_id }
+      body
     );
     return response.data;
   } catch (err: any) {

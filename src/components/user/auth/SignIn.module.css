@@ -42,3 +42,15 @@
 .link:hover {
   background: linear-gradient(270deg, transparent, var(--main-color-2));
 }
+
+.appear_offline {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 4px;
+  cursor: pointer;
+}
+.checked {
+  background-color: var(--main-color-1);
+}

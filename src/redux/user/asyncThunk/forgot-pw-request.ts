@@ -3,15 +3,17 @@ import { RootState } from "../..";
 
 import { client, serverUrl } from "../../utils";
 
+interface Res_body {
+  email: string;
+}
+
 export const forgotPasswordRequest = createAsyncThunk<
   void,
-  { email: string },
+  Res_body,
   { state: RootState }
->("user/forgotPasswordRequest", async ({ email }, thunkAPI) => {
+>("user/forgotPasswordRequest", async (body, thunkAPI) => {
   try {
-    await client.post(serverUrl + `/auth/forgot-pw-request`, {
-      email,
-    });
+    await client.post(serverUrl + `/auth/forgot-pw-request`, body);
     return;
   } catch (err: any) {
     return thunkAPI.rejectWithValue(err.response.data);

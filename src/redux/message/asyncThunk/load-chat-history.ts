@@ -13,13 +13,13 @@ interface MessageObject_res {
   file_name: string;
   file_url: string;
 }
-interface LoadChatHistory_res {
+interface Payload {
   chatHistory: MessageObject_res[];
   currentUsername: string;
   currentUserId: string;
   wasHistoryLoaded: boolean;
 }
-interface LoadChatHistory_req {
+interface Res_body {
   targetRoom_type: string;
   targetRoom_id: string;
   currentUserId: string;
@@ -31,8 +31,8 @@ interface LoadChatHistory_req {
 // used to fetch more old messages. and the messages will be merged into
 // the chatHistory by using "loadMoreOldChatHistory"
 export const loadChatHistory_database = createAsyncThunk<
-  LoadChatHistory_res,
-  LoadChatHistory_req,
+  Payload,
+  Res_body,
   { state: RootState }
 >(
   "message/loadChatHistory",

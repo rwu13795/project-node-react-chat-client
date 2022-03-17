@@ -3,7 +3,7 @@ import { RootState } from "../..";
 
 import { client, serverUrl } from "../../utils";
 
-interface ChangePW_body {
+interface Res_body {
   old_password: string;
   new_password: string;
   confirm_new_password: string;
@@ -11,7 +11,7 @@ interface ChangePW_body {
 
 export const changePassword = createAsyncThunk<
   void,
-  ChangePW_body,
+  Res_body,
   { state: RootState }
 >("user/changePassword", async (body, thunkAPI) => {
   try {

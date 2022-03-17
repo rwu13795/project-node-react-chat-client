@@ -12,6 +12,7 @@ import {
   selectIsLoggedIn,
   selectUserId,
   selectUsername,
+  selectUserOnlineStatus,
 } from "../redux/user/userSlice";
 import { getNotifications } from "../redux/message/asyncThunk";
 import ChatBoard from "./chat/ChatBoard";
@@ -49,6 +50,7 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const currentUserId = useSelector(selectUserId);
   const currentUsername = useSelector(selectUsername);
+  const currentOnlineStatus = useSelector(selectUserOnlineStatus);
   const groupsToJoin = useSelector(selectGroupsToJoin);
   const [loading, setLoading] = useState<boolean>(true);
 
@@ -56,7 +58,7 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
     if (!isLoggedIn) {
       navigate("/");
     } else {
-      dispatch(getNotifications(currentUserId));
+      dispatch(getNotifications({ currentUserId }));
       dispatch(setCurrentUserId_message(currentUserId));
 
       if (socket) return;
@@ -71,7 +73,7 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
         group_ids: groupsToJoin,
       });
       // let all the friends know this user is online
-      newSocket.emit("online");
+      newSocket.emit("online", { onlineStatus: currentOnlineStatus });
 
       // initialize all the listeners //
       message_listener(newSocket, dispatch);

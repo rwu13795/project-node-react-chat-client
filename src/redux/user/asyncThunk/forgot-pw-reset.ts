@@ -3,7 +3,7 @@ import { RootState } from "../..";
 
 import { client, serverUrl } from "../../utils";
 
-interface ResetPW_body {
+interface Res_body {
   token: string;
   user_id: string;
   new_password: string;
@@ -12,7 +12,7 @@ interface ResetPW_body {
 
 export const forgotPasswordReset = createAsyncThunk<
   void,
-  ResetPW_body,
+  Res_body,
   { state: RootState }
 >("user/forgotPasswordReset", async (body, thunkAPI) => {
   try {

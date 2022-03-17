@@ -11,17 +11,20 @@ interface GroupNotifications {
   group_id: string;
   count: number;
 }
-interface GetNotifications_res {
+interface Payload {
   private: PrivateNotifications[];
   group: GroupNotifications[];
 }
+interface Res_body {
+  currentUserId: string;
+}
 
 export const getNotifications = createAsyncThunk<
-  GetNotifications_res,
-  string,
+  Payload,
+  Res_body,
   { state: RootState }
->("message/getNotifications", async (currentUserId) => {
-  const response = await client.get<GetNotifications_res>(
+>("message/getNotifications", async ({ currentUserId }) => {
+  const response = await client.get<Payload>(
     serverUrl + `/chat/get-notifications?user_id=${currentUserId}`
   );
 

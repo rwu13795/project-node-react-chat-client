@@ -5,13 +5,20 @@ import { chatType } from "../../message/messageSlice";
 import { client, serverUrl } from "../../utils";
 import { GroupMember } from "../userSlice";
 
+interface Req_body {
+  group_id: string;
+  initialize: boolean;
+}
+
+interface Payload {
+  group_id: string;
+  group_members: GroupMember[];
+  wasMembersListLoaded: boolean;
+}
+
 export const getGroupMembersList_database = createAsyncThunk<
-  {
-    group_id: string;
-    group_members: GroupMember[];
-    wasMembersListLoaded: boolean;
-  },
-  { group_id: string; initialize: boolean },
+  Payload,
+  Req_body,
   { state: RootState }
 >("user/getGroupMembersList", async ({ group_id, initialize }, thunkAPI) => {
   const room_id = `${chatType.group}_${group_id}`;

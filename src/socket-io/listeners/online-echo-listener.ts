@@ -12,7 +12,10 @@ interface Props {
 // is online by emitting a "online-echo" messsage
 export function onlineEcho_listener(socket: Socket, dispatch: Dispatch) {
   socket.on("online-echo", ({ friend_id, status }: Props) => {
-    console.log(`user ${friend_id} let me know he is ALSO online`);
+    console.log(
+      `user ${friend_id} let me know he change online status to ${status}`
+    );
+
     dispatch(setFriendsOnlineStatus({ friend_id, status }));
   });
 }

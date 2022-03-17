@@ -19,6 +19,8 @@ import InputField, { InputErrors, InputValues } from "../../input/InputField";
 // UI //
 import styles from "./SignIn.module.css";
 import { LoadingButton } from "@mui/lab";
+import { Checkbox } from "@mui/material";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
 
 const inputFields = [inputNames.email, inputNames.password];
 
@@ -33,6 +35,7 @@ function SignIn(): JSX.Element {
   const [inputErrors, setInputErrors] = useState<InputErrors>(
     initializeValues<InputErrors>(inputFields)
   );
+  const [appearOffline, setAppearOffline] = useState<boolean>(false);
 
   function onSubmitHandler(
     e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
@@ -46,8 +49,13 @@ function SignIn(): JSX.Element {
       signIn({
         email: inputValues[inputNames.email],
         password: inputValues[inputNames.password],
+        appearOffline,
       })
     );
+  }
+
+  function toggleAppearOffline() {
+    setAppearOffline((prev) => !prev);
   }
 
   useEffect(() => {
@@ -76,6 +84,14 @@ function SignIn(): JSX.Element {
             />
           );
         })}
+        <div className={styles.appear_offline} onClick={toggleAppearOffline}>
+          <Checkbox
+            checkedIcon={
+              <CheckBoxIcon color="secondary" className={styles.checked} />
+            }
+          />
+          Appear offline after signing in?
+        </div>
 
         <div className={styles.buttons_group}>
           <Link to="/auth/forgot-password" className={styles.link}>

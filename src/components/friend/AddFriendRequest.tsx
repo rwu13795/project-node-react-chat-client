@@ -7,6 +7,7 @@ import {
   selectAddFriendRequests,
   selectUserId,
   selectUsername,
+  selectUserOnlineStatus,
 } from "../../redux/user/userSlice";
 import { getNotifications } from "../../redux/message/asyncThunk";
 import { getUserAuth } from "../../redux/user/asyncThunk";
@@ -20,6 +21,7 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
 
   const currentUserId = useSelector(selectUserId);
   const currentUsername = useSelector(selectUsername);
+  const currentOnlineStatus = useSelector(selectUserOnlineStatus);
   const addFriendRequests = useSelector(selectAddFriendRequests);
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -46,19 +48,22 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
       setLoading(true);
       setTimeout(() => {
         // don't initialize the onlineStatus, otherwise all friends will be marked as offline
-        dispatch(getUserAuth({ initialize: false }));
-        dispatch(getNotifications(currentUserId));
+        dispatch(getUserAuth());
+        dispatch(getNotifications({ currentUserId }));
         setLoading(false);
       }, 4000);
       // wait for 4 seconds, the getUserAuth() should finish updating the friendList
       // then let the new added friend know this user is online.
       setTimeout(() => {
         if (socket) {
-          socket.emit("online", sender_id);
+          socket.emit("online", {
+            target_id: sender_id,
+            onlineStatus: currentOnlineStatus,
+          });
         }
       }, 6000);
     } else {
-      clearAddFriendRequests(index);
+      dispatch(clearAddFriendRequests(index));
     }
   }
 

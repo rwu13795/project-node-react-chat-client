@@ -135,10 +135,10 @@ const userSlice = createSlice({
     },
     clearAddFriendRequests(state, action: PayloadAction<number>) {
       state.addFriendRequests = state.addFriendRequests.filter(
-        (value, index) => {
-          return index !== action.payload;
-        }
+        (value, index) => index !== action.payload
       );
+
+      console.log(state.addFriendRequests);
     },
 
     setResult_addFriendRequest(state, action: PayloadAction<string>) {
@@ -250,7 +250,6 @@ const userSlice = createSlice({
           groupInvitations,
           groupsList,
           friendsList,
-          require_initialize,
         } = action.payload;
 
         state.currentUser = currentUser;
@@ -265,22 +264,22 @@ const userSlice = createSlice({
           }
         }
 
-        if (require_initialize) {
-          state.currentUser.onlineStatus = onlineStatus_enum.online;
-        }
         for (let friend of friendsList) {
-          state.friendsList[friend.friend_id] = friend;
-          if (require_initialize) {
+          if (!state.friendsList[friend.friend_id]) {
+            state.friendsList[friend.friend_id] = friend;
             state.friendsList[friend.friend_id].onlineStatus =
               onlineStatus_enum.offline;
           }
+          // if (require_initialize) {
+          //   state.friendsList[friend.friend_id].onlineStatus =
+          //     onlineStatus_enum.offline;
+          // }
         }
       })
 
       /***************  SIGN IN  ***************/
       .addCase(signIn.fulfilled, (state, action): void => {
         state.currentUser = action.payload.currentUser;
-        state.currentUser.onlineStatus = onlineStatus_enum.online;
         state.addFriendRequests = action.payload.addFriendRequests;
         state.groupInvitations = action.payload.groupInvitations;
 
@@ -485,6 +484,10 @@ export const selectUsername = createSelector(
 export const selectUserEmail = createSelector(
   [selectCurrentUser],
   (currentUser) => currentUser.email
+);
+export const selectUserOnlineStatus = createSelector(
+  [selectCurrentUser],
+  (currentUser) => currentUser.onlineStatus
 );
 
 export const selectFriendsList = createSelector(

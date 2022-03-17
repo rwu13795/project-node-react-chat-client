@@ -1,4 +1,4 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { ActionCreatorWithPayload, createAsyncThunk } from "@reduxjs/toolkit";
 
 import { client, serverUrl } from "../../utils";
 import {
@@ -9,22 +9,21 @@ import {
   GroupInvitation,
 } from "../userSlice";
 
-interface GetUserAuth_res {
+interface Payload {
   currentUser: CurrentUser;
   friendsList: Friend[];
   addFriendRequests: AddFriendRequest[];
   groupsList: Group[];
   groupInvitations: GroupInvitation[];
-  require_initialize: boolean;
 }
 
-export const getUserAuth = createAsyncThunk<
-  GetUserAuth_res,
-  { initialize: boolean }
->("user/getUserAuth", async ({ initialize }) => {
-  const response = await client.get<GetUserAuth_res>(
-    serverUrl + `/auth/user-auth-status?initialize=${initialize ? "yes" : "no"}`
-  );
+export const getUserAuth = createAsyncThunk<Payload>(
+  "user/getUserAuth",
+  async () => {
+    const response = await client.get<Payload>(
+      serverUrl + `/auth/user-auth-status`
+    );
 
-  return response.data;
-});
+    return response.data;
+  }
+);

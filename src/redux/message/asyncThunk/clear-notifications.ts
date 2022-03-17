@@ -3,20 +3,20 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "../..";
 import { client, serverUrl } from "../../utils";
 
-interface ClearNotifications_req {
+interface Res_body {
   previousRoom_id: string;
   previousRoom_type: string;
   nextRoom_id: string;
   nextRoom_type: string;
 }
-interface ClearNotifications_res {
+interface Payload {
   id: string;
   type: string;
 }
 
 export const clearNotifications = createAsyncThunk<
-  ClearNotifications_res,
-  ClearNotifications_req,
+  Payload,
+  Res_body,
   { state: RootState }
 >(
   "message/clearNotifications",

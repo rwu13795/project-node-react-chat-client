@@ -3,17 +3,21 @@ import { RootState } from "../..";
 
 import { client, serverUrl } from "../../utils";
 
-interface changeUsername_body {
+interface Res_body {
+  username: string;
+}
+
+interface Payload {
   username: string;
 }
 
 export const changeUsername = createAsyncThunk<
-  { username: string },
-  changeUsername_body,
+  Payload,
+  Res_body,
   { state: RootState }
 >("user/changeUsername", async (body, thunkAPI) => {
   try {
-    const { data } = await client.post<{ username: string }>(
+    const { data } = await client.post<Payload>(
       serverUrl + `/auth/change-username`,
       body
     );

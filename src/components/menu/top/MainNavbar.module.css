@@ -20,6 +20,10 @@
   flex-flow: column nowrap;
   justify-content: flex-end;
   align-items: center;
+  cursor: pointer;
+}
+.right_grid:hover .logo {
+  animation: logo-spin infinite 10s linear;
 }
 .title {
   display: flex;
@@ -33,7 +37,6 @@
   width: 40px;
   height: 20px;
 }
-
 .logo {
   position: relative;
   bottom: 90%;

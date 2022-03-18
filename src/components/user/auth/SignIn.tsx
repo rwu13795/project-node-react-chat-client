@@ -85,11 +85,7 @@ function SignIn(): JSX.Element {
           );
         })}
         <div className={styles.appear_offline} onClick={toggleAppearOffline}>
-          <Checkbox
-            checkedIcon={
-              <CheckBoxIcon color="secondary" className={styles.checked} />
-            }
-          />
+          <Checkbox checkedIcon={<CheckBoxIcon className={styles.checked} />} />
           Appear offline after signing in?
         </div>
 

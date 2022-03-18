@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, memo } from "react";
 import ReactCrop, {
   centerCrop,
   makeAspectCrop,
@@ -9,33 +9,57 @@ import "react-image-crop/dist/ReactCrop.css";
 import { useDispatch } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { changeAvatar } from "../../../redux/user/userSlice";
 import { cropImage } from "../../../utils";
+
+// UI //
+import styles from "./AddAvatar.module.css";
+import { Button } from "@mui/material";
+import { changeAvatar } from "../../../redux/user/userSlice";
+import ImageIcon from "@mui/icons-material/Image";
+import SaveIcon from "@mui/icons-material/Save";
 
 interface Props {
   socket: Socket | undefined;
+  handleCloseModal: () => void;
 }
 
-export default function AddAvatar({ socket }: Props): JSX.Element {
+const imageTypes = [
+  "image/apng",
+  "image/gif",
+  "image/jpeg",
+  "image/pjpeg",
+  "image/png",
+];
+
+function AddAvatar({ socket, handleCloseModal }: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const [imgSrc, setImgSrc] = useState("");
-  const [previewSrc, setPreviewSrc] = useState("");
   const imgRef = useRef<any>(null);
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
-  const [scale, setScale] = useState(1);
-  const [rotate, setRotate] = useState(0);
+
+  const [sizeExceeded, setSizeExceeded] = useState<boolean>(false);
+  const [notSupported, setNotSupported] = useState<boolean>(false);
 
   const [croppedImageBlob, setCroppedImageBlob] = useState<Blob | null>(null);
 
   function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
+    setSizeExceeded(false);
+    setNotSupported(false);
+
     if (e.target.files && e.target.files.length > 0) {
       setCrop(undefined); // Makes crop preview update between images.
 
       const file = e.target.files[0];
-      if (file.type.split("/")[0] !== "image") {
-        console.log("Not the proper type !!!");
+      // 1 MB max size
+      if (file.size > 1000000) {
+        setSizeExceeded(true);
+        return;
+      }
+
+      if (!imageTypes.includes(file.type)) {
+        setNotSupported(true);
         return;
       }
 
@@ -56,109 +80,68 @@ export default function AddAvatar({ socket }: Props): JSX.Element {
     // This is to demonstate how to make and center a % aspect crop
     // which is a bit trickier so we use some helper functions.
     const crop = centerCrop(
-      makeAspectCrop(
-        {
-          unit: "%",
-          width: 50,
-        },
-        1,
-        width,
-        height
-      ),
+      makeAspectCrop({ unit: "%", width: 50 }, 1, width, height),
       width,
       height
     );
-
     setCrop(crop);
   }
 
   async function changeAvatarHandler() {
     if (socket && croppedImageBlob) {
-      console.log(croppedImageBlob);
-
-      // const imageFile = new File([croppedImageBlob!], "avatarImage");
-      // console.log(imageFile);
       const imageObject = {
         buffer: croppedImageBlob,
         type: croppedImageBlob.type,
       };
-      socket.emit("change-avatar", imageObject);
 
-      console.log(previewSrc);
-      dispatch(changeAvatar(previewSrc));
+      socket.emit("change-avatar", imageObject);
+      dispatch(changeAvatar(URL.createObjectURL(croppedImageBlob)));
     }
+    handleCloseModal();
   }
 
-  const cropImageCallback = useCallback(
-    async (completedCrop: PixelCrop, scale: number, rotate: number) => {
-      if (completedCrop) {
-        const blob = await cropImage(
-          imgRef.current,
-          completedCrop,
-          scale,
-          rotate
-        );
-        if (blob !== null) {
-          setPreviewSrc(URL.createObjectURL(blob));
-          setCroppedImageBlob(blob);
-        }
+  const cropImageCallback = useCallback(async (completedCrop: PixelCrop) => {
+    if (completedCrop) {
+      const blob = await cropImage(imgRef.current, completedCrop);
+      if (blob !== null) {
+        setCroppedImageBlob(blob);
       }
-    },
-    []
-  );
+    }
+  }, []);
 
-  // whenever the image is cropped, update the preview and the blob
+  // whenever the image is cropped, update the blob
   useEffect(() => {
     if (completedCrop) {
-      cropImageCallback(completedCrop, scale, rotate);
+      cropImageCallback(completedCrop);
     }
-  }, [completedCrop, scale, rotate, cropImageCallback]);
+  }, [completedCrop, cropImageCallback]);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <div>
-        <input type="file" accept="image/*" onChange={onSelectFile} />
-        <div>
-          <label htmlFor="scale-input">Scale: </label>
+    <main className={styles.main}>
+      {!Boolean(imgSrc) && (
+        <div className={styles.button_wrapper}>
+          <label htmlFor="select-image" className={styles.label}>
+            <Button
+              variant="outlined"
+              className={styles.button}
+              component="span"
+            >
+              <ImageIcon />
+              Upload a picture
+            </Button>
+          </label>
           <input
-            id="scale-input"
-            type="number"
-            step="0.1"
-            value={scale}
-            disabled={!imgSrc}
-            onChange={(e) => setScale(Number(e.target.value))}
+            id="select-image"
+            type="file"
+            accept="image/png, image/jpeg, image/jpg, image/gif"
+            onChange={onSelectFile}
+            style={{ display: "none" }}
           />
         </div>
-        <div>
-          <label htmlFor="rotate-input">Rotate: </label>
-          <input
-            id="rotate-input"
-            type="number"
-            value={rotate}
-            disabled={!imgSrc}
-            onChange={(e) =>
-              setRotate(Math.min(180, Math.max(-180, Number(e.target.value))))
-            }
-          />
-        </div>
-      </div>
+      )}
+
       {Boolean(imgSrc) && (
-        <div
-          style={{
-            width: "400px",
-            height: "400px",
-            border: "solid red 2px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        <div className={styles.crop_image_wrapper}>
           <ReactCrop
             crop={crop}
             onChange={(_, percentCrop) => setCrop(percentCrop)}
@@ -169,36 +152,35 @@ export default function AddAvatar({ socket }: Props): JSX.Element {
             <img
               alt="Crop me"
               src={imgSrc}
-              style={{
-                transform: `scale(${scale}) rotate(${rotate}deg)`,
-                width: "400px",
-              }}
               onLoad={onImageLoad}
+              className={styles.crop_image}
             />
           </ReactCrop>
         </div>
       )}
 
-      <div>
-        {previewSrc && (
-          <img
-            src={previewSrc}
-            alt="Crop preview"
-            style={{
-              width: "200px",
-              height: "200px",
-              border: "solid red 1px",
-              borderRadius: "100px",
-              objectFit: "contain",
-            }}
-          />
-        )}
-      </div>
+      {sizeExceeded && (
+        <div>Image size exceeds maximum allowable size (1 MB).</div>
+      )}
+      {notSupported && <div>Please only select PNG, GIF, or JPG picture.</div>}
 
-      <button onClick={changeAvatarHandler}>change avatar</button>
-    </div>
+      {Boolean(imgSrc) && (
+        <div className={styles.button_wrapper}>
+          <Button
+            variant="outlined"
+            onClick={changeAvatarHandler}
+            className={styles.button}
+          >
+            <SaveIcon />
+            change avatar
+          </Button>
+        </div>
+      )}
+    </main>
   );
 }
+
+export default memo(AddAvatar);
 
 // NOTE //
 /*

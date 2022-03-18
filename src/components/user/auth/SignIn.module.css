@@ -53,4 +53,5 @@
 }
 .checked {
   background-color: var(--main-color-1);
+  color: var(--main-color-2);
 }

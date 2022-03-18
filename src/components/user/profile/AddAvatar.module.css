@@ -1,0 +1,39 @@
+.main {
+  width: 100%;
+  min-height: 140px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.button_wrapper {
+  width: 60%;
+}
+.button {
+  width: 100%;
+  font-size: 22px;
+  background-image: linear-gradient(
+    to top,
+    var(--navbar-color) 0%,
+    rgb(255, 255, 255) 45%
+  );
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 10px;
+}
+.label {
+  cursor: pointer;
+}
+
+.crop_image_wrapper {
+  max-width: 640px;
+  max-height: 700px;
+  margin-bottom: 20px;
+}
+.crop_image {
+  max-width: 640px;
+  max-height: 700px;
+  object-fit: contain;
+}

@@ -12,3 +12,4 @@ export * from "./helpers/input-check/on-change-check";
 export * from "./helpers/input-check/on-focus-check";
 export * from "./helpers/input-check/on-submit-check";
 export * from "./helpers/input-check/initialize-values";
+export * from "./helpers/scroll-to-top";

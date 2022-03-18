@@ -44,6 +44,17 @@ function ChangeOnlineStatus({
     handleClose();
   }
 
+  let color;
+  if (onlineStatus === onlineStatus_enum.online) {
+    color = styles.color_green;
+  } else if (onlineStatus === onlineStatus_enum.away) {
+    color = styles.color_yellow;
+  } else if (onlineStatus === onlineStatus_enum.busy) {
+    color = styles.color_red;
+  } else {
+    color = styles.color_grey;
+  }
+
   return (
     <main>
       <div className={styles.button_wrapper}>
@@ -56,6 +67,7 @@ function ChangeOnlineStatus({
             ? onlineStatus
             : "Appear Offline"}
         </div>
+        <div className={styles.status_border + " " + color}></div>
       </div>
       <Popover
         open={open}

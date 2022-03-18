@@ -6,8 +6,20 @@ import {
   setAddFriendRequests,
 } from "../../redux/user/userSlice";
 
+interface Props extends AddFriendRequest {}
+
 export function addFriendRequest_listener(socket: Socket, dispatch: Dispatch) {
-  socket.on("add-friend-request", (request: AddFriendRequest) => {
-    dispatch(setAddFriendRequests(request));
-  });
+  socket.on(
+    "add-friend-request",
+    ({ sender_id, sender_username, sender_email, message }: Props) => {
+      dispatch(
+        setAddFriendRequests({
+          sender_id,
+          sender_username,
+          sender_email,
+          message,
+        })
+      );
+    }
+  );
 }

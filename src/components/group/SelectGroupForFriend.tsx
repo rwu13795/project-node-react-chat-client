@@ -12,6 +12,7 @@ import {
 import styles from "./SelectGroupForFriend.module.css";
 import { Popover, Tooltip } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import { groupInvitationRequest_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -35,13 +36,16 @@ function SelectGroupForFriend({ socket, friend_id }: Props): JSX.Element {
   }
 
   function invitationHandler(group_id: string, group_name: string) {
-    if (socket)
-      socket.emit("group-invitation-request", {
+    if (socket) {
+      groupInvitationRequest_emitter({
+        socket,
         friend_id,
         group_id,
         group_name,
         inviter_name: currentUsername,
       });
+    }
+
     handleClose();
     // remove the Result_groupInvitation message after 10 second with a collapse transition
     setTimeout(() => {

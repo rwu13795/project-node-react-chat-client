@@ -11,6 +11,10 @@ import {
 } from "../../redux/user/userSlice";
 import { getNotifications } from "../../redux/message/asyncThunk";
 import { getUserAuth } from "../../redux/user/asyncThunk";
+import {
+  addFriendResponse_emitter,
+  online_emitter,
+} from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -33,7 +37,8 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
   ) {
     if (socket) {
       // update the friends_pair and notificaiton if request is accepted
-      socket.emit("add-friend-response", {
+      addFriendResponse_emitter({
+        socket,
         sender_id,
         sender_username,
         target_id: currentUserId,
@@ -56,9 +61,10 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
       // then let the new added friend know this user is online.
       setTimeout(() => {
         if (socket) {
-          socket.emit("online", {
-            target_id: sender_id,
+          online_emitter({
+            socket,
             onlineStatus: currentOnlineStatus,
+            target_id: sender_id,
           });
         }
       }, 6000);

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import { clearLeftMember, selectUsername } from "../../redux/user/userSlice";
+import { kickMember_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -24,11 +25,7 @@ function KickMember({
 
   function kickMemberHandler() {
     if (socket)
-      socket.emit("kick-member", {
-        group_id,
-        member_user_id,
-        member_username,
-      });
+      kickMember_emitter({ socket, group_id, member_user_id, member_username });
 
     dispatch(clearLeftMember({ group_id, member_user_id }));
 

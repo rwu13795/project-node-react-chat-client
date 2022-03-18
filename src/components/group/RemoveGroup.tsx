@@ -22,6 +22,7 @@ function RemoveGroup(): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
 
+  // remove the group from groupList after leaving or being kicked
   async function removeGroupHandler() {
     const { group_id, was_kicked } = targetGroup;
     await client.post("http://localhost:5000/api/user/remove-group", {

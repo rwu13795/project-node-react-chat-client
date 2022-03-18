@@ -7,6 +7,7 @@ import { selectTargetFriend, setBlockFriend } from "../../redux/user/userSlice";
 import styles from "./BlockFriend.module.css";
 import BlockIcon from "@mui/icons-material/Block";
 import { Tooltip } from "@mui/material";
+import { blockFriend_emitter } from "../../socket-io/emitters";
 
 interface Props {
   friend_id: string;
@@ -20,7 +21,7 @@ function UnblockFriend({ friend_id, socket }: Props): JSX.Element {
     console.log("unblock friend", friend_id);
 
     if (socket) {
-      socket.emit("block-friend", { friend_id, block: false });
+      blockFriend_emitter({ socket, friend_id, block: false });
     }
     dispatch(setBlockFriend({ friend_id, block: false, being_blocked: false }));
   }

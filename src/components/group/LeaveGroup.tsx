@@ -11,6 +11,7 @@ import {
   selectUserId,
   selectUsername,
 } from "../../redux/user/userSlice";
+import { leaveGroup_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -27,10 +28,7 @@ function LeaveGroup({ socket, group_id, group_name }: Props): JSX.Element {
 
   function leaveGroupHandler() {
     if (socket)
-      socket.emit("leave-group", {
-        group_id,
-        user_id: currentUserId,
-      });
+      leaveGroup_emitter({ socket, group_id, user_id: currentUserId });
 
     dispatch(leaveGroup({ group_id, was_kicked: false }));
 

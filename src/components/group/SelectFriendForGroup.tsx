@@ -10,6 +10,7 @@ import {
   selectUsername,
   setResult_groupInvitation,
 } from "../../redux/user/userSlice";
+import { groupInvitationRequest_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -39,13 +40,15 @@ function InviteFriendToGroup({
   }
 
   function invitationHandler(friend_id: string) {
-    if (socket)
-      socket.emit("group-invitation-request", {
+    if (socket) {
+      groupInvitationRequest_emitter({
+        socket,
         friend_id,
         group_id,
         group_name,
         inviter_name: currentUsername,
       });
+    }
     handleClose();
     setTimeout(() => {
       dispatch(setResult_groupInvitation(""));

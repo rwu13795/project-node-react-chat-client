@@ -12,6 +12,7 @@ import {
   setLoadingStatus_user,
 } from "../../redux/user/userSlice";
 import { loadingStatusEnum } from "../../utils";
+import { createNewGroup_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -36,8 +37,7 @@ function CreateGroup({
       socket
     ) {
       dispatch(setLoadingStatus_user("idle"));
-      // join the new created group
-      socket.emit("create-new-group", { group_id: newGroupToJoin });
+      createNewGroup_emitter({ socket, group_id: newGroupToJoin });
       selectTargetChatRoomHandler(newGroupToJoin, groupName, chatType.group);
     }
   }, [loadingStatus, newGroupToJoin]);
@@ -45,6 +45,7 @@ function CreateGroup({
   function setGroupNameHandler(e: ChangeEvent<HTMLInputElement>) {
     setGroupName(e.target.value);
   }
+
   function createGroupHandler() {
     if (groupName === "") return;
     dispatch(

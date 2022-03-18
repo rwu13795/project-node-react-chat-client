@@ -22,7 +22,8 @@ export const getGroupMembersList_database = createAsyncThunk<
   { state: RootState }
 >("user/getGroupMembersList", async ({ group_id, initialize }, thunkAPI) => {
   const room_id = `${chatType.group}_${group_id}`;
-  // if the room is visited, that means chat history has been loaded, then don't make request again
+  // if the room is visited, that means chat history has been loaded,
+  // then don't make request again
   if (thunkAPI.getState().message.visitedRoom[room_id] && !initialize) {
     console.log("visied room - not getting member list again");
     return {

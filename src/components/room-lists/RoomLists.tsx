@@ -22,6 +22,7 @@ import GroupsList from "./GroupsList";
 
 // UI //
 import styles from "./RoomLists.module.css";
+import { changeTargetRoom_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -86,7 +87,10 @@ function RoomLists({ socket }: Props): JSX.Element {
 
     // (1) //
     if (socket)
-      socket.emit("current-target-room", `${nextRoom_type}_${nextRoom_id}`);
+      changeTargetRoom_emitter({
+        socket,
+        room_id: `${nextRoom_type}_${nextRoom_id}`,
+      });
   }
 
   return (

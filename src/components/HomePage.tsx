@@ -26,7 +26,7 @@ import {
   check_addFriendRequest_listener,
   check_groupInvitation_listener,
   groupAdminNotification_listener,
-  groupInvitation_listener,
+  groupInvitationRequest_listener,
   kickedOutOfGroup_listener,
   message_listener,
   offline_listener,
@@ -35,8 +35,9 @@ import {
 } from "../socket-io/listeners";
 
 // UI //
-import styles from "./MainPage.module.css";
+import styles from "./HomePage.module.css";
 import { CircularProgress } from "@mui/material";
+import { joinRoom_emitter, online_emitter } from "../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -68,12 +69,13 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
       setSocket(newSocket);
 
       // each user will join his/her private room and all the groups room after signing in
-      newSocket.emit("join-room", {
-        private_id: `${chatType.private}_${currentUserId}`,
+      joinRoom_emitter({
+        socket: newSocket,
+        user_id: currentUserId,
         group_ids: groupsToJoin,
       });
       // let all the friends know this user is online
-      newSocket.emit("online", { onlineStatus: currentOnlineStatus });
+      online_emitter({ socket: newSocket, onlineStatus: currentOnlineStatus });
 
       // initialize all the listeners //
       message_listener(newSocket, dispatch);
@@ -83,7 +85,7 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
       addFriendResponse_listener(newSocket, dispatch, currentUserId);
       blockFriend_listener(newSocket, dispatch);
 
-      groupInvitation_listener(newSocket, dispatch);
+      groupInvitationRequest_listener(newSocket, dispatch);
       check_groupInvitation_listener(newSocket, dispatch);
       groupAdminNotification_listener(newSocket, dispatch);
       kickedOutOfGroup_listener(newSocket, dispatch);
@@ -91,8 +93,6 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
       online_listener(newSocket, dispatch);
       onlineEcho_listener(newSocket, dispatch);
       offline_listener(newSocket, dispatch);
-
-      console.log("user signed, socket connected");
     }
   }, [isLoggedIn, socket]);
 

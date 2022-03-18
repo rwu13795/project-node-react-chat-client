@@ -31,15 +31,8 @@ export function groupAdminNotification_listener(
         })
       );
 
-      // if (note === "left") {
-      //   // remove the user from membersList who just left or was kicked
-      //   dispatch(clearLeftMember({ group_id, member_user_id }));
-      // } else {
-      //   // fetch a new membersList after a new member has joined
-      //   console.log("getting new group members list");
-
+      // get the new member list from server whenever a member joined or left the group
       dispatch(getGroupMembersList_database({ group_id, initialize: true }));
-      // }
     }
   );
 }

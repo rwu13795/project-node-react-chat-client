@@ -2,6 +2,7 @@ import { Dispatch } from "@reduxjs/toolkit";
 import { Socket } from "socket.io-client";
 
 import { setFriendsOnlineStatus } from "../../redux/user/userSlice";
+import { onlineEcho_emitter } from "../emitters";
 
 interface Props {
   friend_id: string;
@@ -18,6 +19,6 @@ export function online_listener(socket: Socket, dispatch: Dispatch) {
     dispatch(setFriendsOnlineStatus({ friend_id, status }));
 
     // let the friend who just logged in know that the current user is online also
-    socket.emit("online-echo", friend_id);
+    onlineEcho_emitter({ socket, friend_id });
   });
 }

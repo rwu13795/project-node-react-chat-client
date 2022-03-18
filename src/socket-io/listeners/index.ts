@@ -4,7 +4,7 @@ export * from "./block-friend-listener";
 export * from "./check-add-friend-request-listener";
 export * from "./check-group-invitation-listener";
 export * from "./group-admin-notification-listener";
-export * from "./group-invitation-listener";
+export * from "./group-invitation-request-listener";
 export * from "./kicked-out-of-group-listener";
 export * from "./message-listener";
 export * from "./offline-listener";

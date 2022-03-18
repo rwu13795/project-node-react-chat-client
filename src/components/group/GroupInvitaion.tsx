@@ -6,6 +6,7 @@ import {
   respondToGroupInvitation,
   selectGroupInvitations,
 } from "../../redux/user/userSlice";
+import { groupInvitationResponse_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -30,10 +31,7 @@ function GroupInvitation({
   function responseHandler(group_id: string, accept: boolean, index: number) {
     if (socket) {
       // update the groups and users_in_groups according to the response
-      socket.emit("group-invitation-response", {
-        group_id,
-        accept,
-      });
+      groupInvitationResponse_emitter({ socket, group_id, accept });
     }
     dispatch(respondToGroupInvitation(index));
 

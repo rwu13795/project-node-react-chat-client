@@ -4,12 +4,16 @@ import { Socket } from "socket.io-client";
 import { getNotifications } from "../../redux/message/asyncThunk/get-notifications";
 import { getUserAuth } from "../../redux/user/asyncThunk/get-user-auth";
 
+interface Props {
+  newFriend: string;
+}
+
 export function addFriendResponse_listener(
   socket: Socket,
   dispatch: Dispatch<any>,
   currentUserId: string
 ) {
-  socket.on("add-friend-response", (newFriend: string) => {
+  socket.on("add-friend-response", ({ newFriend }: Props) => {
     console.log(
       `user ${newFriend} has accepted you request, you are friends now!`
     );

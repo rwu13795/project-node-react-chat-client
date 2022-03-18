@@ -14,6 +14,7 @@ import {
   selectUserId,
   selectUsername,
 } from "../../redux/user/userSlice";
+import { message_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -72,7 +73,8 @@ function ImageInput({ socket }: Props): JSX.Element {
     );
 
     if (socket) {
-      socket.emit("message-to-server", {
+      message_emitter({
+        socket,
         messageObject: { ...messageObject, file_body: imageFile },
         room_type: targetChatRoom.type,
       });

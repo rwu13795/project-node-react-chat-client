@@ -5,7 +5,7 @@ import "./styles/App.css";
 
 import MainNavbar from "./components/menu/top/MainNavbar";
 import Auth from "./components/user/auth/Auth";
-import MainPage from "./components/MainPage";
+import HomePage from "./components/HomePage";
 import UserProfile from "./components/user/profile/UserProfile";
 import { useDispatch } from "react-redux";
 import { getUserAuth } from "./redux/user/asyncThunk/get-user-auth";
@@ -39,7 +39,7 @@ function App(): JSX.Element {
 
             <Route
               path="/chat"
-              element={<MainPage setSocket={setSocket} socket={socket} />}
+              element={<HomePage setSocket={setSocket} socket={socket} />}
             />
             <Route path="profile" element={<UserProfile socket={socket} />} />
 

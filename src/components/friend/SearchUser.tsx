@@ -9,6 +9,7 @@ import {
   setResult_addFriendRequest,
 } from "../../redux/user/userSlice";
 import { client, serverUrl } from "../../redux/utils";
+import { addFriendRequest_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -94,7 +95,8 @@ function SearchUser({ socket }: Props): JSX.Element {
 
     const { user_id, username, email } = currentUser;
     if (socket) {
-      socket.emit("add-friend-request", {
+      addFriendRequest_emitter({
+        socket,
         sender_id: user_id,
         sender_username: username,
         sender_email: email,

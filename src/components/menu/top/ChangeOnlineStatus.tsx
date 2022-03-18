@@ -13,6 +13,7 @@ import StatusDot from "./StatusDot";
 import styles from "./ChangeOnlineStatus.module.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { changeOnlineStatus_session } from "../../../redux/user/asyncThunk";
+import { changeOnlineStatus_emitter } from "../../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -38,7 +39,7 @@ function ChangeOnlineStatus({
   }
 
   function selectHandler(status: string) {
-    if (socket) socket.emit("online-status-change", status);
+    if (socket) changeOnlineStatus_emitter({ socket, status });
     dispatch(setUserOnlineStatus(status));
     dispatch(changeOnlineStatus_session({ status }));
     handleClose();

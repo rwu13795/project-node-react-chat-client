@@ -47,7 +47,7 @@ function UserAvatar({
   function logoutHandler() {
     handleClose();
     if (socket) {
-      logout_emitter({ socket });
+      logout_emitter(socket);
     }
     dispatch(signOut());
     dispatch(setIsLoggedIn(false));

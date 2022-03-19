@@ -31,7 +31,7 @@ function GroupInvitation({
   function responseHandler(group_id: string, accept: boolean, index: number) {
     if (socket) {
       // update the groups and users_in_groups according to the response
-      groupInvitationResponse_emitter({ socket, group_id, accept });
+      groupInvitationResponse_emitter(socket, { group_id, accept });
     }
     dispatch(respondToGroupInvitation(index));
 

@@ -1,12 +1,14 @@
 import { Socket } from "socket.io-client";
 
-interface Props {
-  socket: Socket;
+interface Body {
   group_id: string;
   user_id: string;
 }
 
-export function leaveGroup_emitter({ socket, group_id, user_id }: Props) {
+export function leaveGroup_emitter(
+  socket: Socket,
+  { group_id, user_id }: Body
+) {
   socket.emit("leave-group", {
     group_id,
     user_id,

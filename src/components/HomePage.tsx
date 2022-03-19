@@ -69,13 +69,12 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
       setSocket(newSocket);
 
       // each user will join his/her private room and all the groups room after signing in
-      joinRoom_emitter({
-        socket: newSocket,
+      joinRoom_emitter(newSocket, {
         user_id: currentUserId,
         group_ids: groupsToJoin,
       });
       // let all the friends know this user is online
-      online_emitter({ socket: newSocket, onlineStatus: currentOnlineStatus });
+      online_emitter(newSocket, { onlineStatus: currentOnlineStatus });
 
       // initialize all the listeners //
       message_listener(newSocket, dispatch);

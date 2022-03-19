@@ -28,7 +28,7 @@ function LeaveGroup({ socket, group_id, group_name }: Props): JSX.Element {
 
   function leaveGroupHandler() {
     if (socket)
-      leaveGroup_emitter({ socket, group_id, user_id: currentUserId });
+      leaveGroup_emitter(socket, { group_id, user_id: currentUserId });
 
     dispatch(leaveGroup({ group_id, was_kicked: false }));
 

@@ -87,8 +87,7 @@ function RoomLists({ socket }: Props): JSX.Element {
 
     // (1) //
     if (socket)
-      changeTargetRoom_emitter({
-        socket,
+      changeTargetRoom_emitter(socket, {
         room_id: `${nextRoom_type}_${nextRoom_id}`,
       });
   }

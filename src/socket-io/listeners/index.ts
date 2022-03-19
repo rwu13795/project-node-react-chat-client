@@ -1,13 +1,14 @@
-export * from "./add-friend-request-listener";
-export * from "./add-friend-response-listener";
-export * from "./block-friend-listener";
-export * from "./check-add-friend-request-listener";
-export * from "./check-group-invitation-listener";
-export * from "./group-admin-notification-listener";
-export * from "./group-invitation-request-listener";
-export * from "./kicked-out-of-group-listener";
-export * from "./message-listener";
-export * from "./offline-listener";
-export * from "./online-echo-listener";
-export * from "./online-listener";
-export * from "./online-status-change-listener";
+export * from "./friends/add-friend-request-listener";
+export * from "./friends/add-friend-response-listener";
+export * from "./friends/block-friend-listener";
+export * from "./friends/check-add-friend-request-listener";
+
+export * from "./groups/check-group-invitation-listener";
+export * from "./groups/group-admin-notification-listener";
+export * from "./groups/group-invitation-request-listener";
+export * from "./groups/kicked-out-of-group-listener";
+
+export * from "./user/message-listener";
+export * from "./user/offline-listener";
+export * from "./user/online-echo-listener";
+export * from "./user/online-listener";

@@ -39,7 +39,7 @@ function ChangeOnlineStatus({
   }
 
   function selectHandler(status: string) {
-    if (socket) changeOnlineStatus_emitter({ socket, status });
+    if (socket) changeOnlineStatus_emitter(socket, { status });
     dispatch(setUserOnlineStatus(status));
     dispatch(changeOnlineStatus_session({ status }));
     handleClose();

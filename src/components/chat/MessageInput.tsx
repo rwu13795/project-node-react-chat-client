@@ -91,8 +91,7 @@ function MessageInput({ socket }: Props): JSX.Element {
       })
     );
     if (socket) {
-      message_emitter({
-        socket,
+      message_emitter(socket, {
         messageObject,
         room_type: targetChatRoom.type,
       });

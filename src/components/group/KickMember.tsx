@@ -25,7 +25,7 @@ function KickMember({
 
   function kickMemberHandler() {
     if (socket)
-      kickMember_emitter({ socket, group_id, member_user_id, member_username });
+      kickMember_emitter(socket, { group_id, member_user_id, member_username });
 
     dispatch(clearLeftMember({ group_id, member_user_id }));
 

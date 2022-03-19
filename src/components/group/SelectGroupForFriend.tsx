@@ -37,8 +37,7 @@ function SelectGroupForFriend({ socket, friend_id }: Props): JSX.Element {
 
   function invitationHandler(group_id: string, group_name: string) {
     if (socket) {
-      groupInvitationRequest_emitter({
-        socket,
+      groupInvitationRequest_emitter(socket, {
         friend_id,
         group_id,
         group_name,

@@ -1,9 +1,5 @@
 import { Socket } from "socket.io-client";
 
-interface Props {
-  socket: Socket;
-}
-
-export function logout_emitter({ socket }: Props) {
+export function logout_emitter(socket: Socket) {
   socket.emit("log-out");
 }

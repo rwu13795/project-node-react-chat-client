@@ -41,8 +41,7 @@ function InviteFriendToGroup({
 
   function invitationHandler(friend_id: string) {
     if (socket) {
-      groupInvitationRequest_emitter({
-        socket,
+      groupInvitationRequest_emitter(socket, {
         friend_id,
         group_id,
         group_name,

@@ -37,7 +37,7 @@ function CreateGroup({
       socket
     ) {
       dispatch(setLoadingStatus_user("idle"));
-      createNewGroup_emitter({ socket, group_id: newGroupToJoin });
+      createNewGroup_emitter(socket, { group_id: newGroupToJoin });
       selectTargetChatRoomHandler(newGroupToJoin, groupName, chatType.group);
     }
   }, [loadingStatus, newGroupToJoin]);

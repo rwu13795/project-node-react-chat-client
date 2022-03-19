@@ -1,15 +1,17 @@
 import { Dispatch } from "@reduxjs/toolkit";
 import { Socket } from "socket.io-client";
-import { loadChatHistory_database } from "../../redux/message/asyncThunk/load-chat-history";
-import { chatType, resetVisitedRoom } from "../../redux/message/messageSlice";
-import { getGroupMembersList_database } from "../../redux/user/asyncThunk/get-members-list";
+
+import {
+  chatType,
+  resetVisitedRoom,
+} from "../../../redux/message/messageSlice";
 import {
   Group,
   setResult_groupInvitation,
   updateGroupsList,
-} from "../../redux/user/userSlice";
+} from "../../../redux/user/userSlice";
 
-interface Props {
+interface Body {
   message: string;
   newGroupsList?: Group[];
   newGroupId?: string;
@@ -21,7 +23,7 @@ export function check_groupInvitation_listener(
 ) {
   socket.on(
     "check-group-invitation",
-    ({ message, newGroupsList, newGroupId }: Props) => {
+    ({ message, newGroupsList, newGroupId }: Body) => {
       console.log("check-group-invitation", message);
 
       if (newGroupsList && newGroupId && newGroupsList.length > 0) {

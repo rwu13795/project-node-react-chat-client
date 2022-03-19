@@ -1,11 +1,13 @@
 import { Socket } from "socket.io-client";
 
-interface Props {
-  socket: Socket;
+interface Body {
   friend_id: string;
   block: boolean;
 }
 
-export function blockFriend_emitter({ socket, friend_id, block }: Props) {
+export function blockFriend_emitter(
+  socket: Socket,
+  { friend_id, block }: Body
+) {
   socket.emit("block-friend", { friend_id, block });
 }

@@ -95,8 +95,7 @@ function SearchUser({ socket }: Props): JSX.Element {
 
     const { user_id, username, email } = currentUser;
     if (socket) {
-      addFriendRequest_emitter({
-        socket,
+      addFriendRequest_emitter(socket, {
         sender_id: user_id,
         sender_username: username,
         sender_email: email,

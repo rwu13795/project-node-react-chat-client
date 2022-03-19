@@ -19,7 +19,7 @@ function BlockFriend({ socket, friend_id }: Props): JSX.Element {
 
   function blockFriendHandler() {
     if (socket) {
-      blockFriend_emitter({ socket, friend_id, block: true });
+      blockFriend_emitter(socket, { friend_id, block: true });
     }
     dispatch(setBlockFriend({ friend_id, block: true, being_blocked: false }));
     setTimeout(() => {

@@ -21,7 +21,7 @@ function UnblockFriend({ friend_id, socket }: Props): JSX.Element {
     console.log("unblock friend", friend_id);
 
     if (socket) {
-      blockFriend_emitter({ socket, friend_id, block: false });
+      blockFriend_emitter(socket, { friend_id, block: false });
     }
     dispatch(setBlockFriend({ friend_id, block: false, being_blocked: false }));
   }

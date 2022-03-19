@@ -37,8 +37,7 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
   ) {
     if (socket) {
       // update the friends_pair and notificaiton if request is accepted
-      addFriendResponse_emitter({
-        socket,
+      addFriendResponse_emitter(socket, {
         sender_id,
         sender_username,
         target_id: currentUserId,
@@ -61,8 +60,7 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
       // then let the new added friend know this user is online.
       setTimeout(() => {
         if (socket) {
-          online_emitter({
-            socket,
+          online_emitter(socket, {
             onlineStatus: currentOnlineStatus,
             target_id: sender_id,
           });

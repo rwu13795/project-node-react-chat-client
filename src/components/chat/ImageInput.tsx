@@ -73,8 +73,7 @@ function ImageInput({ socket }: Props): JSX.Element {
     );
 
     if (socket) {
-      message_emitter({
-        socket,
+      message_emitter(socket, {
         messageObject: { ...messageObject, file_body: imageFile },
         room_type: targetChatRoom.type,
       });

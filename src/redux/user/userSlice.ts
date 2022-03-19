@@ -125,10 +125,10 @@ const userSlice = createSlice({
     },
     setFriendsOnlineStatus(
       state,
-      action: PayloadAction<{ friend_id: string; status: string }>
+      action: PayloadAction<{ sender_id: string; status: string }>
     ) {
-      const { friend_id, status } = action.payload;
-      state.friendsList[friend_id].onlineStatus = status;
+      const { sender_id, status } = action.payload;
+      state.friendsList[sender_id].onlineStatus = status;
     },
     setAddFriendRequests(state, action: PayloadAction<AddFriendRequest>) {
       state.addFriendRequests.push(action.payload);

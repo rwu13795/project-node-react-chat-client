@@ -3,15 +3,10 @@ import { Socket } from "socket.io-client";
 import {
   addNewMessageToHistory_memory,
   MessageObject,
-} from "../../redux/message/messageSlice";
-import { getGroupMembersList_database } from "../../redux/user/asyncThunk/get-members-list";
+} from "../../../redux/message/messageSlice";
+import { getGroupMembersList_database } from "../../../redux/user/asyncThunk/get-members-list";
 
-import {
-  clearLeftMember,
-  setGroupInvitation,
-} from "../../redux/user/userSlice";
-
-interface Props {
+interface Body {
   messageObject: MessageObject;
   room_type: string;
   group_id: string;
@@ -23,7 +18,7 @@ export function groupAdminNotification_listener(
 ) {
   socket.on(
     "group-admin-notification",
-    ({ messageObject, room_type, group_id }: Props) => {
+    ({ messageObject, room_type, group_id }: Body) => {
       dispatch(
         addNewMessageToHistory_memory({
           messageObject,

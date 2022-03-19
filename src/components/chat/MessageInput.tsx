@@ -130,8 +130,20 @@ function inputWarningHandler(
   dispatch: Dispatch
 ): boolean {
   if (room_type === chatType.group) {
-    if (targetGroup && targetGroup.user_left) return true;
-    else return false;
+    if (targetGroup && targetGroup.user_left) {
+      messageObject.msg_body = `You cannot send any message to this group since you have left.`;
+      messageObject.warning = true;
+      messageObject.created_at = "";
+      dispatch(
+        addNewMessageToHistory_memory({
+          messageObject,
+          room_type,
+        })
+      );
+      return true;
+    } else {
+      return false;
+    }
   } else {
     if (
       targetFriend &&
@@ -141,6 +153,7 @@ function inputWarningHandler(
         targetFriend.user_blocked_friend ? "blocked" : "were blocked by"
       } this friend, you cannot send any message to him/her!`;
       messageObject.warning = true;
+      messageObject.created_at = "";
       console.log("messageObject", messageObject);
       dispatch(
         addNewMessageToHistory_memory({

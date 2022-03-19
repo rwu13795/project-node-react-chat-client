@@ -24,10 +24,10 @@ function MembersList({ socket }: Props): JSX.Element {
           return (
             <div key={index}>
               Username: {member.username} @ID{member.user_id}
-              {targetGroup.creator_user_id === member.user_id && (
+              {targetGroup.admin_user_id === member.user_id && (
                 <span style={{ color: "red" }}>Group Admin</span>
               )}
-              {currentUserId === targetGroup.creator_user_id && (
+              {currentUserId === targetGroup.admin_user_id && (
                 <KickMember
                   socket={socket}
                   group_id={targetGroup.group_id}

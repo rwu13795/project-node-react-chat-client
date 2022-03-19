@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { InputErrors } from "../../../components/input/InputField";
+import { InputErrors } from "../../../components/input-field/InputField";
 import { inputNames } from "../../enums/input-names";
 
 const regex_email =

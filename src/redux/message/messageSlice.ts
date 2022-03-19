@@ -44,10 +44,14 @@ export interface TargetChatRoom {
 interface ChatHistory {
   [targetChatRoom_id: string]: MessageObject[];
 }
+interface Notifications {
+  [room_id: string]: { count: number; last_added_at: number };
+}
+
 interface MessageState {
   targetChatRoom: TargetChatRoom;
   chatHistory: ChatHistory;
-  messageNotifications: { [room_id: string]: number };
+  messageNotifications: Notifications;
   // add the room_type + id in the set, if the room is existed,
   // that means chat history has been loaded, then don't make request again
   // PS: cannot use Set in redux store due to non-serializable !?
@@ -147,14 +151,19 @@ const messageSlice = createSlice({
 
       // update the live message notification for private or group chat rooms
       if (!state.messageNotifications[room_id]) {
-        state.messageNotifications[room_id] = 0;
+        state.messageNotifications[room_id] = { count: 0, last_added_at: 0 };
       }
       const userIsInChatRoom = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
       // only show notification if user is not in the target room
       console.log(userIsInChatRoom);
       if (userIsInChatRoom !== room_id) {
-        state.messageNotifications[room_id] += 1;
+        state.messageNotifications[room_id].count += 1;
+        state.messageNotifications[room_id].last_added_at = Date.now();
       }
+
+      // reposition the friends/groups in the order of latest notification
+      // 1. get indexof user_id from the positionArray
+      // 2. uses slice(0,i) and slice(i+1) to reconstruct the array
     },
 
     loadMoreOldChatHistory_database(
@@ -242,18 +251,44 @@ const messageSlice = createSlice({
       /***************  Get Notifications  ***************/
       .addCase(getNotifications.fulfilled, (state, action): void => {
         action.payload.private.forEach((note) => {
-          state.messageNotifications[`${chatType.private}_${note.sender_id}`] =
-            note.count;
+          let target_id = `${chatType.private}_${note.sender_id}`;
+          // initialize the notification
+          if (!state.messageNotifications[target_id]) {
+            state.messageNotifications[target_id] = {
+              count: 0,
+              last_added_at: 0,
+            };
+          }
+          state.messageNotifications[target_id].count = note.count;
+          state.messageNotifications[target_id].last_added_at = new Date(
+            note.last_added_at
+          ).getTime();
+          // use the sort to initialize the position of Friends by the lastest notification
+
+          // array.sort((elem1,elem2)=>{if(elem1.x < elem2.x){return 1}else{return -1} })
         });
         action.payload.group.forEach((note) => {
-          state.messageNotifications[`${chatType.group}_${note.group_id}`] =
-            note.count;
+          let target_id = `${chatType.group}_${note.group_id}`;
+          // initialize the notification
+          if (!state.messageNotifications[target_id]) {
+            state.messageNotifications[target_id] = {
+              count: 0,
+              last_added_at: 0,
+            };
+          }
+          state.messageNotifications[target_id].count = note.count;
+          state.messageNotifications[target_id].last_added_at = new Date(
+            note.last_added_at
+          ).getTime();
+          // use the sort to initialize the position of Groups by the lastest notification
         });
       })
+
       /***************  Clear Notifications  ***************/
       .addCase(clearNotifications.fulfilled, (state, action): void => {
         const { type, id } = action.payload;
-        state.messageNotifications[`${type}_${id}`] = 0;
+        if (!state.messageNotifications[`${type}_${id}`]) return;
+        state.messageNotifications[`${type}_${id}`].count = 0;
       });
   },
 });

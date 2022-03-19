@@ -14,7 +14,10 @@ import {
   onSubmitCheck,
   initializeValues,
 } from "../../../utils";
-import InputField, { InputErrors, InputValues } from "../../input/InputField";
+import InputField, {
+  InputErrors,
+  InputValues,
+} from "../../input-field/InputField";
 
 // UI //
 import styles from "./SignIn.module.css";

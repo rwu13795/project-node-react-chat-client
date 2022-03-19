@@ -1,4 +1,7 @@
-import { InputErrors, InputValues } from "../../../components/input/InputField";
+import {
+  InputErrors,
+  InputValues,
+} from "../../../components/input-field/InputField";
 
 export function initializeValues<T extends InputValues | InputErrors>(
   inputFields: string[]

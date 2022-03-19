@@ -12,6 +12,8 @@ export function groupInvitationRequest_listener(
   socket: Socket,
   dispatch: Dispatch
 ) {
+  console.log("groupInvitationRequest_listener----------------");
+
   socket.on("group-invitation-request", (body: Body) => {
     dispatch(setGroupInvitation(body));
   });

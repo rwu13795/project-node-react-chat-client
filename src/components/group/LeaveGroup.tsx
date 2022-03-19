@@ -17,9 +17,15 @@ interface Props {
   socket: Socket | undefined;
   group_id: string;
   group_name: string;
+  admin_user_id: string;
 }
 
-function LeaveGroup({ socket, group_id, group_name }: Props): JSX.Element {
+function LeaveGroup({
+  socket,
+  group_id,
+  group_name,
+  admin_user_id,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const currentUserId = useSelector(selectUserId);
@@ -28,7 +34,11 @@ function LeaveGroup({ socket, group_id, group_name }: Props): JSX.Element {
 
   function leaveGroupHandler() {
     if (socket)
-      leaveGroup_emitter(socket, { group_id, user_id: currentUserId });
+      leaveGroup_emitter(socket, {
+        group_id,
+        user_id: currentUserId,
+        admin_user_id,
+      });
 
     dispatch(leaveGroup({ group_id, was_kicked: false }));
 

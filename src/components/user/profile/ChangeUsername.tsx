@@ -13,7 +13,7 @@ import InputField, {
   customStyleOptions,
   InputErrors,
   InputValues,
-} from "../../input/InputField";
+} from "../../input-field/InputField";
 
 // UI //
 import styles from "./ChangeUsername.module.css";

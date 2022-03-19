@@ -8,7 +8,10 @@ import {
   selectRequestErrors,
   setLoadingStatus_user,
 } from "../../../redux/user/userSlice";
-import InputField, { InputValues, InputErrors } from "../../input/InputField";
+import InputField, {
+  InputValues,
+  InputErrors,
+} from "../../input-field/InputField";
 import { forgotPasswordRequest } from "../../../redux/user/asyncThunk";
 import { inputNames, loadingStatusEnum, onSubmitCheck } from "../../../utils";
 

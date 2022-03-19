@@ -6,10 +6,12 @@ import { client, serverUrl } from "../../utils";
 interface PrivateNotifications {
   sender_id: string;
   count: number;
+  last_added_at: string;
 }
 interface GroupNotifications {
   group_id: string;
   count: number;
+  last_added_at: string;
 }
 interface Payload {
   private: PrivateNotifications[];

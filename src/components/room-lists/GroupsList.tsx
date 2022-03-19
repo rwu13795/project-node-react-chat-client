@@ -139,7 +139,19 @@ function GroupsList({
               // choose which friend to send message
               // pass the friend_id inside the message body, and the server
               // will emit the messsage to the room where the friend is in
-              let { group_id, group_name, user_left, user_left_at } = group;
+              let {
+                group_id,
+                group_name,
+                user_left,
+                user_left_at,
+                admin_user_id,
+              } = group;
+              let room_id = `${chatType.group}_${group_id}`;
+              let count = 0;
+              if (messageNotifications[room_id]) {
+                count = messageNotifications[room_id].count;
+              }
+
               return (
                 <div key={group_id}>
                   <button
@@ -165,14 +177,12 @@ function GroupsList({
                     group_id={group_id}
                     group_name={group_name}
                   />
-                  <div>
-                    notifications:{" "}
-                    {messageNotifications[`${chatType.group}_${group_id}`]}{" "}
-                  </div>
+                  <div>notifications: {count}</div>
                   <LeaveGroup
                     socket={socket}
                     group_id={group_id}
                     group_name={group_name}
+                    admin_user_id={admin_user_id}
                   />
                 </div>
               );

@@ -103,6 +103,11 @@ function FriendsList({
               // pass the friend_id inside the message body, and the server
               // will emit the messsage to the room where the friend is in
               let { friend_id, friend_username } = friend;
+              let room_id = `${chatType.private}_${friend_id}`;
+              let count = 0;
+              if (messageNotifications[room_id]) {
+                count = messageNotifications[room_id].count;
+              }
               return (
                 <div key={friend_id}>
                   <button
@@ -116,10 +121,7 @@ function FriendsList({
                   >
                     {friend_username + friend_id}
                   </button>
-                  <div>
-                    notifications:{" "}
-                    {messageNotifications[`${chatType.private}_${friend_id}`]}{" "}
-                  </div>
+                  <div>notifications: {count}</div>
                   <div>
                     friend {friend_username} online-status:{" "}
                     {friendsList[friend_id].onlineStatus}

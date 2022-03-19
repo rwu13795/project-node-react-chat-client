@@ -67,7 +67,7 @@ export interface GroupMember {
 export interface Group {
   group_id: string;
   group_name: string;
-  creator_user_id: string;
+  admin_user_id: string;
   user_left: boolean;
   user_left_at: string | null;
   was_kicked: boolean;
@@ -233,6 +233,13 @@ const userSlice = createSlice({
     },
     setIsLoggedIn(state, action: PayloadAction<boolean>) {
       state.currentUser.isLoggedIn = action.payload;
+    },
+    updateGroupAdmin(
+      state,
+      action: PayloadAction<{ newAdmin: string; group_id: string }>
+    ) {
+      const { newAdmin, group_id } = action.payload;
+      state.groupsList[group_id].admin_user_id = newAdmin;
     },
   },
 
@@ -457,6 +464,7 @@ export const {
   changeAvatar,
   clearRequestError,
   setIsLoggedIn,
+  updateGroupAdmin,
 } = userSlice.actions;
 
 export default userSlice.reducer;

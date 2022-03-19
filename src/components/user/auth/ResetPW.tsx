@@ -2,7 +2,10 @@ import { FormEvent, memo, MouseEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import InputField, { InputErrors, InputValues } from "../../input/InputField";
+import InputField, {
+  InputErrors,
+  InputValues,
+} from "../../input-field/InputField";
 import {
   clearRequestError,
   selectLoadingStatus_user,

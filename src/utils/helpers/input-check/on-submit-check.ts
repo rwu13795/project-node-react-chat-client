@@ -1,5 +1,8 @@
 import { Dispatch, SetStateAction } from "react";
-import { InputErrors, InputValues } from "../../../components/input/InputField";
+import {
+  InputErrors,
+  InputValues,
+} from "../../../components/input-field/InputField";
 import { onBlurCheck } from "./on-blur-check";
 
 export function onSubmitCheck(

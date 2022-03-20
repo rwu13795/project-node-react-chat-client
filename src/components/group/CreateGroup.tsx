@@ -49,7 +49,7 @@ function CreateGroup({
   function createGroupHandler() {
     if (groupName === "") return;
     dispatch(
-      createNewGroup({ group_name: groupName, creator_user_id: currentUserId })
+      createNewGroup({ group_name: groupName, admin_user_id: currentUserId })
     );
   }
 

@@ -4,6 +4,7 @@ import { Socket } from "socket.io-client";
 
 import {
   chatType,
+  selectFriendsPosition,
   selectMessageNotifications,
 } from "../../redux/message/messageSlice";
 import { selectFriendsList } from "../../redux/user/userSlice";
@@ -35,6 +36,7 @@ function FriendsList({
   selectTargetChatRoomHandler,
 }: Props): JSX.Element {
   const friendsList = useSelector(selectFriendsList);
+  const friendsPosition = useSelector(selectFriendsPosition);
   const messageNotifications = useSelector(selectMessageNotifications);
 
   const [expand, setExpand] = useState<boolean>(false);
@@ -98,38 +100,39 @@ function FriendsList({
         <Collapse in={expand} timeout="auto" unmountOnExit>
           <AddFriendRequest socket={socket} />
           <List component="div" disablePadding>
-            {Object.values(friendsList).map((friend) => {
-              // choose which friend to send message
-              // pass the friend_id inside the message body, and the server
-              // will emit the messsage to the room where the friend is in
-              let { friend_id, friend_username } = friend;
-              let room_id = `${chatType.private}_${friend_id}`;
-              let count = 0;
-              if (messageNotifications[room_id]) {
-                count = messageNotifications[room_id].count;
-              }
-              return (
-                <div key={friend_id}>
-                  <button
-                    onClick={() =>
-                      selectTargetChatRoomHandler(
-                        friend_id,
-                        friend_username,
-                        chatType.private
-                      )
-                    }
-                  >
-                    {friend_username + friend_id}
-                  </button>
-                  <div>notifications: {count}</div>
-                  <div>
-                    friend {friend_username} online-status:{" "}
-                    {friendsList[friend_id].onlineStatus}
-                  </div>
+            {friendsPosition.map((id) => {
+              if (friendsList[id]) {
+                let { friend_id, friend_username, onlineStatus } =
+                  friendsList[id];
+                let target_id = `${chatType.private}_${friend_id}`;
+                let count = 0;
+                if (messageNotifications[target_id]) {
+                  count = messageNotifications[target_id].count;
+                }
+                return (
+                  <div key={friend_id}>
+                    <button
+                      onClick={() =>
+                        selectTargetChatRoomHandler(
+                          friend_id,
+                          friend_username,
+                          chatType.private
+                        )
+                      }
+                    >
+                      {friend_username + "@ID" + friend_id}
+                    </button>
+                    <div>notifications: {count}</div>
+                    <div>
+                      friend {friend_username} online-status: {onlineStatus}
+                    </div>
 
-                  <hr />
-                </div>
-              );
+                    <hr />
+                  </div>
+                );
+              } else {
+                return <h3>loading.....</h3>;
+              }
             })}
           </List>
         </Collapse>

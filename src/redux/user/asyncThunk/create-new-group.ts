@@ -6,7 +6,7 @@ import { Group } from "../userSlice";
 
 interface Res_body {
   group_name: string;
-  creator_user_id: string;
+  admin_user_id: string;
 }
 interface Payload extends Group {}
 

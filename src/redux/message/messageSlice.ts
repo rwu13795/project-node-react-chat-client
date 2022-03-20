@@ -44,7 +44,7 @@ export interface TargetChatRoom {
 interface ChatHistory {
   [targetChatRoom_id: string]: MessageObject[];
 }
-interface Notifications {
+export interface Notifications {
   [room_id: string]: { count: number; last_added_at: number };
 }
 
@@ -52,6 +52,8 @@ interface MessageState {
   targetChatRoom: TargetChatRoom;
   chatHistory: ChatHistory;
   messageNotifications: Notifications;
+  groupsPosition: string[];
+  friendsPosition: string[];
   // add the room_type + id in the set, if the room is existed,
   // that means chat history has been loaded, then don't make request again
   // PS: cannot use Set in redux store due to non-serializable !?
@@ -66,6 +68,8 @@ const initialState: MessageState = {
   targetChatRoom: { id: "", name: "", type: "", date_limit: "" },
   chatHistory: {},
   messageNotifications: {},
+  groupsPosition: [],
+  friendsPosition: [],
   visitedRoom: {},
   currentUserId_message: "",
   infiniteScrollStats: {},
@@ -75,13 +79,6 @@ const messageSlice = createSlice({
   name: "message",
   initialState,
   reducers: {
-    //   clearAuthErrors(state, action: PayloadAction<string>) {
-    //     if (action.payload === "all") {
-    //       state.authErrors = {};
-    //     } else {
-    //       state.authErrors[action.payload] = "";
-    //     }
-    //   },
     setCurrentUserId_message(state, action: PayloadAction<string>): void {
       state.currentUserId_message = action.payload;
     },
@@ -101,9 +98,9 @@ const messageSlice = createSlice({
       state,
       action: PayloadAction<{ hasMore?: boolean; pageNum?: number }>
     ): void {
-      // the infinite scroll will be broken if user re-enters the a visited room
+      // the infinite scroll will be broken if user re-enters a visited room
       // the "hasMore" and "pageNum" will be reset.
-      //So each room needs to have its own chatHistory "hasMore" and "pageNum" values
+      // So each room needs to have its own chatHistory "hasMore" and "pageNum" values
       const { hasMore, pageNum } = action.payload;
       const { type, id } = state.targetChatRoom;
       if (hasMore !== undefined) {
@@ -120,27 +117,37 @@ const messageSlice = createSlice({
     ) {
       const { messageObject, room_type } = action.payload;
       const { sender_id, recipient_id } = messageObject;
-
       const currentUserId = state.currentUserId_message;
 
       // since this listener handles all types of live messages
       // have to figure out which room the live message is belonged to
       let room_id = "";
       if (room_type === chatType.private) {
-        // for private_messages
-        // for exmaple, if user=1 is sends a message, then the sender_id=1 will be the
-        // the room_id. if the current user sends a message to user=5, then the
-        // recipient_id=5 will be the room_id
         if (sender_id === currentUserId) {
           // when the current user is the sender, then the recipient_id is the room_id
           room_id = `${room_type}_${recipient_id}`;
+          // reposition the friend in the order of latest notification
+          // both sender and recipient should push the latest chat to top
+          state.friendsPosition = pushPositionToTop(
+            state.friendsPosition,
+            recipient_id
+          );
         } else {
           // when the current user is the recipient, then then sender_id is the room_id
           room_id = `${room_type}_${sender_id}`;
+          // reposition the friend in the order of latest notification
+          state.friendsPosition = pushPositionToTop(
+            state.friendsPosition,
+            sender_id
+          );
         }
       } else {
-        // all public and group rooms will always be the recipient
+        // all group rooms are always the recipient
         room_id = `${room_type}_${recipient_id}`;
+        state.groupsPosition = pushPositionToTop(
+          state.groupsPosition,
+          recipient_id
+        );
       }
 
       // add message to chat history for the specific room
@@ -160,10 +167,6 @@ const messageSlice = createSlice({
         state.messageNotifications[room_id].count += 1;
         state.messageNotifications[room_id].last_added_at = Date.now();
       }
-
-      // reposition the friends/groups in the order of latest notification
-      // 1. get indexof user_id from the positionArray
-      // 2. uses slice(0,i) and slice(i+1) to reconstruct the array
     },
 
     loadMoreOldChatHistory_database(
@@ -250,9 +253,10 @@ const messageSlice = createSlice({
 
       /***************  Get Notifications  ***************/
       .addCase(getNotifications.fulfilled, (state, action): void => {
+        // initialize the private chat notification
+        state.friendsPosition = [];
         action.payload.private.forEach((note) => {
           let target_id = `${chatType.private}_${note.sender_id}`;
-          // initialize the notification
           if (!state.messageNotifications[target_id]) {
             state.messageNotifications[target_id] = {
               count: 0,
@@ -263,13 +267,19 @@ const messageSlice = createSlice({
           state.messageNotifications[target_id].last_added_at = new Date(
             note.last_added_at
           ).getTime();
-          // use the sort to initialize the position of Friends by the lastest notification
-
-          // array.sort((elem1,elem2)=>{if(elem1.x < elem2.x){return 1}else{return -1} })
+          state.friendsPosition.push(note.sender_id);
         });
+        // use the sort to initialize the position of Friends by the lastest notification
+        state.friendsPosition = sortByLastAdded(
+          state.friendsPosition,
+          state.messageNotifications,
+          chatType.private
+        );
+
+        // initialize the group chat notification
+        state.groupsPosition = [];
         action.payload.group.forEach((note) => {
           let target_id = `${chatType.group}_${note.group_id}`;
-          // initialize the notification
           if (!state.messageNotifications[target_id]) {
             state.messageNotifications[target_id] = {
               count: 0,
@@ -280,8 +290,14 @@ const messageSlice = createSlice({
           state.messageNotifications[target_id].last_added_at = new Date(
             note.last_added_at
           ).getTime();
-          // use the sort to initialize the position of Groups by the lastest notification
+          state.groupsPosition.push(note.group_id);
         });
+        // use the sort to initialize the position of Groups by the lastest notification
+        state.groupsPosition = sortByLastAdded(
+          state.groupsPosition,
+          state.messageNotifications,
+          chatType.group
+        );
       })
 
       /***************  Clear Notifications  ***************/
@@ -336,3 +352,43 @@ export const selectInfiniteScrollStats = createSelector(
   [selectMessageState],
   (messageState) => messageState.infiniteScrollStats
 );
+export const selectFriendsPosition = createSelector(
+  [selectMessageState],
+  (messageState) => messageState.friendsPosition
+);
+export const selectGroupsPosition = createSelector(
+  [selectMessageState],
+  (messageState) => messageState.groupsPosition
+);
+
+// the user/group with the lastest notification will be on top of the list
+function sortByLastAdded(
+  position: string[],
+  notifications: Notifications,
+  type: string
+): string[] {
+  // JS default sorting should be O(n log n)
+  position.sort((id_1, id_2) => {
+    if (
+      notifications[`${type}_${id_1}`].last_added_at <
+      notifications[`${type}_${id_2}`].last_added_at
+    ) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+  return position;
+}
+
+function pushPositionToTop(position: string[], target_id: string): string[] {
+  // array.slice takes O(n), array.indexof takes O(n)
+  // Cannot use binary-search on position array since the ids are not sorted
+  // it should be more efficient than using array.sort() for the newly added notification
+  const targetIndex = position.indexOf(target_id);
+  const newPosition = [target_id];
+  newPosition.push(...position.slice(0, targetIndex));
+  newPosition.push(...position.slice(targetIndex + 1));
+
+  return newPosition;
+}

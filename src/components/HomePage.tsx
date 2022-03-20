@@ -93,7 +93,7 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
       onlineEcho_listener(newSocket, dispatch);
       offline_listener(newSocket, dispatch);
     }
-  }, [isLoggedIn, socket]);
+  }, []);
 
   useLayoutEffect(() => {
     if (isLoggedIn === undefined) {

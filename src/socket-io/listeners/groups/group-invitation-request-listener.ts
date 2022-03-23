@@ -6,7 +6,7 @@ import {
   setGroupInvitation,
 } from "../../../redux/user/userSlice";
 
-interface Body extends GroupInvitation {}
+interface Data extends GroupInvitation {}
 
 export function groupInvitationRequest_listener(
   socket: Socket,
@@ -14,7 +14,7 @@ export function groupInvitationRequest_listener(
 ) {
   console.log("groupInvitationRequest_listener----------------");
 
-  socket.on("group-invitation-request", (body: Body) => {
-    dispatch(setGroupInvitation(body));
+  socket.on("group-invitation-request", (data: Data) => {
+    dispatch(setGroupInvitation(data));
   });
 }

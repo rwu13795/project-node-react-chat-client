@@ -11,7 +11,7 @@ import {
   updateGroupsList,
 } from "../../../redux/user/userSlice";
 
-interface Body {
+interface Data {
   message: string;
   newGroupsList?: Group[];
   newGroupId?: string;
@@ -23,7 +23,7 @@ export function check_groupInvitation_listener(
 ) {
   socket.on(
     "check-group-invitation",
-    ({ message, newGroupsList, newGroupId }: Body) => {
+    ({ message, newGroupsList, newGroupId }: Data) => {
       console.log("check-group-invitation", message);
 
       if (newGroupsList && newGroupId && newGroupsList.length > 0) {

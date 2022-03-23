@@ -5,17 +5,12 @@ interface MessageToServer extends MessageObject {
   file_body?: File;
 }
 
-interface Body {
-  messageObject: MessageToServer;
-  room_type: string;
-}
-
 export function message_emitter(
   socket: Socket,
-  { messageObject, room_type }: Body
+  data: {
+    messageObject: MessageToServer;
+    room_type: string;
+  }
 ) {
-  socket.emit("message-to-server", {
-    messageObject,
-    room_type,
-  });
+  socket.emit("message-to-server", data);
 }

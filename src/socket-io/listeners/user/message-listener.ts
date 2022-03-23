@@ -6,13 +6,13 @@ import {
   MessageObject,
 } from "../../../redux/message/messageSlice";
 
-interface Body {
+interface Data {
   messageObject: MessageObject;
   room_type: string;
 }
 
 export function message_listener(socket: Socket, dispatch: Dispatch) {
-  socket.on("message-to-client", async ({ messageObject, room_type }: Body) => {
+  socket.on("message-to-client", async ({ messageObject, room_type }: Data) => {
     console.log(messageObject);
 
     dispatch(

@@ -1,16 +1,11 @@
 import { Socket } from "socket.io-client";
 
-interface Body {
-  group_id: string;
-  accept: boolean;
-}
-
 export function groupInvitationResponse_emitter(
   socket: Socket,
-  { group_id, accept }: Body
+  data: {
+    group_id: string;
+    accept: boolean;
+  }
 ) {
-  socket.emit("group-invitation-response", {
-    group_id,
-    accept,
-  });
+  socket.emit("group-invitation-response", data);
 }

@@ -5,14 +5,14 @@ import {
   setFriendsOnlineStatus,
 } from "../../../redux/user/userSlice";
 
-interface Body {
+interface Data {
   sender_id: string;
 }
 
 // whenever a user is offline/disconnected, the server will emit the offline message
 // to all the friends of that user.
 export function offline_listener(socket: Socket, dispatch: Dispatch) {
-  socket.on("offline", ({ sender_id }: Body) => {
+  socket.on("offline", ({ sender_id }: Data) => {
     console.log(`user ${sender_id} is offline`);
     dispatch(
       setFriendsOnlineStatus({

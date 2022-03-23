@@ -18,7 +18,7 @@ import { getNotifications } from "../redux/message/asyncThunk";
 import ChatBoard from "./chat/ChatBoard";
 import RoomLists from "./room-lists/RoomLists";
 import ChatRoomMenu from "./menu/right/ChatRoomMenu";
-import { connectSocket } from "../socket-io/socketConnection";
+import connectSocket from "../socket-io/socketConnection";
 import {
   addFriendRequest_listener,
   addFriendResponse_listener,
@@ -38,6 +38,7 @@ import {
 import styles from "./HomePage.module.css";
 import { CircularProgress } from "@mui/material";
 import { joinRoom_emitter, online_emitter } from "../socket-io/emitters";
+import addAllListeners from "../socket-io/add-all-listener";
 
 interface Props {
   socket: Socket | undefined;
@@ -77,21 +78,7 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
       online_emitter(newSocket, { onlineStatus: currentOnlineStatus });
 
       // initialize all the listeners //
-      message_listener(newSocket, dispatch);
-
-      addFriendRequest_listener(newSocket, dispatch);
-      check_addFriendRequest_listener(newSocket, dispatch);
-      addFriendResponse_listener(newSocket, dispatch, currentUserId);
-      blockFriend_listener(newSocket, dispatch);
-
-      groupInvitationRequest_listener(newSocket, dispatch);
-      check_groupInvitation_listener(newSocket, dispatch);
-      groupAdminNotification_listener(newSocket, dispatch);
-      kickedOutOfGroup_listener(newSocket, dispatch);
-
-      online_listener(newSocket, dispatch);
-      onlineEcho_listener(newSocket, dispatch);
-      offline_listener(newSocket, dispatch);
+      addAllListeners(newSocket, dispatch, currentUserId);
     }
   }, []);
 

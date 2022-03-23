@@ -7,7 +7,7 @@ import {
 import { getGroupMembersList_database } from "../../../redux/user/asyncThunk/get-members-list";
 import { updateGroupAdmin } from "../../../redux/user/userSlice";
 
-interface Body {
+interface Data {
   messageObject: MessageObject;
   room_type: string;
   group_id: string;
@@ -20,7 +20,7 @@ export function groupAdminNotification_listener(
 ) {
   socket.on(
     "group-admin-notification",
-    ({ messageObject, room_type, group_id, newAdmin }: Body) => {
+    ({ messageObject, room_type, group_id, newAdmin }: Data) => {
       dispatch(
         addNewMessageToHistory_memory({
           messageObject,

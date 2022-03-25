@@ -9,6 +9,7 @@ import {
   check_groupInvitation_listener,
   groupAdminNotification_listener,
   groupInvitationRequest_listener,
+  joinNewGroup_listener,
   kickedOutOfGroup_listener,
   message_listener,
   offline_listener,
@@ -53,4 +54,5 @@ export default function addAllListeners(
   groupAdminNotification_listener(socket, dispatch);
   groupInvitationRequest_listener(socket, dispatch);
   kickedOutOfGroup_listener(socket, dispatch);
+  joinNewGroup_listener(socket, dispatch);
 }

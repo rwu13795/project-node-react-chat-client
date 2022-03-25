@@ -10,6 +10,7 @@ import {
 import {
   chatType,
   selectTargetChatRoom,
+  setLoadingStatus_msg,
   setTargetChatRoom,
 } from "../../redux/message/messageSlice";
 import { getGroupMembersList_database } from "../../redux/user/asyncThunk";
@@ -23,6 +24,7 @@ import GroupsList from "./GroupsList";
 // UI //
 import styles from "./RoomLists.module.css";
 import { changeTargetRoom_emitter } from "../../socket-io/emitters";
+import { loadingStatusEnum } from "../../utils";
 
 interface Props {
   socket: Socket | undefined;
@@ -41,6 +43,7 @@ function RoomLists({ socket }: Props): JSX.Element {
   ) {
     // let elem = document.getElementById("chat-board");
     // if (elem) elem.scrollTo({ top: elem.scrollHeight, behavior: "auto" });
+    dispatch(setLoadingStatus_msg(loadingStatusEnum.changingTargetRoom));
 
     // clear the notifications of the previous room in database, only when the user
     // enters the next room
@@ -90,6 +93,8 @@ function RoomLists({ socket }: Props): JSX.Element {
       changeTargetRoom_emitter(socket, {
         room_id: `${nextRoom_type}_${nextRoom_id}`,
       });
+
+    dispatch(setLoadingStatus_msg(loadingStatusEnum.idle));
   }
 
   return (

@@ -43,12 +43,16 @@
   background: linear-gradient(270deg, transparent, var(--main-color-2));
 }
 
+.appear_offline_wrapper {
+  display: flex;
+  justify-content: flex-start;
+  margin-bottom: 4px;
+}
 .appear_offline {
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
-  margin-bottom: 4px;
   cursor: pointer;
 }
 .checked {

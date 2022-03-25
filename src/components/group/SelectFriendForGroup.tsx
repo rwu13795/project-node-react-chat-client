@@ -16,12 +16,14 @@ interface Props {
   socket: Socket | undefined;
   group_id: string;
   group_name: string;
+  admin_user_id: string;
 }
 
 function InviteFriendToGroup({
   socket,
   group_id,
   group_name,
+  admin_user_id,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
 
@@ -46,12 +48,13 @@ function InviteFriendToGroup({
         group_id,
         group_name,
         inviter_name: currentUsername,
+        admin_user_id,
       });
     }
     handleClose();
     setTimeout(() => {
       dispatch(setResult_groupInvitation(""));
-    }, 10000);
+    }, 20000);
   }
 
   return (

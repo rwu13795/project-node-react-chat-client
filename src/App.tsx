@@ -39,9 +39,12 @@ function App(): JSX.Element {
 
             <Route
               path="/chat"
-              element={<HomePage setSocket={setSocket} socket={socket} />}
+              element={<HomePage socket={socket} setSocket={setSocket} />}
             />
-            <Route path="profile" element={<UserProfile socket={socket} />} />
+            <Route
+              path="/profile"
+              element={<UserProfile socket={socket} setSocket={setSocket} />}
+            />
 
             <Route path="/*" element={<Page404 />} />
           </Routes>

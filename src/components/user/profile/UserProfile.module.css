@@ -55,6 +55,10 @@
   border-radius: 1000px;
   width: 92%;
 }
+.no_avatar {
+  height: 92%;
+  width: 92%;
+}
 
 .upper_right {
   width: 46%;

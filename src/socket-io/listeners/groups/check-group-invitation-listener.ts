@@ -39,7 +39,7 @@ export function check_groupInvitation_listener(
             visited: false,
           })
         );
-        // make the user who just joined the group enter the group room
+        // force the user who just joined the group enter the group room
         setTimeout(() => {
           let elem = document.getElementById(`${chatType.group}_${newGroupId}`);
           if (elem) {

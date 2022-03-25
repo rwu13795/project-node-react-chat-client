@@ -1,10 +1,11 @@
 import { memo, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 import { useNavigate } from "react-router-dom";
 
 import {
   selectCurrentUser,
+  selectGroupsToJoin,
   selectIsLoggedIn,
 } from "../../../redux/user/userSlice";
 import ChangeUsername from "./ChangeUsername";
@@ -19,31 +20,52 @@ import {
   Backdrop,
   Box,
   Button,
+  Avatar,
   CircularProgress,
   Fade,
   Modal,
 } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import EditIcon from "@mui/icons-material/Edit";
+import connectSocket from "../../../socket-io/socketConnection";
+import addAllListeners from "../../../socket-io/add-all-listener";
+import { setCurrentUserId_message } from "../../../redux/message/messageSlice";
 
 interface Props {
   socket: Socket | undefined;
+  setSocket: React.Dispatch<React.SetStateAction<Socket | undefined>>;
 }
 
-function UserProfile({ socket }: Props): JSX.Element {
+function UserProfile({ socket, setSocket }: Props): JSX.Element {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const { avatar_url, user_id, username, email } =
+  const { avatar_url, user_id, username, email, onlineStatus } =
     useSelector(selectCurrentUser);
   const isLoggedIn = useSelector(selectIsLoggedIn);
+  const group_ids = useSelector(selectGroupsToJoin);
 
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   useEffect(() => {
+    if (isLoggedIn === undefined) return;
     if (isLoggedIn === false) {
       navigate("/");
+    } else {
+      // if getAuth has not finished loading before the selector selected the user_id
+      if (!user_id) return;
+      if (socket) return;
+
+      dispatch(setCurrentUserId_message(user_id));
+      let newSocket: Socket = connectSocket(user_id, username);
+      setSocket(newSocket);
+      addAllListeners(newSocket, dispatch, {
+        user_id,
+        group_ids,
+        onlineStatus,
+      });
     }
-  }, [isLoggedIn, navigate]);
+  }, [isLoggedIn, socket, user_id]);
 
   function handleOpenModal() {
     setOpenModal(true);
@@ -68,11 +90,15 @@ function UserProfile({ socket }: Props): JSX.Element {
           <div className={styles.upper_body}>
             <div className={styles.upper_left}>
               <div className={styles.avatar_wrapper}>
-                <img
-                  src={avatar_url}
-                  alt={username[0]}
-                  className={styles.avatar}
-                />
+                {avatar_url ? (
+                  <img
+                    src={avatar_url}
+                    alt={"Missing source"}
+                    className={styles.avatar}
+                  />
+                ) : (
+                  <Avatar className={styles.no_avatar} />
+                )}
               </div>
               <div className={styles.edit_avatar}>
                 <Button

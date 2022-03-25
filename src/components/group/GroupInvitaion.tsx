@@ -1,63 +1,49 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
+import { getNotifications } from "../../redux/message/asyncThunk";
+import {
+  chatType,
+  resetVisitedRoom,
+  selectLoadingStatus_msg,
+  setLoadingStatus_msg,
+} from "../../redux/message/messageSlice";
+import { getUserAuth } from "../../redux/user/asyncThunk";
 
 import {
   respondToGroupInvitation,
   selectGroupInvitations,
+  selectUserId,
 } from "../../redux/user/userSlice";
 import { groupInvitationResponse_emitter } from "../../socket-io/emitters";
+import { loadingStatusEnum } from "../../utils";
 
 interface Props {
   socket: Socket | undefined;
-  selectTargetChatRoomHandler: (
-    id: string,
-    name: string,
-    type: string,
-    date_limit?: string | null
-  ) => void;
 }
 
-function GroupInvitation({
-  socket,
-  selectTargetChatRoomHandler,
-}: Props): JSX.Element {
+function GroupInvitation({ socket }: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const groupInvitations = useSelector(selectGroupInvitations);
-
-  const [loading, setLoading] = useState<boolean>(false);
+  const loadingStatus = useSelector(selectLoadingStatus_msg);
 
   function responseHandler(group_id: string, accept: boolean, index: number) {
+    dispatch(respondToGroupInvitation(index));
     if (socket) {
       // update the groups and users_in_groups according to the response
       groupInvitationResponse_emitter(socket, { group_id, accept });
+      if (accept) {
+        dispatch(setLoadingStatus_msg(loadingStatusEnum.changingTargetRoom));
+      }
     }
-    dispatch(respondToGroupInvitation(index));
-
-    // set the loading status here !!!!!!!!!!!!!
-
-    // if (accept) {
-    //   setLoading(true);
-    //   setTimeout(() => {
-    //     // get the new groupsList from the DB
-    //     // don't initialize the onlineStatus, otherwise all friends will be marked as offline
-    //     dispatch(getUserAuth({ initialize: false }));
-    //     // dispatch(getNotifications(currentUserId));
-    //     setLoading(false);
-    //   }, 4000);
-    //   // wait for 4 seconds, the getUserAuth() should finish updating the friendList
-    //   // then let the new added friend know this user is online.
-    //   // setTimeout(() => {
-    //   //   if (socket) {
-    //   //     socket.emit("online", sender_id);
-    //   //   }
-    //   // }, 6000);
-    // }
   }
 
   return (
     <main>
+      {loadingStatus === loadingStatusEnum.changingTargetRoom && (
+        <div>Joining the new group</div>
+      )}
       <h4>Group Invitation</h4>
       {groupInvitations.map((inv, index) => {
         return (

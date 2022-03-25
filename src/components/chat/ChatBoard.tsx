@@ -1,4 +1,4 @@
-import { memo, useCallback } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
@@ -10,6 +10,7 @@ import {
   chatType,
   selectInfiniteScrollStats,
   setInfiniteScrollStats,
+  selectLoadingStatus_msg,
 } from "../../redux/message/messageSlice";
 import {
   selectTargetFriend,
@@ -22,6 +23,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import MessageInput from "./MessageInput";
 import ImageInput from "./ImageInput";
 import { client } from "../../redux/utils";
+import { loadingStatusEnum } from "../../utils";
 
 interface Props {
   socket: Socket | undefined;
@@ -37,8 +39,20 @@ function ChatBoard({ socket }: Props): JSX.Element {
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
   const infiniteScrollStats = useSelector(selectInfiniteScrollStats);
+  const loadingStatus = useSelector(selectLoadingStatus_msg);
 
   const MSG_PER_PAGE = 10;
+
+  const [showLoader, setShowLoader] = useState<boolean>(false);
+
+  useEffect(() => {
+    if (infiniteScrollStats[`${targetChatRoom.type}_${targetChatRoom.id}`]) {
+      setShowLoader(
+        infiniteScrollStats[`${targetChatRoom.type}_${targetChatRoom.id}`]
+          .hasMore && chatHistory.length >= MSG_PER_PAGE
+      );
+    }
+  }, [infiniteScrollStats, chatHistory, targetChatRoom]);
 
   const fetchMoreData = useCallback(async () => {
     const { type, id, date_limit } = targetChatRoom;
@@ -130,48 +144,52 @@ function ChatBoard({ socket }: Props): JSX.Element {
                       `${targetChatRoom.type}_${targetChatRoom.id}`
                     ].hasMore
               }
-              loader={<h4>Loading...</h4>}
+              loader={showLoader ? <h4>Loading...</h4> : <div></div>}
               scrollableTarget="chat-board"
             >
-              {chatHistory.map((msg, index) => {
-                let folder = "users";
-                let folder_id = currentUserId; // the private folder of the current user
-                if (targetChatRoom.type === chatType.group) {
-                  folder = "groups";
-                  folder_id = targetChatRoom.id;
-                }
+              {loadingStatus === loadingStatusEnum.changingTargetRoom ? (
+                <h1>Loading shit load of msg</h1>
+              ) : (
+                chatHistory.map((msg, index) => {
+                  let folder = "users";
+                  let folder_id = currentUserId; // the private folder of the current user
+                  if (targetChatRoom.type === chatType.group) {
+                    folder = "groups";
+                    folder_id = targetChatRoom.id;
+                  }
 
-                // console.log("msg.warning", msg.warning);
+                  // console.log("msg.warning", msg.warning);
 
-                return (
-                  <div key={index}>
-                    {msg.msg_type === "image" ? (
-                      <div>
+                  return (
+                    <div key={index}>
+                      {msg.msg_type === "image" ? (
                         <div>
-                          User {msg.sender_id} sent to User {msg.recipient_id}
+                          <div>
+                            User {msg.sender_id} sent to User {msg.recipient_id}
+                          </div>
+                          <img
+                            alt="tesing"
+                            src={
+                              msg.file_localUrl
+                                ? msg.file_localUrl
+                                : `https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${msg.file_url}`
+                            }
+                          />
                         </div>
-                        <img
-                          alt="tesing"
-                          src={
-                            msg.file_localUrl
-                              ? msg.file_localUrl
-                              : `https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${msg.file_url}`
-                          }
-                        />
-                      </div>
-                    ) : (
-                      <div>
+                      ) : (
                         <div>
-                          User {msg.sender_id} sent to User {msg.recipient_id}
+                          <div>
+                            User {msg.sender_id} sent to User {msg.recipient_id}
+                          </div>
+                          <div style={{ color: msg.warning ? "red" : "black" }}>
+                            {msg.msg_body} @ {msg.created_at}
+                          </div>
                         </div>
-                        <div style={{ color: msg.warning ? "red" : "black" }}>
-                          {msg.msg_body} @ {msg.created_at}
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                      )}
+                    </div>
+                  );
+                })
+              )}
             </InfiniteScroll>
           </div>
           <br />

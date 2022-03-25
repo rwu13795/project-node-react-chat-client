@@ -115,10 +115,7 @@ function GroupsList({
         </div>
 
         <Collapse in={expand} timeout="auto" unmountOnExit>
-          <GroupInvitation
-            socket={socket}
-            selectTargetChatRoomHandler={selectTargetChatRoomHandler}
-          />
+          <GroupInvitation socket={socket} />
           <List component="div" disablePadding>
             {groupsPosition.map((id) => {
               return (
@@ -194,6 +191,7 @@ function RenderGroup({
           socket={socket}
           group_id={group_id}
           group_name={group_name}
+          admin_user_id={admin_user_id}
         />
         <div>notifications: {count}</div>
         <LeaveGroup

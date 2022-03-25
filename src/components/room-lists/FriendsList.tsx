@@ -100,40 +100,44 @@ function FriendsList({
         <Collapse in={expand} timeout="auto" unmountOnExit>
           <AddFriendRequest socket={socket} />
           <List component="div" disablePadding>
-            {friendsPosition.map((id) => {
-              if (friendsList[id]) {
-                let { friend_id, friend_username, onlineStatus } =
-                  friendsList[id];
-                let target_id = `${chatType.private}_${friend_id}`;
-                let count = 0;
-                if (messageNotifications[target_id]) {
-                  count = messageNotifications[target_id].count;
-                }
-                return (
-                  <div key={friend_id}>
-                    <button
-                      onClick={() =>
-                        selectTargetChatRoomHandler(
-                          friend_id,
-                          friend_username,
-                          chatType.private
-                        )
-                      }
-                    >
-                      {friend_username + "@ID" + friend_id}
-                    </button>
-                    <div>notifications: {count}</div>
-                    <div>
-                      friend {friend_username} online-status: {onlineStatus}
-                    </div>
+            {friendsPosition &&
+              friendsPosition.length > 0 &&
+              friendsPosition.map((id, index) => {
+                console.log("friendsPosition", friendsPosition);
 
-                    <hr />
-                  </div>
-                );
-              } else {
-                return <h3>loading.....</h3>;
-              }
-            })}
+                if (friendsList[id]) {
+                  let { friend_id, friend_username, onlineStatus } =
+                    friendsList[id];
+                  let target_id = `${chatType.private}_${friend_id}`;
+                  let count = 0;
+                  if (messageNotifications[target_id]) {
+                    count = messageNotifications[target_id].count;
+                  }
+                  return (
+                    <div key={friend_id}>
+                      <button
+                        onClick={() =>
+                          selectTargetChatRoomHandler(
+                            friend_id,
+                            friend_username,
+                            chatType.private
+                          )
+                        }
+                      >
+                        {friend_username + "@ID" + friend_id}
+                      </button>
+                      <div>notifications: {count}</div>
+                      <div>
+                        friend {friend_username} online-status: {onlineStatus}
+                      </div>
+
+                      <hr />
+                    </div>
+                  );
+                } else {
+                  return <h3 key={index}>loading.....</h3>;
+                }
+              })}
           </List>
         </Collapse>
       </Fragment>

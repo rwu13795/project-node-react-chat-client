@@ -1,5 +1,6 @@
 import { Dispatch } from "@reduxjs/toolkit";
 import { Socket } from "socket.io-client";
+import { joinRoom_emitter, online_emitter } from "./emitters";
 import {
   addFriendRequest_listener,
   addFriendResponse_listener,
@@ -18,8 +19,23 @@ import {
 export default function addAllListeners(
   socket: Socket,
   dispatch: Dispatch,
-  currentUserId: string
+  data: {
+    user_id: string;
+    group_ids: string[];
+    onlineStatus: string;
+  }
 ): void {
+  console.log("setting up listeners");
+  const { user_id, group_ids, onlineStatus } = data;
+
+  // each user will join his/her private room and all the groups room after signing in
+  joinRoom_emitter(socket, {
+    user_id,
+    group_ids,
+  });
+  // let all the friends know this user is online
+  online_emitter(socket, { onlineStatus });
+
   // user
   message_listener(socket, dispatch);
   online_listener(socket, dispatch);
@@ -28,7 +44,7 @@ export default function addAllListeners(
 
   // friends
   addFriendRequest_listener(socket, dispatch);
-  addFriendResponse_listener(socket, dispatch, currentUserId);
+  addFriendResponse_listener(socket, dispatch, user_id);
   blockFriend_listener(socket, dispatch);
   check_addFriendRequest_listener(socket, dispatch);
 

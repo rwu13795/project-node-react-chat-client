@@ -24,6 +24,8 @@ export const getUserAuth = createAsyncThunk<Payload>(
       serverUrl + `/auth/user-auth-status`
     );
 
+    console.log(response.data);
+
     return response.data;
   }
 );

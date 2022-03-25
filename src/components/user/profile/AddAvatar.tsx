@@ -98,6 +98,8 @@ function AddAvatar({ socket, handleCloseModal }: Props): JSX.Element {
       changeAvatar_emitter(socket, imageObject);
       dispatch(changeAvatar(URL.createObjectURL(croppedImageBlob)));
     }
+    console.log("changing avatar !!!");
+
     handleCloseModal();
   }
 

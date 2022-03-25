@@ -13,6 +13,7 @@ import {
 } from "../../redux/user/userSlice";
 import { loadingStatusEnum } from "../../utils";
 import { createNewGroup_emitter } from "../../socket-io/emitters";
+import { getNotifications } from "../../redux/message/asyncThunk";
 
 interface Props {
   socket: Socket | undefined;
@@ -37,6 +38,7 @@ function CreateGroup({
       socket
     ) {
       dispatch(setLoadingStatus_user("idle"));
+      dispatch(getNotifications({ currentUserId }));
       createNewGroup_emitter(socket, { group_id: newGroupToJoin });
       selectTargetChatRoomHandler(newGroupToJoin, groupName, chatType.group);
     }
@@ -47,6 +49,11 @@ function CreateGroup({
   }
 
   function createGroupHandler() {
+    if (groupName.length > 30) {
+      console.log("group name should be no greater than 30 char");
+      return;
+    }
+
     if (groupName === "") return;
     dispatch(
       createNewGroup({ group_name: groupName, admin_user_id: currentUserId })

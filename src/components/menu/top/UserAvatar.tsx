@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useLayoutEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 import { useDispatch } from "react-redux";
@@ -31,6 +31,7 @@ function UserAvatar({
   const dispatch = useDispatch();
 
   const [anchorEl, setAnchorEl] = useState<HTMLDivElement | null>(null);
+  const [avatarUrl_src, setAvatarUrl_src] = useState<string>("");
   const open = Boolean(anchorEl);
 
   function openListHandler(event: React.MouseEvent<HTMLDivElement>) {
@@ -54,10 +55,24 @@ function UserAvatar({
     navigate("/");
   }
 
+  useLayoutEffect(() => {
+    if (avatar_url === null || avatar_url === "" || avatar_url === undefined) {
+      setAvatarUrl_src(username[0]);
+    } else {
+      setAvatarUrl_src(avatar_url);
+    }
+  }, [avatar_url, username]);
+
+  console.log("avatarUrl_src", avatarUrl_src);
+
   return (
     <main className={styles.main}>
       <div onClick={openListHandler} className={styles.avatar_wrapper}>
-        <Avatar src={avatar_url} alt={username[0]} className={styles.avatar} />
+        <Avatar
+          src={avatarUrl_src}
+          alt={username[0]}
+          className={styles.avatar}
+        />
       </div>
       <StatusDot onlineStatus={onlineStatus} forAvatar={true} />
 

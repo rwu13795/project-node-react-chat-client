@@ -1,4 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { loadingStatusEnum } from "../../utils";
 import type { RootState } from "../index";
 
 import {
@@ -62,6 +63,7 @@ interface MessageState {
   infiniteScrollStats: {
     [room_id: string]: { hasMore: boolean; pageNum: number };
   };
+  loadingStatus: string;
 }
 
 const initialState: MessageState = {
@@ -73,6 +75,7 @@ const initialState: MessageState = {
   visitedRoom: {},
   currentUserId_message: "",
   infiniteScrollStats: {},
+  loadingStatus: loadingStatusEnum.idle,
 };
 
 const messageSlice = createSlice({
@@ -99,8 +102,9 @@ const messageSlice = createSlice({
       action: PayloadAction<{ hasMore?: boolean; pageNum?: number }>
     ): void {
       // the infinite scroll will be broken if user re-enters a visited room
-      // the "hasMore" and "pageNum" will be reset.
+      // the local component "hasMore" and "pageNum" will be reset.
       // So each room needs to have its own chatHistory "hasMore" and "pageNum" values
+      // in the store
       const { hasMore, pageNum } = action.payload;
       const { type, id } = state.targetChatRoom;
       if (hasMore !== undefined) {
@@ -214,6 +218,14 @@ const messageSlice = createSlice({
       const { room_id, visited } = action.payload;
       state.visitedRoom[room_id] = visited;
       state.chatHistory[room_id] = [];
+      state.infiniteScrollStats[room_id] = {
+        hasMore: true,
+        pageNum: 2,
+      };
+    },
+
+    setLoadingStatus_msg(state, action: PayloadAction<string>) {
+      state.loadingStatus = action.payload;
     },
   },
 
@@ -316,6 +328,7 @@ export const {
   setCurrentUserId_message,
   setInfiniteScrollStats,
   resetVisitedRoom,
+  setLoadingStatus_msg,
 } = messageSlice.actions;
 
 export default messageSlice.reducer;
@@ -359,6 +372,10 @@ export const selectFriendsPosition = createSelector(
 export const selectGroupsPosition = createSelector(
   [selectMessageState],
   (messageState) => messageState.groupsPosition
+);
+export const selectLoadingStatus_msg = createSelector(
+  [selectMessageState],
+  (userState) => userState.loadingStatus
 );
 
 // the user/group with the lastest notification will be on top of the list

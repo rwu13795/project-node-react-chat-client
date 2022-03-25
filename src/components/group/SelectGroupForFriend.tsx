@@ -35,13 +35,18 @@ function SelectGroupForFriend({ socket, friend_id }: Props): JSX.Element {
     setAnchorEl(null);
   }
 
-  function invitationHandler(group_id: string, group_name: string) {
+  function invitationHandler(
+    group_id: string,
+    group_name: string,
+    admin_user_id: string
+  ) {
     if (socket) {
       groupInvitationRequest_emitter(socket, {
         friend_id,
         group_id,
         group_name,
         inviter_name: currentUsername,
+        admin_user_id,
       });
     }
 
@@ -85,7 +90,11 @@ function SelectGroupForFriend({ socket, friend_id }: Props): JSX.Element {
               <div>
                 <button
                   onClick={() =>
-                    invitationHandler(group.group_id, group.group_name)
+                    invitationHandler(
+                      group.group_id,
+                      group.group_name,
+                      group.admin_user_id
+                    )
                   }
                 >
                   {group.group_name} @ ID{group.group_id}

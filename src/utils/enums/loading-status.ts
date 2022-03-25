@@ -10,4 +10,5 @@ export enum loadingStatusEnum {
   resetPW_succeeded = "resetPW_succeeded",
   resetPW_loading = "resetPW_loading",
   resetPW_failed = "resetPW_failed",
+  changingTargetRoom = "changingTargetRoom",
 }

@@ -16,6 +16,7 @@
   height: 90%;
   cursor: pointer;
   transition: 0.5s;
+  font-size: 46px;
 }
 .avatar:hover {
   transition: 0.5s;

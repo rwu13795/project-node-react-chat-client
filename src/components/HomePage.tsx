@@ -74,7 +74,7 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   // const [target, setTarget] = useState<HTMLElement | null>(null);
 
   function resizeLeftMenu() {
-    let distance = 0,
+    let dragDistance = 0,
       startClientX = 0;
 
     let elem = document.getElementById("resize_box");
@@ -97,11 +97,11 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
     function dragElement(e: MouseEvent) {
       e.preventDefault();
       // calculate the new cursor position:
-      distance = startClientX - e.clientX;
+      dragDistance = startClientX - e.clientX;
       startClientX = e.clientX;
 
       console.log("startClientX", startClientX);
-      console.log("distance", distance);
+      console.log("distance", dragDistance);
 
       // set the element's new position:
       if (!elem || !leftMenu) return;
@@ -110,17 +110,17 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
       console.log("leftMenu.offsetWidth", leftMenu.offsetWidth);
       console.log("elem.offsetLeft", elem.offsetLeft);
       // console.dir(leftMenu);
-      let width = leftMenu.scrollWidth - distance;
-      if (width > 500) {
-        leftMenu.style.width = 500 + "px";
+      let width = leftMenu.scrollWidth - dragDistance;
+      if (width > 550) {
+        leftMenu.style.width = 550 + "px";
       } else if (width < 250) {
         leftMenu.style.width = 250 + "px";
       } else {
         leftMenu.style.width = width + "px";
       }
-      let pos = elem.offsetLeft - distance;
-      if (pos > 460) {
-        elem.style.left = 460 + "px";
+      let pos = elem.offsetLeft - dragDistance;
+      if (pos > 510) {
+        elem.style.left = 510 + "px";
       } else if (pos < 250) {
         elem.style.left = 250 + "px";
       } else {

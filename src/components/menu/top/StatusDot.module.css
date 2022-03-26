@@ -1,18 +1,25 @@
-.status_dot_avatar {
+.status_dot_top_avatar {
   position: relative;
-  min-width: 24%;
-  height: 24%;
-  right: 15%;
-  top: 70%;
+  width: 18px;
+  height: 18px;
+  left: 80%;
+  bottom: 30%;
   border-radius: 20px;
   z-index: 2;
 }
-
+.status_dot_list_avatar {
+  position: relative;
+  width: 12px;
+  height: 12px;
+  left: 85%;
+  bottom: 30%;
+  border-radius: 20px;
+  z-index: 2;
+}
 .status_dot_selection {
   width: 16px;
   height: 16px;
   border-radius: 20px;
-  z-index: 2;
 }
 
 .color_online {

@@ -6,25 +6,30 @@ import {
   chatType,
   selectFriendsPosition,
   selectMessageNotifications,
+  selectTargetChatRoom,
+  selectTotalFriendNoteCount,
 } from "../../../redux/message/messageSlice";
 import { selectFriendsList } from "../../../redux/user/userSlice";
 import SearchUser from "../../friend/SearchUser";
 
 // UI //
-import styles from "./RoomLists.module.css";
-import AddFriendRequest from "../../friend/AddFriendRequest";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import styles from "./GroupsList.module.css";
 import {
-  Backdrop,
-  Box,
+  Button,
+  Badge,
   Collapse,
   Fade,
   List,
   ListItemButton,
   ListItemText,
   Modal,
+  Backdrop,
+  Box,
 } from "@mui/material";
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import AddFriendRequest from "../../friend/AddFriendRequest";
+import RenderFriend from "./RenderFriend";
 
 interface Props {
   socket: Socket | undefined;
@@ -36,8 +41,10 @@ function FriendsList({
   selectTargetChatRoomHandler,
 }: Props): JSX.Element {
   const friendsList = useSelector(selectFriendsList);
-  const friendsPosition = useSelector(selectFriendsPosition);
   const messageNotifications = useSelector(selectMessageNotifications);
+  const friendsPosition = useSelector(selectFriendsPosition);
+  const { type, id: target_id } = useSelector(selectTargetChatRoom);
+  const totalCount = useSelector(selectTotalFriendNoteCount);
 
   const [expand, setExpand] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -55,18 +62,22 @@ function FriendsList({
   return (
     <main>
       <div className={styles.drawer}>
-        <ListItemButton onClick={toggleExpand} sx={{ pl: 2, height: "100px" }}>
-          {expand ? <ExpandLess /> : <ExpandMore />}
+        <ListItemButton
+          onClick={toggleExpand}
+          className={styles.list_item_button}
+        >
+          {expand ? (
+            <ExpandLess className={styles.arrow_up} />
+          ) : (
+            <ExpandMore className={styles.arrow_down} />
+          )}
           <ListItemText
             primary={
-              <div
-                style={{
-                  color: "green",
-                  fontSize: "3rem",
-                  textAlign: "center",
-                }}
-              >
-                Friends
+              <div className={styles.list_item_text_wrapper}>
+                <Badge badgeContent={expand ? 0 : totalCount} color="info">
+                  <div className={styles.list_item_text}>FRIENDS</div>
+                </Badge>
+                <div className={expand ? styles.list_item_border : ""}></div>
               </div>
             }
           />
@@ -95,45 +106,24 @@ function FriendsList({
 
       <Collapse in={expand} timeout="auto" unmountOnExit>
         <AddFriendRequest socket={socket} />
-        <List component="div" disablePadding>
-          {friendsPosition &&
-            friendsPosition.length > 0 &&
-            friendsPosition.map((id, index) => {
-              console.log("friendsPosition", friendsPosition);
-
-              if (friendsList[id]) {
-                let { friend_id, friend_username, onlineStatus } =
-                  friendsList[id];
-                let target_id = `${chatType.private}_${friend_id}`;
-                let count = 0;
-                if (messageNotifications[target_id]) {
-                  count = messageNotifications[target_id].count;
-                }
-                return (
-                  <div key={friend_id}>
-                    <button
-                      onClick={() =>
-                        selectTargetChatRoomHandler(
-                          friend_id,
-                          friend_username,
-                          chatType.private
-                        )
-                      }
-                    >
-                      {friend_username + "@ID" + friend_id}
-                    </button>
-                    <div>notifications: {count}</div>
-                    <div>
-                      friend {friend_username} online-status: {onlineStatus}
-                    </div>
-
-                    <hr />
-                  </div>
-                );
-              } else {
-                return <h3 key={index}>loading.....</h3>;
-              }
-            })}
+        <List component="div" disablePadding className={styles.group_list}>
+          {friendsPosition.map((id) => {
+            let room_id = `${chatType.private}_${id}`;
+            let count = 0;
+            if (messageNotifications[room_id]) {
+              count = messageNotifications[room_id].count;
+            }
+            return (
+              <RenderFriend
+                key={id}
+                socket={socket}
+                friend={friendsList[id]}
+                target_room={`${type}_${target_id}`}
+                notificationCount={count}
+                selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+              />
+            );
+          })}
         </List>
       </Collapse>
     </main>

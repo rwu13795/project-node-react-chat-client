@@ -1,22 +1,22 @@
 .main {
   flex-flow: row nowrap;
   display: flex;
-  min-width: 60px;
-  height: 60px;
 }
-
-.avatar_wrapper {
-  min-width: 100%;
-  height: 100%;
+.size_1 {
+  width: 64px;
+  height: 64px;
+}
+.size_2 {
+  width: 40px;
+  height: 40px;
 }
 
 .avatar {
-  border: solid 4px #008badc2;
-  min-width: 90%;
+  width: 90%;
   height: 90%;
+  border: solid 4px #008badc2;
   cursor: pointer;
   transition: 0.5s;
-  font-size: 46px;
 }
 .avatar:hover {
   transition: 0.5s;
@@ -24,6 +24,12 @@
   box-shadow: 0 0 10px var(--main-color-1), 0 0 20px var(--main-color-1);
   transform: scale(1.1);
   z-index: 3;
+}
+.avatar_size_1 {
+  font-size: 46px;
+}
+.avatar_size_2 {
+  font-size: 32px;
 }
 
 .popover_box {

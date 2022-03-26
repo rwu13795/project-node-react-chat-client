@@ -422,6 +422,20 @@ export const selectTotalGroupNoteCount = createSelector(
     return totalCount;
   }
 );
+export const selectTotalFriendNoteCount = createSelector(
+  [selectFriendsPosition, selectMessageNotifications],
+  (positions, notes) => {
+    const totalCount = positions.reduce((x, y) => {
+      const room_id = `${chatType.private}_${y}`;
+      if (!notes[room_id]) {
+        return (x = x + 0);
+      }
+      console.log("total", x);
+      return (x = x + notes[room_id].count);
+    }, 0);
+    return totalCount;
+  }
+);
 
 // the user/group with the lastest notification will be on top of the list
 function sortByLastAdded(

@@ -14,6 +14,7 @@ import styles from "./ChangeOnlineStatus.module.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { changeOnlineStatus_session } from "../../../redux/user/asyncThunk";
 import { changeOnlineStatus_emitter } from "../../../socket-io/emitters";
+import { AvatarOptions } from "../../../utils";
 
 interface Props {
   socket: Socket | undefined;
@@ -87,11 +88,14 @@ function ChangeOnlineStatus({
           {Object.values(onlineStatus_enum).map((status) => {
             return (
               <div key={status} className={styles.status_selection_wrapper}>
-                <StatusDot onlineStatus={status} />
                 <Button
                   onClick={() => selectHandler(status)}
                   className={styles.status_button}
                 >
+                  <StatusDot
+                    onlineStatus={status}
+                    option={AvatarOptions.none}
+                  />
                   {status === onlineStatus_enum.offline ? "Invisible" : status}
                 </Button>
               </div>

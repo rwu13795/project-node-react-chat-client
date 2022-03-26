@@ -5,6 +5,7 @@ import {
   Route,
   useLocation,
 } from "react-router-dom"; // (1)
+import { useIdleTimer } from "react-idle-timer";
 
 import "./styles/App.css";
 
@@ -29,6 +30,32 @@ function App(): JSX.Element {
   useEffect(() => {
     dispatch(getUserAuth());
   }, [dispatch]);
+
+  /////////////
+  const handleOnIdle = (event: any) => {
+    // when user is idle for a period of specific time, this callback will be triggered
+    console.log("user is idle", event);
+    console.log("last active", getLastActiveTime());
+    window.alert("user is idle for 15mins!!");
+  };
+
+  const handleOnActive = (event: any) => {
+    console.log("user is active", event);
+    console.log("time remaining", getRemainingTime());
+  };
+
+  const handleOnAction = (event: any) => {
+    console.log("user did something", event);
+  };
+
+  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+    timeout: 1000 * 60 * 15,
+    onIdle: handleOnIdle,
+    onActive: handleOnActive,
+    onAction: handleOnAction,
+    debounce: 500,
+  });
+  /////////////
 
   return (
     <Router>

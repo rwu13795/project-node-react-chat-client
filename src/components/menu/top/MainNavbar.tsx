@@ -13,7 +13,8 @@ import { Badge, Tooltip } from "@mui/material";
 import { styled } from "@mui/material/styles";
 
 import logo from "../../../images/logo.svg";
-import { scrollToTop } from "../../../utils";
+import { AvatarOptions, scrollToTop } from "../../../utils";
+import StatusDot from "./StatusDot";
 
 interface Props {
   socket: Socket | undefined;
@@ -33,12 +34,18 @@ function MainNavbar({ socket }: Props): JSX.Element {
   return isLoggedIn ? (
     <main className={styles.main}>
       <div className={styles.left_grid}>
-        <UserAvatar
-          username={username}
-          avatar_url={avatar_url}
-          onlineStatus={onlineStatus}
-          socket={socket}
-        />
+        <div className={styles.avatar_dot_wrapper}>
+          <UserAvatar
+            username={username}
+            avatar_url={avatar_url}
+            socket={socket}
+            option={AvatarOptions.topAvatar}
+          />
+          <StatusDot
+            onlineStatus={onlineStatus}
+            option={AvatarOptions.topAvatar}
+          />
+        </div>
         <ChangeOnlineStatus
           socket={socket}
           onlineStatus={onlineStatus}

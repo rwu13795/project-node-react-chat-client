@@ -13,19 +13,20 @@ import FaceIcon from "@mui/icons-material/Face";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { setIsLoggedIn } from "../../../redux/user/userSlice";
 import { logout_emitter } from "../../../socket-io/emitters";
+import { AvatarOptions } from "../../../utils";
 
 interface Props {
   username: string;
   avatar_url: string | undefined;
-  onlineStatus: string;
   socket: Socket | undefined;
+  option: AvatarOptions;
 }
 
 function UserAvatar({
   username,
   avatar_url,
-  onlineStatus,
   socket,
+  option,
 }: Props): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -63,41 +64,45 @@ function UserAvatar({
     }
   }, [avatar_url, username]);
 
-  console.log("avatarUrl_src", avatarUrl_src);
+  let main = styles.main + " " + styles.size_1;
+  let avatar = styles.avatar + " " + styles.avatar_size_1;
+  if (option === AvatarOptions.listAvatar) {
+    main = styles.main + " " + styles.size_2;
+    avatar = styles.avatar + " " + styles.avatar_size_2;
+  }
 
   return (
-    <main className={styles.main}>
-      <div onClick={openListHandler} className={styles.avatar_wrapper}>
-        <Avatar
-          src={avatarUrl_src}
-          alt={username[0]}
-          className={styles.avatar}
-        />
-      </div>
-      <StatusDot onlineStatus={onlineStatus} forAvatar={true} />
-
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-      >
-        <div className={styles.popover_box}>
-          <Button onClick={toUserProfile} className={styles.button}>
-            <FaceIcon /> User Profile
-          </Button>
-          <Button onClick={logoutHandler} className={styles.button}>
-            <LogoutIcon /> Log out
-          </Button>
-        </div>
-      </Popover>
+    <main className={main}>
+      <Avatar
+        src={avatarUrl_src}
+        alt={username[0]}
+        className={avatar}
+        onClick={openListHandler}
+      />
+      {option !== AvatarOptions.listAvatar && (
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleClose}
+          anchorOrigin={{
+            vertical: "bottom",
+            horizontal: "right",
+          }}
+          transformOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+        >
+          <div className={styles.popover_box}>
+            <Button onClick={toUserProfile} className={styles.button}>
+              <FaceIcon /> User Profile
+            </Button>
+            <Button onClick={logoutHandler} className={styles.button}>
+              <LogoutIcon /> Log out
+            </Button>
+          </div>
+        </Popover>
+      )}
     </main>
   );
 }

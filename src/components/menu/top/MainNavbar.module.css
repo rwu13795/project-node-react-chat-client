@@ -13,6 +13,11 @@
   align-items: flex-end;
   gap: 16px;
 }
+.avatar_dot_wrapper {
+  width: 64px;
+  height: 64px;
+  display: inline;
+}
 
 .right_grid {
   max-width: 30%;

@@ -14,7 +14,7 @@ import { Group, selectGroupsList } from "../../../redux/user/userSlice";
 import CreateGroup from "../../group/CreateGroup";
 import SelectFriendForGroup from "../../group/SelectFriendForGroup";
 import GroupInvitation from "../../group/GroupInvitaion";
-import LeaveGroup from "../../group/LeaveGroup";
+import RenderGroup from "./RenderGroup";
 
 // UI //
 import styles from "./GroupsList.module.css";
@@ -32,7 +32,6 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import RenderGroup from "./RenderGroup";
 
 interface Props {
   socket: Socket | undefined;
@@ -51,7 +50,7 @@ function GroupsList({
   const groupsList = useSelector(selectGroupsList);
   const messageNotifications = useSelector(selectMessageNotifications);
   const groupsPosition = useSelector(selectGroupsPosition);
-  const targetChatRoom = useSelector(selectTargetChatRoom);
+  const { type, id: target_id } = useSelector(selectTargetChatRoom);
   const totalCount = useSelector(selectTotalGroupNoteCount);
 
   const [expand, setExpand] = useState<boolean>(false);
@@ -130,7 +129,7 @@ function GroupsList({
               <RenderGroup
                 key={id}
                 socket={socket}
-                target_id={targetChatRoom.id}
+                target_room={`${type}_${target_id}`}
                 group={groupsList[id]}
                 notificationCount={count}
                 selectTargetChatRoomHandler={selectTargetChatRoomHandler}

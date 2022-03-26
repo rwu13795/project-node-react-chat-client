@@ -15,7 +15,7 @@ interface Props {
   group: Group;
   notificationCount: number;
   socket: Socket | undefined;
-  target_id: string;
+  target_room: string;
   selectTargetChatRoomHandler: (
     id: string,
     name: string,
@@ -28,18 +28,14 @@ function RenderGroup({
   group,
   notificationCount,
   socket,
-  target_id,
+  target_room,
   selectTargetChatRoomHandler,
 }: Props): JSX.Element {
   function groupOnClickHandler(
     group_id: string,
     group_name: string,
-    user_left: boolean,
     user_left_at: string | null
   ) {
-    if (user_left) {
-      window.alert("you were politely kicked out of this group by the creator");
-    }
     selectTargetChatRoomHandler(
       group_id,
       group_name,
@@ -59,37 +55,26 @@ function RenderGroup({
     } = group;
     let room_id = `${chatType.group}_${group_id}`;
     let isTargetRoom =
-      group_id === target_id
+      room_id === target_room
         ? `${styles.button} ${styles.button_bg}`
         : styles.button;
 
     return (
       <main className={styles.main}>
         <Button
-          // variant="outlined"
           id={`${chatType.group}_${group_id}`}
           className={isTargetRoom}
           onClick={() =>
-            groupOnClickHandler(group_id, group_name, user_left, user_left_at)
+            groupOnClickHandler(group_id, group_name, user_left_at)
           }
         >
-          <div className={styles.button_upper}>
-            <GroupIcon />
-            <div className={styles.button_text}>{group_name}</div>{" "}
-            <Badge
-              badgeContent={notificationCount}
-              color="primary"
-              className={styles.badge}
-            />
-          </div>
-          <div className={styles.button_lower}>
-            {user_left
-              ? was_kicked
-                ? "You were kicked out of this group"
-                : "You have left this group"
-              : ""}
-          </div>
-          <div>{/* <Badge badgeContent={4} color="primary" /> */}</div>
+          <GroupIcon />
+          <div className={styles.button_text}>{group_name}</div>{" "}
+          <Badge
+            badgeContent={notificationCount}
+            color="primary"
+            className={styles.badge}
+          />
         </Button>
       </main>
     );

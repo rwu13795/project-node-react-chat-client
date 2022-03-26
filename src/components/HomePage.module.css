@@ -15,24 +15,17 @@
   max-height: calc(100vh - 115px);
   overflow: hidden;
   border: red solid 2px;
-
-  background: linear-gradient(
-    135deg,
-    var(--navbar-color) 0%,
-    rgb(255, 255, 255) 90%
-  );
-  background-color: white;
   z-index: 8;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
 }
 .left_grid:hover .resize_button {
   visibility: visible;
 }
 .room_list {
-  width: 90%;
+  width: 94%; /* leave some room for the drag-button */
   height: 100%;
   max-height: calc(100vh - 115px);
   display: flex;

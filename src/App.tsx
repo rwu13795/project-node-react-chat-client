@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // (1)
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom"; // (1)
 
 import "./styles/App.css";
 
@@ -19,6 +24,7 @@ function App(): JSX.Element {
   const dispatch = useDispatch();
 
   const [socket, setSocket] = useState<Socket>();
+  const [showFooter, setShowFooter] = useState<boolean>(true);
 
   useEffect(() => {
     dispatch(getUserAuth());
@@ -39,7 +45,13 @@ function App(): JSX.Element {
 
             <Route
               path="/chat"
-              element={<HomePage socket={socket} setSocket={setSocket} />}
+              element={
+                <HomePage
+                  socket={socket}
+                  setSocket={setSocket}
+                  setShowFooter={setShowFooter}
+                />
+              }
             />
             <Route
               path="/profile"
@@ -49,9 +61,12 @@ function App(): JSX.Element {
             <Route path="/*" element={<Page404 />} />
           </Routes>
         </div>
-        <div className="footer">
-          <Footer />
-        </div>
+
+        {showFooter && (
+          <div className="footer">
+            <Footer />
+          </div>
+        )}
       </div>
     </Router>
   );

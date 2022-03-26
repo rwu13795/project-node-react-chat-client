@@ -22,7 +22,7 @@ function ChatRoomMenu({ socket }: Props): JSX.Element {
   return (
     <main>
       {targetChatRoom.type === chatType.group && (
-        <GroupChatMenu group_id={targetChatRoom.id} socket={socket} />
+        <GroupChatMenu target_id={targetChatRoom.id} socket={socket} />
       )}
       {targetChatRoom.type === chatType.private && (
         <PrivateChatMenu friend_id={targetChatRoom.id} socket={socket} />

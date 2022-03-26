@@ -4,16 +4,24 @@ import { Socket } from "socket.io-client";
 import {
   chatType,
   resetVisitedRoom,
+  updateGroupNote_afterJoining,
 } from "../../../redux/message/messageSlice";
 import { Group, updateGroupsList } from "../../../redux/user/userSlice";
 
+export interface NewGroupNotification {
+  group_id: string;
+  count: number;
+  last_added_at: string;
+}
+
 interface Data {
+  note: NewGroupNotification;
   newGroupsList: Group[];
   newGroupId: string;
 }
 
 export function joinNewGroup_listener(socket: Socket, dispatch: Dispatch<any>) {
-  socket.on("join-new-group", ({ newGroupsList, newGroupId }: Data) => {
+  socket.on("join-new-group", ({ note, newGroupsList, newGroupId }: Data) => {
     // when the user accepted and joined the group, update the client groupsList
     dispatch(updateGroupsList(newGroupsList));
     // if the group which the user has left is the same group he is joining now,
@@ -26,13 +34,12 @@ export function joinNewGroup_listener(socket: Socket, dispatch: Dispatch<any>) {
         visited: false,
       })
     );
+    dispatch(updateGroupNote_afterJoining(note));
     // force the user who just joined the group enter the group room
-    setTimeout(() => {
-      let elem = document.getElementById(`${chatType.group}_${newGroupId}`);
-      if (elem) {
-        console.log("enter room ", newGroupId);
-        elem.click();
-      }
-    }, 1000);
+    let elem = document.getElementById(`${chatType.group}_${newGroupId}`);
+    if (elem) {
+      console.log("enter room ", newGroupId);
+      elem.click();
+    }
   });
 }

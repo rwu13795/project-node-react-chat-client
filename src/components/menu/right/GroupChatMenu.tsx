@@ -7,18 +7,27 @@ import {
   selectResult_groupInvitation,
   selectTargetGroup,
 } from "../../../redux/user/userSlice";
+import LeaveGroup from "../../group/LeaveGroup";
 
 import MembersList from "../../group/MembersList";
 import RemoveGroup from "../../group/RemoveGroup";
+import SelectFriendForGroup from "../../group/SelectFriendForGroup";
 
 interface Props {
-  group_id: string;
+  target_id: string;
   socket: Socket | undefined;
 }
 
-function GroupChatMenu({ group_id, socket }: Props): JSX.Element {
+function GroupChatMenu({ target_id, socket }: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
-  const targetGroup = useSelector(selectTargetGroup(group_id));
+  const {
+    group_id,
+    group_name,
+    admin_user_id,
+    user_left_at,
+    was_kicked,
+    user_left,
+  } = useSelector(selectTargetGroup(target_id));
   const result_invitation = useSelector(selectResult_groupInvitation);
 
   const [openMembersList, setOpenMembersList] = useState<boolean>(false);
@@ -32,16 +41,33 @@ function GroupChatMenu({ group_id, socket }: Props): JSX.Element {
       <h3>
         Chatting with {targetChatRoom.name}-{targetChatRoom.id}
       </h3>
-      {targetGroup.user_left_at && (
+      {user_left_at && (
         <div>
-          You {targetGroup.was_kicked ? "were kicked out from" : "have left"}{" "}
-          this group on {targetGroup.user_left_at}
+          You {was_kicked ? "were kicked out from" : "have left"} this group on{" "}
+          {user_left_at}
         </div>
       )}
       <div>
-        <button onClick={openMembersListHandler}>Members list</button>
-        {openMembersList && <MembersList socket={socket} />}
-        <RemoveGroup />
+        {user_left ? (
+          <RemoveGroup />
+        ) : (
+          <>
+            <button onClick={openMembersListHandler}>Members list</button>
+            {openMembersList && <MembersList socket={socket} />}
+            <SelectFriendForGroup
+              socket={socket}
+              group_id={group_id}
+              group_name={group_name}
+              admin_user_id={admin_user_id}
+            />
+            <LeaveGroup
+              socket={socket}
+              group_id={group_id}
+              group_name={group_name}
+              admin_user_id={admin_user_id}
+            />
+          </>
+        )}
       </div>
       {result_invitation}
     </main>

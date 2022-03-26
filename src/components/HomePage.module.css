@@ -1,15 +1,72 @@
 .main_grid {
-  display: flex;
-  flex-flow: row nowrap;
+  /* display: flex;
+  flex-flow: row nowrap; */
   width: 100vw;
-  gap: 10px;
+  /* gap: 10px; */
+  height: 100%;
+  max-height: calc(100vh - 100px);
 }
 
 .left_grid {
-  width: 30%;
-  max-height: calc(100vh - 160px);
-  overflow: auto;
+  float: left;
+  position: absolute;
+  width: 28vw;
+  height: 100%;
+  max-height: calc(100vh - 115px);
+  overflow: hidden;
+  border: red solid 2px;
+
+  background: linear-gradient(
+    135deg,
+    var(--navbar-color) 0%,
+    rgb(255, 255, 255) 90%
+  );
+  background-color: white;
+  z-index: 8;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
 }
+.left_grid:hover .resize_button {
+  visibility: visible;
+}
+.room_list {
+  width: 90%;
+  height: 100%;
+  max-height: calc(100vh - 115px);
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
 .right_grid {
-  width: 70%;
+  float: right;
+  width: 68vw;
+  height: 100%;
+  max-height: calc(100vh - 105px);
+  border: red solid 2px;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+.menu_wrapper {
+  min-width: calc(70vw - 14px);
+}
+
+.resize_button {
+  position: absolute;
+  min-width: 20px;
+  max-width: 20px;
+  height: 20px;
+  background-color: red;
+  content: "";
+  z-index: 9;
+  padding: 10px;
+  width: 100%;
+  right: 0px;
+  visibility: hidden;
 }

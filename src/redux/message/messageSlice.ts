@@ -1,4 +1,5 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { NewGroupNotification } from "../../socket-io/listeners";
 import { loadingStatusEnum } from "../../utils";
 import type { RootState } from "../index";
 
@@ -227,6 +228,35 @@ const messageSlice = createSlice({
     setLoadingStatus_msg(state, action: PayloadAction<string>) {
       state.loadingStatus = action.payload;
     },
+
+    updateGroupNote_afterJoining(
+      state,
+      action: PayloadAction<NewGroupNotification>
+    ) {
+      // push the new group to top by adding the new notification
+      const note = action.payload;
+      let target_id = `${chatType.group}_${note.group_id}`;
+      if (!state.messageNotifications[target_id]) {
+        state.messageNotifications[target_id] = {
+          count: 0,
+          last_added_at: 0,
+        };
+        // if this is a new group, push the new group_id to the position array
+        // otherwise, do nothing, since user who got kicked or left can join in the same group
+        state.groupsPosition.push(note.group_id);
+      }
+      state.messageNotifications[target_id].count = note.count;
+      state.messageNotifications[target_id].last_added_at = new Date(
+        note.last_added_at
+      ).getTime();
+
+      // use the sort to initialize the position of Groups by the lastest notification
+      state.groupsPosition = sortByLastAdded(
+        state.groupsPosition,
+        state.messageNotifications,
+        chatType.group
+      );
+    },
   },
 
   extraReducers: (builder) => {
@@ -329,6 +359,7 @@ export const {
   setInfiniteScrollStats,
   resetVisitedRoom,
   setLoadingStatus_msg,
+  updateGroupNote_afterJoining,
 } = messageSlice.actions;
 
 export default messageSlice.reducer;
@@ -376,6 +407,20 @@ export const selectGroupsPosition = createSelector(
 export const selectLoadingStatus_msg = createSelector(
   [selectMessageState],
   (userState) => userState.loadingStatus
+);
+export const selectTotalGroupNoteCount = createSelector(
+  [selectGroupsPosition, selectMessageNotifications],
+  (positions, notes) => {
+    const totalCount = positions.reduce((x, y) => {
+      const room_id = `${chatType.group}_${y}`;
+      if (!notes[room_id]) {
+        return (x = x + 0);
+      }
+      console.log("total", x);
+      return (x = x + notes[room_id].count);
+    }, 0);
+    return totalCount;
+  }
 );
 
 // the user/group with the lastest notification will be on top of the list

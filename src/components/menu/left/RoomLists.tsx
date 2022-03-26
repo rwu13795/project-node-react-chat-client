@@ -6,25 +6,25 @@ import {
   leaveGroup,
   selectUserId,
   setResult_groupInvitation,
-} from "../../redux/user/userSlice";
+} from "../../../redux/user/userSlice";
 import {
   chatType,
   selectTargetChatRoom,
   setLoadingStatus_msg,
   setTargetChatRoom,
-} from "../../redux/message/messageSlice";
-import { getGroupMembersList_database } from "../../redux/user/asyncThunk";
+} from "../../../redux/message/messageSlice";
+import { getGroupMembersList_database } from "../../../redux/user/asyncThunk";
 import {
   clearNotifications,
   loadChatHistory_database,
-} from "../../redux/message/asyncThunk";
+} from "../../../redux/message/asyncThunk";
 import FriendsList from "./FriendsList";
 import GroupsList from "./GroupsList";
 
 // UI //
 import styles from "./RoomLists.module.css";
-import { changeTargetRoom_emitter } from "../../socket-io/emitters";
-import { loadingStatusEnum } from "../../utils";
+import { changeTargetRoom_emitter } from "../../../socket-io/emitters";
+import { loadingStatusEnum } from "../../../utils";
 
 interface Props {
   socket: Socket | undefined;
@@ -99,7 +99,6 @@ function RoomLists({ socket }: Props): JSX.Element {
 
   return (
     <main className={styles.main}>
-      <h3>Chat Rooms</h3>
       <GroupsList
         socket={socket}
         selectTargetChatRoomHandler={selectTargetChatRoomHandler}

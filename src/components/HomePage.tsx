@@ -13,7 +13,7 @@ import {
 } from "../redux/user/userSlice";
 import { getNotifications } from "../redux/message/asyncThunk";
 import ChatBoard from "./chat/ChatBoard";
-import RoomLists from "./room-lists/RoomLists";
+import RoomLists from "./menu/left/RoomLists";
 import ChatRoomMenu from "./menu/right/ChatRoomMenu";
 import connectSocket from "../socket-io/socketConnection";
 
@@ -26,9 +26,10 @@ import addAllListeners from "../socket-io/add-all-listener";
 interface Props {
   socket: Socket | undefined;
   setSocket: React.Dispatch<React.SetStateAction<Socket | undefined>>;
+  setShowFooter: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function MainPage({ socket, setSocket }: Props): JSX.Element {
+function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -37,6 +38,13 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
   const currentUsername = useSelector(selectUsername);
   const currentOnlineStatus = useSelector(selectUserOnlineStatus);
   const groupsToJoin = useSelector(selectGroupsToJoin);
+
+  useEffect(() => {
+    setShowFooter(false);
+    return () => {
+      setShowFooter(true);
+    };
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn === undefined) return;
@@ -62,21 +70,101 @@ function MainPage({ socket, setSocket }: Props): JSX.Element {
     }
   }, [isLoggedIn, socket, currentUserId]);
 
+  // /////////////////////////////////////
+  // const [target, setTarget] = useState<HTMLElement | null>(null);
+
+  function resizeLeftMenu() {
+    let distance = 0,
+      startClientX = 0;
+
+    let elem = document.getElementById("resize_box");
+    let leftMenu = document.getElementById("left_menu");
+    if (!elem || !leftMenu) return;
+
+    // otherwise, move the DIV from anywhere inside the DIV:
+    elem.onmousedown = dragOnMouseDown;
+
+    function dragOnMouseDown(e: MouseEvent) {
+      e.preventDefault();
+      // get the mouse cursor position at startup:
+      startClientX = e.clientX;
+
+      document.onmouseup = clearListeners;
+      // call a function whenever the cursor moves:
+      document.onmousemove = dragElement;
+    }
+
+    function dragElement(e: MouseEvent) {
+      e.preventDefault();
+      // calculate the new cursor position:
+      distance = startClientX - e.clientX;
+      startClientX = e.clientX;
+
+      console.log("startClientX", startClientX);
+      console.log("distance", distance);
+
+      // set the element's new position:
+      if (!elem || !leftMenu) return;
+
+      console.log("leftMenu.style.width", leftMenu.style.width);
+      console.log("leftMenu.offsetWidth", leftMenu.offsetWidth);
+      console.log("elem.offsetLeft", elem.offsetLeft);
+      // console.dir(leftMenu);
+      let width = leftMenu.scrollWidth - distance;
+      if (width > 500) {
+        leftMenu.style.width = 500 + "px";
+      } else if (width < 250) {
+        leftMenu.style.width = 250 + "px";
+      } else {
+        leftMenu.style.width = width + "px";
+      }
+      let pos = elem.offsetLeft - distance;
+      if (pos > 460) {
+        elem.style.left = 460 + "px";
+      } else if (pos < 250) {
+        elem.style.left = 250 + "px";
+      } else {
+        elem.style.left = pos + "px";
+      }
+    }
+
+    function clearListeners() {
+      // stop moving when mouse button is released:
+      document.onmouseup = null;
+      document.onmousemove = null;
+    }
+  }
+
+  useEffect(() => {
+    resizeLeftMenu();
+  });
+
   return (
-    <main>
+    <main className={styles.main_grid}>
       {isLoggedIn === undefined ? (
         <CircularProgress />
       ) : (
-        <div className={styles.main_grid}>
-          <div className={styles.left_grid}>
-            <RoomLists socket={socket} />
+        <>
+          <div className={styles.left_grid} id="left_menu">
+            <div className={styles.room_list}>
+              <RoomLists socket={socket} />
+            </div>
+            <div
+              id="resize_box"
+              className={styles.resize_button}
+              // onMouseDown={resizeHanlder}
+              // onMouseUp={cancelHandler}
+              // onMouseOut={cancelHandler}
+            ></div>
           </div>
 
           <div className={styles.right_grid}>
-            <ChatRoomMenu socket={socket} />
-            <ChatBoard socket={socket} />
+            <div className={styles.menu_wrapper}>
+              <ChatRoomMenu socket={socket} />
+              <ChatBoard socket={socket} />
+            </div>
           </div>
-        </div>
+        </>
       )}
     </main>
   );

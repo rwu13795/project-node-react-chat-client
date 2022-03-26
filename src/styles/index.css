@@ -9,6 +9,8 @@
   --main-color-3: #003b49;
   --main-color-4: #000000e0;
   --navbar-color: #00ccff8f;
+  --contrast-color-1: rgb(0, 138, 0);
+  --contrast-color-2: #0050858f;
 }
 
 body {

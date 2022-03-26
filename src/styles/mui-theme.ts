@@ -7,7 +7,7 @@ const theme = createTheme({
     secondary: { main: "#00ccff", contrastText: "#00586e" },
     warning: { main: "#fc9403" },
     error: { main: "#f44336" },
-    info: { main: "#00789e", contrastText: "#ffffff" },
+    info: { main: "#008a00", contrastText: "#ffffff" },
   },
   typography: {
     fontFamily: ["Quantico", "sans-serif"].join(","),

@@ -1,0 +1,24 @@
+.main {
+  width: 100%;
+}
+
+.title {
+  width: 60%;
+  text-align: left;
+  margin-top: 10px;
+  margin-left: 10px;
+}
+.online {
+  margin-left: 10px;
+  margin-bottom: 6px;
+  height: 3px;
+  width: 35%;
+  background-image: linear-gradient(270deg, transparent, rgb(6, 201, 49));
+}
+.offline {
+  margin-left: 10px;
+  margin-bottom: 6px;
+  height: 3px;
+  width: 35%;
+  background-image: linear-gradient(270deg, transparent, rgb(78, 78, 78));
+}

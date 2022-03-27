@@ -53,7 +53,10 @@ export interface Notifications {
 interface MessageState {
   targetChatRoom: TargetChatRoom;
   chatHistory: ChatHistory;
-  messageNotifications: Notifications;
+  // need to seperate the group and friend notifications, otherwise both group and
+  // frend list will be rendered every time a new notification comes in
+  groupNotifications: Notifications;
+  friendNotifications: Notifications;
   groupsPosition: string[];
   friendsPosition: string[];
   // add the room_type + id in the set, if the room is existed,
@@ -70,7 +73,8 @@ interface MessageState {
 const initialState: MessageState = {
   targetChatRoom: { id: "", name: "", type: "", date_limit: "" },
   chatHistory: {},
-  messageNotifications: {},
+  groupNotifications: {},
+  friendNotifications: {},
   groupsPosition: [],
   friendsPosition: [],
   visitedRoom: {},
@@ -124,6 +128,7 @@ const messageSlice = createSlice({
       const { sender_id, recipient_id } = messageObject;
       const currentUserId = state.currentUserId_message;
 
+      const userIsInChatRoom = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
       // since this listener handles all types of live messages
       // have to figure out which room the live message is belonged to
       let room_id = "";
@@ -146,6 +151,15 @@ const messageSlice = createSlice({
             sender_id
           );
         }
+        // update the live message notification for private chat room
+        // only show notification if user is not in the target room
+        if (!state.friendNotifications[room_id]) {
+          state.friendNotifications[room_id] = { count: 0, last_added_at: 0 };
+        }
+        if (userIsInChatRoom !== room_id) {
+          state.friendNotifications[room_id].count += 1;
+          state.friendNotifications[room_id].last_added_at = Date.now();
+        }
       } else {
         // all group rooms are always the recipient
         room_id = `${room_type}_${recipient_id}`;
@@ -153,6 +167,15 @@ const messageSlice = createSlice({
           state.groupsPosition,
           recipient_id
         );
+        // update the live message notification for private or group chat rooms
+        if (!state.groupNotifications[room_id]) {
+          state.groupNotifications[room_id] = { count: 0, last_added_at: 0 };
+        }
+
+        if (userIsInChatRoom !== room_id) {
+          state.groupNotifications[room_id].count += 1;
+          state.groupNotifications[room_id].last_added_at = Date.now();
+        }
       }
 
       // add message to chat history for the specific room
@@ -160,18 +183,6 @@ const messageSlice = createSlice({
         state.chatHistory[room_id] = [];
       }
       state.chatHistory[room_id].unshift(messageObject);
-
-      // update the live message notification for private or group chat rooms
-      if (!state.messageNotifications[room_id]) {
-        state.messageNotifications[room_id] = { count: 0, last_added_at: 0 };
-      }
-      const userIsInChatRoom = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
-      // only show notification if user is not in the target room
-      console.log(userIsInChatRoom);
-      if (userIsInChatRoom !== room_id) {
-        state.messageNotifications[room_id].count += 1;
-        state.messageNotifications[room_id].last_added_at = Date.now();
-      }
     },
 
     loadMoreOldChatHistory_database(
@@ -236,8 +247,8 @@ const messageSlice = createSlice({
       // push the new group to top by adding the new notification
       const note = action.payload;
       let target_id = `${chatType.group}_${note.group_id}`;
-      if (!state.messageNotifications[target_id]) {
-        state.messageNotifications[target_id] = {
+      if (!state.groupNotifications[target_id]) {
+        state.groupNotifications[target_id] = {
           count: 0,
           last_added_at: 0,
         };
@@ -245,15 +256,15 @@ const messageSlice = createSlice({
         // otherwise, do nothing, since user who got kicked or left can join in the same group
         state.groupsPosition.push(note.group_id);
       }
-      state.messageNotifications[target_id].count = note.count;
-      state.messageNotifications[target_id].last_added_at = new Date(
+      state.groupNotifications[target_id].count = note.count;
+      state.groupNotifications[target_id].last_added_at = new Date(
         note.last_added_at
       ).getTime();
 
       // use the sort to initialize the position of Groups by the lastest notification
       state.groupsPosition = sortByLastAdded(
         state.groupsPosition,
-        state.messageNotifications,
+        state.groupNotifications,
         chatType.group
       );
     },
@@ -299,14 +310,14 @@ const messageSlice = createSlice({
         state.friendsPosition = [];
         action.payload.private.forEach((note) => {
           let target_id = `${chatType.private}_${note.sender_id}`;
-          if (!state.messageNotifications[target_id]) {
-            state.messageNotifications[target_id] = {
+          if (!state.friendNotifications[target_id]) {
+            state.friendNotifications[target_id] = {
               count: 0,
               last_added_at: 0,
             };
           }
-          state.messageNotifications[target_id].count = note.count;
-          state.messageNotifications[target_id].last_added_at = new Date(
+          state.friendNotifications[target_id].count = note.count;
+          state.friendNotifications[target_id].last_added_at = new Date(
             note.last_added_at
           ).getTime();
           state.friendsPosition.push(note.sender_id);
@@ -314,7 +325,7 @@ const messageSlice = createSlice({
         // use the sort to initialize the position of Friends by the lastest notification
         state.friendsPosition = sortByLastAdded(
           state.friendsPosition,
-          state.messageNotifications,
+          state.friendNotifications,
           chatType.private
         );
 
@@ -322,14 +333,14 @@ const messageSlice = createSlice({
         state.groupsPosition = [];
         action.payload.group.forEach((note) => {
           let target_id = `${chatType.group}_${note.group_id}`;
-          if (!state.messageNotifications[target_id]) {
-            state.messageNotifications[target_id] = {
+          if (!state.groupNotifications[target_id]) {
+            state.groupNotifications[target_id] = {
               count: 0,
               last_added_at: 0,
             };
           }
-          state.messageNotifications[target_id].count = note.count;
-          state.messageNotifications[target_id].last_added_at = new Date(
+          state.groupNotifications[target_id].count = note.count;
+          state.groupNotifications[target_id].last_added_at = new Date(
             note.last_added_at
           ).getTime();
           state.groupsPosition.push(note.group_id);
@@ -337,7 +348,7 @@ const messageSlice = createSlice({
         // use the sort to initialize the position of Groups by the lastest notification
         state.groupsPosition = sortByLastAdded(
           state.groupsPosition,
-          state.messageNotifications,
+          state.groupNotifications,
           chatType.group
         );
       })
@@ -345,8 +356,13 @@ const messageSlice = createSlice({
       /***************  Clear Notifications  ***************/
       .addCase(clearNotifications.fulfilled, (state, action): void => {
         const { type, id } = action.payload;
-        if (!state.messageNotifications[`${type}_${id}`]) return;
-        state.messageNotifications[`${type}_${id}`].count = 0;
+        if (type === chatType.group) {
+          if (!state.groupNotifications[`${type}_${id}`]) return;
+          state.groupNotifications[`${type}_${id}`].count = 0;
+        } else {
+          if (!state.friendNotifications[`${type}_${id}`]) return;
+          state.friendNotifications[`${type}_${id}`].count = 0;
+        }
       });
   },
 });
@@ -388,9 +404,13 @@ export const selectTargetChatRoom_history = createSelector(
     return history[room_id] ? history[room_id] : [];
   }
 );
-export const selectMessageNotifications = createSelector(
+export const selectGroupNotifications = createSelector(
   [selectMessageState],
-  (messageState) => messageState.messageNotifications
+  (messageState) => messageState.groupNotifications
+);
+export const selectFriendNotifications = createSelector(
+  [selectMessageState],
+  (messageState) => messageState.friendNotifications
 );
 export const selectInfiniteScrollStats = createSelector(
   [selectMessageState],
@@ -409,7 +429,7 @@ export const selectLoadingStatus_msg = createSelector(
   (userState) => userState.loadingStatus
 );
 export const selectTotalGroupNoteCount = createSelector(
-  [selectGroupsPosition, selectMessageNotifications],
+  [selectGroupsPosition, selectGroupNotifications],
   (positions, notes) => {
     const totalCount = positions.reduce((x, y) => {
       const room_id = `${chatType.group}_${y}`;
@@ -423,7 +443,7 @@ export const selectTotalGroupNoteCount = createSelector(
   }
 );
 export const selectTotalFriendNoteCount = createSelector(
-  [selectFriendsPosition, selectMessageNotifications],
+  [selectFriendsPosition, selectFriendNotifications],
   (positions, notes) => {
     const totalCount = positions.reduce((x, y) => {
       const room_id = `${chatType.private}_${y}`;

@@ -1,7 +1,11 @@
 import { memo } from "react";
 import { Socket } from "socket.io-client";
 
-import { chatType, Notifications } from "../../../redux/message/messageSlice";
+import {
+  chatType,
+  Notifications,
+  selectTargetChatRoom,
+} from "../../../redux/message/messageSlice";
 import { Friend, Group } from "../../../redux/user/userSlice";
 
 // UI //
@@ -11,12 +15,12 @@ import { Button, Badge } from "@mui/material";
 import UserAvatar from "../top/UserAvatar";
 import { AvatarOptions } from "../../../utils";
 import StatusDot from "../top/StatusDot";
+import { useSelector } from "react-redux";
 
 interface Props {
   friend: Friend;
   notificationCount: number;
   socket: Socket | undefined;
-  target_room: string;
   selectTargetChatRoomHandler: (
     id: string,
     name: string,
@@ -29,9 +33,10 @@ function RenderFriend({
   friend,
   notificationCount,
   socket,
-  target_room,
   selectTargetChatRoomHandler,
 }: Props): JSX.Element {
+  const { type, id: target_id } = useSelector(selectTargetChatRoom);
+
   function friendOnClickHandler(friend_id: string, friend_username: string) {
     selectTargetChatRoomHandler(friend_id, friend_username, chatType.private);
   }
@@ -40,7 +45,7 @@ function RenderFriend({
     let { friend_id, friend_username, onlineStatus, avatar_url } = friend;
     let room_id = `${chatType.private}_${friend_id}`;
     let isTargetRoom =
-      room_id === target_room
+      room_id === `${type}_${target_id}`
         ? `${styles.button} ${styles.button_bg}`
         : styles.button;
     return (

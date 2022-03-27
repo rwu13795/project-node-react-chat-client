@@ -36,7 +36,8 @@ function App(): JSX.Element {
     // when user is idle for a period of specific time, this callback will be triggered
     console.log("user is idle", event);
     console.log("last active", getLastActiveTime());
-    window.alert("user is idle for 15mins!!");
+    let s = window.prompt("user is idle for 15mins!! reset timer?");
+    if (s === "y") reset();
   };
 
   const handleOnActive = (event: any) => {
@@ -48,7 +49,7 @@ function App(): JSX.Element {
     console.log("user did something", event);
   };
 
-  const { getRemainingTime, getLastActiveTime } = useIdleTimer({
+  const { getRemainingTime, getLastActiveTime, reset } = useIdleTimer({
     timeout: 1000 * 60 * 15,
     onIdle: handleOnIdle,
     onActive: handleOnActive,

@@ -5,6 +5,7 @@
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
 }
 .drawer_item_upper {
   display: flex;
@@ -12,6 +13,25 @@
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
+}
+.drawer:hover .list_item_border_hover {
+  transform: translateX(110%);
+  transition: all 0.6s;
+}
+.list_item_border_hover {
+  position: relative;
+  left: -110%;
+  bottom: 6px;
+  border-radius: 10rem;
+  height: 5px;
+  min-width: 100%;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    var(--contrast-color-1) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  transition: all 0.6s;
 }
 
 .list_item_button {
@@ -114,4 +134,23 @@
   justify-content: center;
   align-items: center;
   margin-left: 4px;
+}
+
+.no_group_wrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  gap: 6px;
+}
+.create_button {
+  font-size: 14px;
+  padding: 1px;
+  width: 190px;
+}
+.create_button:hover {
+  background: linear-gradient(
+    to right,
+    var(--main-color-2) 0%,
+    rgba(0, 0, 0, 0) 100%
+  );
 }

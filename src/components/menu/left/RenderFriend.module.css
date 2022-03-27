@@ -1,4 +1,4 @@
-.list_wrapper {
+.main {
   width: 100%;
 }
 
@@ -14,26 +14,41 @@
   color: var(--main-color-4);
   gap: 8px;
   padding: 2px 2px 2px 12px;
+  overflow: hidden;
 }
-.button:hover {
+.button_selected {
   background: linear-gradient(
     to right,
     var(--main-color-2) 0%,
     rgba(0, 0, 0, 0) 100%
   );
 }
-.button_bg {
+.button::before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
   background: linear-gradient(
-    to right,
-    var(--main-color-2) 0%,
-    rgba(0, 0, 0, 0) 100%
-  );
+      to right,
+      var(--main-color-2) 0%,
+      rgba(0, 0, 0, 0) 100%
+    )
+    no-repeat;
+  z-index: 0;
+  border-radius: 4px;
+  left: -101%;
+  transition: all 0.5s;
+}
+.button:hover::before {
+  transform: translateX(101%);
+  transition: all 0.5s;
 }
 
 .avatar_dot_wrapper {
   width: 40px;
   height: 40px;
   display: inline;
+  z-index: 2;
 }
 
 .button_text {
@@ -43,10 +58,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   margin-left: 8px;
+  z-index: 2;
 }
 
 .badge {
   position: relative;
   bottom: 12px;
   left: 8px;
+  z-index: 2;
 }

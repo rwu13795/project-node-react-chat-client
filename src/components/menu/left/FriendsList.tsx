@@ -87,24 +87,26 @@ function FriendsList({
             onClick={handleOpenModal}
           />
         </div>
+        {!expand && <div className={styles.list_item_border_hover}></div>}
         <div className={expand ? styles.list_item_border : ""}></div>
-        <Modal
-          disableScrollLock={true}
-          open={openModal}
-          onClose={handleCloseModal}
-          closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500,
-          }}
-        >
-          <Fade in={openModal}>
-            <Box className={styles.modal}>
-              <SearchUser socket={socket} />
-            </Box>
-          </Fade>
-        </Modal>
       </div>
+
+      <Modal
+        disableScrollLock={true}
+        open={openModal}
+        onClose={handleCloseModal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openModal}>
+          <Box className={styles.modal}>
+            <SearchUser socket={socket} />
+          </Box>
+        </Fade>
+      </Modal>
 
       <Collapse in={expand} timeout="auto" unmountOnExit>
         {/* <AddFriendRequest socket={socket} /> */}

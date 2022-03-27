@@ -1,0 +1,53 @@
+.main {
+  margin-top: 10px;
+  margin-bottom: 16px;
+  display: flex;
+  width: 96%;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.title {
+  width: 100%;
+  text-align: left;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.main_border {
+  margin-top: 6px;
+  height: 3px;
+  min-width: 105%;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    var(--contrast-color-2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.invitation_wrapper {
+  width: 94%;
+  border: solid 2px var(--contrast-color-2);
+  border-radius: 8px;
+  padding: 4px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.buttons_wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
+.button {
+  padding: 1px;
+  font-size: 12px;
+}

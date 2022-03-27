@@ -46,7 +46,7 @@ function RenderFriend({
     let room_id = `${chatType.private}_${friend_id}`;
     let isTargetRoom =
       room_id === `${type}_${target_id}`
-        ? `${styles.button} ${styles.button_bg}`
+        ? `${styles.button} ${styles.button_selected}`
         : styles.button;
     return (
       <main className={styles.main}>

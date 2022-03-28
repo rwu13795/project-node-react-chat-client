@@ -102,6 +102,8 @@ function UserProfile({ socket, setSocket }: Props): JSX.Element {
               </div>
               <div className={styles.edit_avatar}>
                 <Button
+                  variant="contained"
+                  color="secondary"
                   className={styles.edit_button}
                   onClick={handleOpenModal}
                 >

@@ -7,11 +7,8 @@ import {
 } from "../../redux/message/messageSlice";
 import {
   removeGroup,
-  selectCreateGroupError,
-  selectFriendsList,
   selectTargetGroup,
   selectUserId,
-  selectUsername,
 } from "../../redux/user/userSlice";
 import { client } from "../../redux/utils";
 

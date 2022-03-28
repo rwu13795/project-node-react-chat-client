@@ -1,5 +1,5 @@
 import { Fragment, memo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
@@ -11,6 +11,7 @@ import {
   selectTotalGroupNoteCount,
 } from "../../../redux/message/messageSlice";
 import {
+  clearRequestError,
   Group,
   selectGroupInvitations,
   selectGroupsList,
@@ -36,6 +37,7 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
 interface Props {
   socket: Socket | undefined;
@@ -51,6 +53,8 @@ function GroupsList({
   socket,
   selectTargetChatRoomHandler,
 }: Props): JSX.Element {
+  const dispatch = useDispatch();
+
   const groupsList = useSelector(selectGroupsList);
   const groupNotifications = useSelector(selectGroupNotifications);
   const groupsPosition = useSelector(selectGroupsPosition);
@@ -68,6 +72,7 @@ function GroupsList({
     setOpenModal(true);
   }
   function handleCloseModal() {
+    dispatch(clearRequestError("all"));
     setOpenModal(false);
   }
 
@@ -122,9 +127,16 @@ function GroupsList({
       >
         <Fade in={openModal}>
           <Box className={styles.modal}>
+            <div className={styles.close_icon_wrapper}>
+              <CancelPresentationIcon
+                className={styles.close_icon}
+                onClick={handleCloseModal}
+              />
+            </div>
             <CreateGroup
               socket={socket}
               selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+              handleCloseModal={handleCloseModal}
             />
           </Box>
         </Fade>
@@ -160,7 +172,11 @@ function GroupsList({
         ) : (
           <div className={styles.no_group_wrapper}>
             <div>You are not in any group</div>
-            <Button variant="outlined" className={styles.create_button}>
+            <Button
+              variant="outlined"
+              onClick={handleOpenModal}
+              className={styles.create_button}
+            >
               Create a new group
             </Button>
           </div>

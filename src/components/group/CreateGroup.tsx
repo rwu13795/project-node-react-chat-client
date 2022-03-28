@@ -1,80 +1,129 @@
-import { ChangeEvent, memo, useEffect, useState } from "react";
+import { MouseEvent, FormEvent, memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import { chatType } from "../../redux/message/messageSlice";
 import { createNewGroup } from "../../redux/user/asyncThunk";
 import {
-  selectCreateGroupError,
   selectLoadingStatus_user,
   selectNewGroupToJoin,
+  selectRequestErrors,
   selectUserId,
   setLoadingStatus_user,
 } from "../../redux/user/userSlice";
-import { loadingStatusEnum } from "../../utils";
+import { inputNames, loadingStatusEnum, onSubmitCheck } from "../../utils";
 import { createNewGroup_emitter } from "../../socket-io/emitters";
 import { getNotifications } from "../../redux/message/asyncThunk";
+import InputField, {
+  customStyleOptions,
+  InputErrors,
+  InputValues,
+} from "../input-field/InputField";
+
+// UI //
+import styles from "./CreateGroup.module.css";
+import { Button } from "@mui/material";
 
 interface Props {
   socket: Socket | undefined;
   selectTargetChatRoomHandler: (id: string, name: string, type: string) => void;
+  handleCloseModal: () => void;
 }
 
 function CreateGroup({
   socket,
   selectTargetChatRoomHandler,
+  handleCloseModal,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const currentUserId = useSelector(selectUserId);
-  const createGroupError = useSelector(selectCreateGroupError);
   const newGroupToJoin = useSelector(selectNewGroupToJoin);
   const loadingStatus = useSelector(selectLoadingStatus_user);
-  const [groupName, setGroupName] = useState<string>("");
+  const requestErrors = useSelector(selectRequestErrors);
+
+  const [inputValues, setInputValues] = useState<InputValues>({
+    [inputNames.new_group_name]: "",
+  });
+  const [inputErrors, setInputErrors] = useState<InputErrors>({
+    [inputNames.new_group_name]: "",
+  });
 
   useEffect(() => {
     if (
       loadingStatus === loadingStatusEnum.createNewGroup_succeeded &&
       socket
     ) {
-      dispatch(setLoadingStatus_user("idle"));
       dispatch(getNotifications({ currentUserId }));
       createNewGroup_emitter(socket, { group_id: newGroupToJoin });
-      selectTargetChatRoomHandler(newGroupToJoin, groupName, chatType.group);
+      selectTargetChatRoomHandler(
+        newGroupToJoin,
+        inputValues[inputNames.new_group_name],
+        chatType.group
+      );
+      handleCloseModal();
+      dispatch(setLoadingStatus_user("idle"));
     }
   }, [loadingStatus, newGroupToJoin]);
 
-  function setGroupNameHandler(e: ChangeEvent<HTMLInputElement>) {
-    setGroupName(e.target.value);
-  }
+  function createGroupHandler(
+    e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
+  ) {
+    e.preventDefault();
 
-  function createGroupHandler() {
-    if (groupName.length > 30) {
-      console.log("group name should be no greater than 30 char");
-      return;
-    }
-
-    if (groupName === "") return;
+    const hasError = onSubmitCheck(inputValues, setInputErrors);
+    if (hasError) return;
     dispatch(
-      createNewGroup({ group_name: groupName, admin_user_id: currentUserId })
+      createNewGroup({
+        group_name: inputValues[inputNames.new_group_name],
+        admin_user_id: currentUserId,
+      })
     );
   }
 
   return (
-    <main>
-      <h3>I am the Create Group</h3>
-      <div>
-        <div>
-          <label>group name</label>
-          <input type="text" value={groupName} onChange={setGroupNameHandler} />
+    <main className={styles.main}>
+      <h1>Create a new group</h1>
+      <form onSubmit={createGroupHandler}>
+        <div className={styles.input_field}>
+          {Object.entries(inputValues).map(([name, value]) => {
+            return (
+              <InputField
+                key={name}
+                inputName={name}
+                inputValue={value}
+                inputError={inputErrors[name]}
+                requestError={requestErrors[name]}
+                setInputValues={setInputValues}
+                setInputErrors={setInputErrors}
+                customStyle={customStyleOptions.create_new_group}
+                isDisabled={
+                  loadingStatus ===
+                    loadingStatusEnum.createNewGroup_succeeded ||
+                  loadingStatus === loadingStatusEnum.loading
+                }
+              />
+            );
+          })}
         </div>
+
+        <Button
+          type="submit"
+          variant="outlined"
+          className={styles.button}
+          onClick={createGroupHandler}
+          disabled={
+            loadingStatus === loadingStatusEnum.createNewGroup_succeeded ||
+            loadingStatus === loadingStatusEnum.loading
+          }
+        >
+          Create
+        </Button>
+      </form>
+
+      <div className={styles.error_groups_limit}>
+        {requestErrors[inputNames.groups_limit]}
       </div>
-      <div>
-        <button onClick={createGroupHandler} disabled={groupName === ""}>
-          Create Group
-        </button>
-      </div>
-      <div>{createGroupError}</div>
     </main>
   );
 }

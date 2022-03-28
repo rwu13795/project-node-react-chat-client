@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
-  selectCreateGroupError,
   selectFriendsList,
   selectUserId,
   selectUsername,

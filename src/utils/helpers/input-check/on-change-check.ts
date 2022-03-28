@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction } from "react";
 import { InputErrors } from "../../../components/input-field/InputField";
 import { inputNames } from "../../enums/input-names";
+import { regex_numbers } from "./on-blur-check";
 
 export function onChangeCheck(
   inputName: string,
@@ -19,20 +20,57 @@ export function onChangeCheck(
     return (hasError = true);
   }
 
-  if (inputName === inputNames.username) {
-    if (inputValue.length > 20) {
-      setInputErrors((prev) => {
-        return {
-          ...prev,
-          [inputName]: "Your username cannot be longer than 20 characters",
-        };
-      });
-    } else {
-      setInputErrors((prev) => {
-        return { ...prev, [inputName]: "" };
-      });
+  switch (inputName) {
+    case inputNames.username: {
+      if (inputValue.length > 20) {
+        setInputErrors((prev) => {
+          return {
+            ...prev,
+            [inputName]: "Your username cannot be longer than 20 characters",
+          };
+        });
+      } else {
+        setInputErrors((prev) => {
+          return { ...prev, [inputName]: "" };
+        });
+      }
+      return (hasError = false);
     }
-    return (hasError = false);
+    case inputNames.new_group_name: {
+      if (inputValue.length > 30) {
+        setInputErrors((prev) => {
+          return {
+            ...prev,
+            [inputName]: "The group name cannot be longer than 30 characters",
+          };
+        });
+      } else {
+        setInputErrors((prev) => {
+          return { ...prev, [inputName]: "" };
+        });
+      }
+      return (hasError = false);
+    }
+
+    case "User_ID": {
+      if (!regex_numbers.test(inputValue)) {
+        setInputErrors((prev) => {
+          return {
+            ...prev,
+            [inputName]: "User ID consists of numbers only",
+          };
+        });
+        hasError = true;
+      } else {
+        setInputErrors((prev) => {
+          return { ...prev, [inputName]: "" };
+        });
+      }
+      return (hasError = false);
+    }
+
+    default:
+      break;
   }
 
   if (inputValue !== "" || inputValue !== undefined) {

@@ -28,6 +28,6 @@
   width: 44%;
   min-width: 200px;
   max-width: 300px;
-  background: linear-gradient(90deg, transparent, var(--main-color-2));
+  background: var(--button-bgc-1);
   font-size: 18px;
 }

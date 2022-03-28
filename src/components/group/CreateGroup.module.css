@@ -1,0 +1,29 @@
+.main {
+  margin-top: 10px;
+  margin-bottom: 16px;
+  display: flex;
+  width: 96%;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.input_field {
+  margin-bottom: 10px;
+}
+
+.button {
+  float: right;
+  font-size: 20px;
+  width: 140px;
+}
+.button:hover {
+  background: var(--button-bgc-2);
+}
+
+.error_groups_limit {
+  margin-top: 10px;
+  font-size: 18px;
+  color: red;
+}

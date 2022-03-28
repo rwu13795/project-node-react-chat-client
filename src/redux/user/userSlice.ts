@@ -87,7 +87,6 @@ export interface UserState {
   groupsList: { [group_id: string]: Group };
   groupsToJoin: string[];
   newGroupToJoin: string;
-  createGroupError: string;
   groupInvitations: GroupInvitation[];
   result_groupInvitation: string;
   // layout
@@ -111,7 +110,6 @@ const initialState: UserState = {
   groupsList: {},
   groupsToJoin: [],
   newGroupToJoin: "",
-  createGroupError: "",
   loadingStatus: loadingStatusEnum.idle,
   requestErrors: {},
 };
@@ -352,8 +350,11 @@ const userSlice = createSlice({
         createNewGroup.rejected,
         (state, action: PayloadAction<any>): void => {
           // each user can only create 5 groups (for demo)
-          state.createGroupError = action.payload.errors[0].message;
+          // the "groups_limit" is the field name
           state.loadingStatus = loadingStatusEnum.failed;
+          for (let err of action.payload.errors) {
+            state.requestErrors[err.field] = err.message;
+          }
         }
       )
 
@@ -520,10 +521,6 @@ export const selectResult_groupInvitation = createSelector(
   (userState) => userState.result_groupInvitation
 );
 
-export const selectCreateGroupError = createSelector(
-  [selectUser],
-  (userState) => userState.createGroupError
-);
 export const selectGroupsList = createSelector(
   [selectUser],
   (userState) => userState.groupsList

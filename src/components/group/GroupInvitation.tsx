@@ -52,6 +52,8 @@ function GroupInvitation({ groupInvitations, socket }: Props): JSX.Element {
   useEffect(() => {
     if (loadingStatus === loadingStatusEnum.joiningNewGroup) {
       handleOpenModal();
+    } else {
+      handleCloseModal();
     }
   }, [loadingStatus]);
 
@@ -93,7 +95,7 @@ function GroupInvitation({ groupInvitations, socket }: Props): JSX.Element {
       <Modal
         disableScrollLock={true}
         open={openModal}
-        onClose={handleCloseModal}
+        // onClose={handleCloseModal}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
@@ -103,6 +105,13 @@ function GroupInvitation({ groupInvitations, socket }: Props): JSX.Element {
         <Fade in={openModal}>
           <Box className={styles.modal}>
             <div className={styles.joining}>Joining the new group</div>
+            <div className={styles.cube_container}>
+              <div className={styles.cube}></div>
+              <div className={styles.cube}></div>
+              <div className={styles.cube}></div>
+              <div className={styles.cube}></div>
+              <div className={styles.cube}></div>
+            </div>
           </Box>
         </Fade>
       </Modal>

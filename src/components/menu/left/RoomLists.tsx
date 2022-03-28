@@ -5,6 +5,7 @@ import { Socket } from "socket.io-client";
 import {
   leaveGroup,
   selectUserId,
+  setLoadingStatus_user,
   setResult_groupInvitation,
 } from "../../../redux/user/userSlice";
 import {
@@ -95,6 +96,7 @@ function RoomLists({ socket }: Props): JSX.Element {
       });
 
     dispatch(setLoadingStatus_msg(loadingStatusEnum.idle));
+    dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
   }
 
   return (

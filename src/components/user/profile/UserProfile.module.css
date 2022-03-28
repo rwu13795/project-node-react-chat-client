@@ -94,11 +94,14 @@
 
 .edit_button {
   max-height: 30px;
-  background: linear-gradient(90deg, transparent, var(--main-color-2));
+  background: var(--button-bgc-1);
   display: flex;
   flex-flow: row nowrap;
   gap: 5px;
+  padding: 2px;
+  /* margin-left: 6px; */
 }
+
 .edit_avatar {
   position: relative;
   right: 20%;

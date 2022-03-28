@@ -31,6 +31,7 @@ export interface InputErrors {
 export enum customStyleOptions {
   default = "default",
   change_user_name = "change_user_name",
+  create_new_group = "create_new_group",
 }
 
 interface Props {
@@ -104,10 +105,14 @@ function InputField({
     }
   }, [inputError, requestError]);
 
-  let content: JSX.Element;
-  let error_text: string;
+  let content: JSX.Element = <></>;
+  let error_text: string = "";
   switch (customStyle) {
     case customStyleOptions.default:
+    case customStyleOptions.create_new_group:
+      let useMultiline =
+        inputName === inputNames.message ||
+        customStyle === customStyleOptions.create_new_group;
       error_text = styles.error_text_default;
       content = (
         <>
@@ -117,7 +122,7 @@ function InputField({
           <OutlinedInput
             type={inputType}
             required={true}
-            multiline={inputName === inputNames.message}
+            multiline={useMultiline}
             name={inputName}
             value={inputValue}
             onFocus={onFocusHandler}

@@ -1,4 +1,3 @@
-import { Button } from "@mui/material";
 import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -14,13 +13,14 @@ import InputField, {
   InputErrors,
   InputValues,
 } from "../../input-field/InputField";
+import { changeUsername } from "../../../redux/user/asyncThunk";
 
 // UI //
 import styles from "./ChangeUsername.module.css";
 import styles_2 from "./UserProfile.module.css";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
-import { changeUsername } from "../../../redux/user/asyncThunk";
+import { Button } from "@mui/material";
 
 interface Props {
   username: string;
@@ -87,6 +87,8 @@ function ChangeUsername({ username }: Props): JSX.Element {
                 customStyle={customStyleOptions.change_user_name}
               />
               <Button
+                variant="contained"
+                color="secondary"
                 className={styles_2.edit_button}
                 onClick={editUsernameHandler}
               >
@@ -97,7 +99,12 @@ function ChangeUsername({ username }: Props): JSX.Element {
           ) : (
             <>
               {username}
-              <Button className={styles_2.edit_button} onClick={toggleEditing}>
+              <Button
+                variant="contained"
+                color="secondary"
+                className={styles_2.edit_button}
+                onClick={toggleEditing}
+              >
                 <EditIcon fontSize="small" />
                 Edit
               </Button>

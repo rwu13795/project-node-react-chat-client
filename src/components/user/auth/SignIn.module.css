@@ -27,7 +27,7 @@
   width: 44%;
   min-width: 200px;
   max-width: 300px;
-  background: linear-gradient(90deg, transparent, var(--main-color-2));
+  background: var(--button-bgc-1);
   font-size: 18px;
 }
 .button_wrapper {
@@ -40,7 +40,7 @@
   color: var(--main-color-4);
 }
 .link:hover {
-  background: linear-gradient(270deg, transparent, var(--main-color-2));
+  background: var(--button-bgc-2);
 }
 
 .appear_offline_wrapper {

@@ -32,8 +32,7 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
-import AddFriendRequest from "../../friend/AddFriendRequest";
-import RenderFriend from "./RenderFriend";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 
 interface Props {
   socket: Socket | undefined;
@@ -103,6 +102,12 @@ function FriendsList({
       >
         <Fade in={openModal}>
           <Box className={styles.modal}>
+            <div className={styles.close_icon_wrapper}>
+              <CancelPresentationIcon
+                className={styles.close_icon}
+                onClick={handleCloseModal}
+              />
+            </div>
             <SearchUser socket={socket} />
           </Box>
         </Fade>

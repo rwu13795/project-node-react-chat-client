@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { InputErrors } from "../../../components/input-field/InputField";
 import { inputNames } from "../../enums/input-names";
 
+export const regex_numbers = /^[0-9]*$/;
 const regex_email =
   /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -34,7 +35,7 @@ export function onBlurCheck(
         break;
       }
       case inputNames.password: {
-        if (inputValue.length < 4) {
+        if (inputValue.length < 8) {
           setInputErrors((prev) => {
             return {
               ...prev,
@@ -47,7 +48,7 @@ export function onBlurCheck(
         break;
       }
       case inputNames.confirm_password: {
-        if (inputValue.length < 4) {
+        if (inputValue.length < 8) {
           setInputErrors((prev) => {
             return {
               ...prev,
@@ -91,6 +92,31 @@ export function onBlurCheck(
             return {
               ...prev,
               [inputName]: "Your username cannot be longer than 20 characters",
+            };
+          });
+          hasError = true;
+        }
+        break;
+      }
+      case inputNames.new_group_name: {
+        if (inputValue.length > 30) {
+          setInputErrors((prev) => {
+            return {
+              ...prev,
+              [inputName]: "The group name cannot be longer than 30 characters",
+            };
+          });
+          hasError = true;
+        }
+        break;
+      }
+
+      case "User_ID": {
+        if (!regex_numbers.test(inputValue)) {
+          setInputErrors((prev) => {
+            return {
+              ...prev,
+              [inputName]: "User ID consists of numbers only",
             };
           });
           hasError = true;

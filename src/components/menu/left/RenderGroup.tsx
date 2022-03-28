@@ -56,7 +56,7 @@ function RenderGroup({
     let room_id = `${chatType.group}_${group_id}`;
     let isTargetRoom =
       room_id === target_room
-        ? `${styles.button} ${styles.button_bg}`
+        ? `${styles.button} ${styles.button_selected}`
         : styles.button;
 
     return (
@@ -68,7 +68,7 @@ function RenderGroup({
             groupOnClickHandler(group_id, group_name, user_left_at)
           }
         >
-          <GroupIcon />
+          <GroupIcon sx={{ zIndex: 2 }} />
           <div className={styles.button_text}>{group_name}</div>{" "}
           <Badge
             badgeContent={notificationCount}

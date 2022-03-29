@@ -9,6 +9,11 @@
   gap: 8px;
 }
 
+.title {
+  font-size: 40px;
+  font-weight: bold;
+}
+
 .input_field {
   margin-bottom: 10px;
 }
@@ -26,4 +31,16 @@
   margin-top: 10px;
   font-size: 18px;
   color: red;
+}
+
+.border {
+  margin-top: 10px;
+  height: 5px;
+  min-width: 110%;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    var(--contrast-color-2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
 }

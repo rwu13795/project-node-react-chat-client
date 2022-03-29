@@ -1,4 +1,11 @@
-import { ChangeEvent, MouseEvent, FormEvent, memo, useState } from "react";
+import {
+  ChangeEvent,
+  MouseEvent,
+  FormEvent,
+  memo,
+  useState,
+  useEffect,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
@@ -6,11 +13,18 @@ import {
   selectCurrentUser,
   selectFriendsList,
   selectResult_addFriendRequest,
+  setLoadingStatus_user,
   setResult_addFriendRequest,
 } from "../../redux/user/userSlice";
 import { client, serverUrl } from "../../redux/utils";
 import { addFriendRequest_emitter } from "../../socket-io/emitters";
-import { inputNames, onSubmitCheck } from "../../utils";
+import {
+  AvatarOptions,
+  inputFieldSizes,
+  inputNames,
+  loadingStatusEnum,
+  onSubmitCheck,
+} from "../../utils";
 import InputField, {
   InputErrors,
   InputValues,
@@ -18,7 +32,9 @@ import InputField, {
 
 // UI //
 import styles from "./SearchUser.module.css";
-import { Button } from "@mui/material";
+import { Button, FormControlLabel, Radio, RadioGroup } from "@mui/material";
+import UserAvatar from "../menu/top/UserAvatar";
+import SearchFound from "./SearchFound";
 
 interface Props {
   socket: Socket | undefined;
@@ -47,21 +63,18 @@ function SearchUser({ socket }: Props): JSX.Element {
   const [foundUser, setFoundUser] = useState<{
     user_id: string;
     username: string;
-  }>({ user_id: "", username: "" });
+    avatar_url: string;
+  }>({ user_id: "", username: "", avatar_url: "" });
   const [isFound, setIsFound] = useState<boolean>(false);
   const [findById, setFindById] = useState<boolean>(true);
-  const [message, setMesssage] = useState<string>("");
   const [errorMsg, setErrorMsg] = useState<string>("");
-
-  function setMessageHandler(e: ChangeEvent<HTMLInputElement>) {
-    setMesssage(e.target.value);
-  }
 
   async function submitSearchHandler(
     e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
   ) {
     e.preventDefault();
     setErrorMsg("");
+    setFoundUser({ user_id: "", username: "", avatar_url: "" });
     dispatch(setResult_addFriendRequest(""));
 
     let hasError = false;
@@ -83,21 +96,19 @@ function SearchUser({ socket }: Props): JSX.Element {
 
     try {
       const { data } = await client.post<
-        { user_id: string; username: string }[]
+        { user_id: string; username: string; avatar_url: string }[]
       >(serverUrl + `/user/search-user`, {
         user_id: idValue.User_ID,
         user_email: emailValue[inputNames.email],
       });
 
-      console.log(data);
       if (data.length === 0) {
-        setFoundUser({ user_id: "", username: "Not Found" });
+        setErrorMsg("This user is does not exist in our record.");
         setIsFound(false);
       } else {
         setFoundUser({ ...data[0] });
         setIsFound(true);
         if (friendsList[data[0].user_id] !== undefined) {
-          console.log("This user is your friend already.");
           setErrorMsg("This user is your friend already.");
         }
       }
@@ -106,39 +117,57 @@ function SearchUser({ socket }: Props): JSX.Element {
     }
   }
 
-  function toggleFindById() {
-    setFindById((prev) => !prev);
+  function toggleFindBy(e: ChangeEvent<HTMLInputElement>) {
+    setErrorMsg("");
+    dispatch(setResult_addFriendRequest(""));
+    if (e.currentTarget.value === "id") setFindById(true);
+    else setFindById(false);
   }
 
-  function addFriendRequestHandler() {
-    // send request to target user. If user is online, he can see the request immediately
-    // If target user is not online, save the request to DB, so he can get the request
-    // notification next time he signs in
-    if (message === "") {
-      console.log("message is empty");
-      return;
-    }
-
-    const { user_id, username, email } = currentUser;
+  function addFriendRequestHandler(message: string) {
+    const { user_id, username, email, avatar_url } = currentUser;
     if (socket) {
+      dispatch(
+        setLoadingStatus_user(loadingStatusEnum.addFriendRequest_loading)
+      );
       addFriendRequest_emitter(socket, {
         sender_id: user_id,
         sender_username: username,
         sender_email: email,
+        sender_avatar: avatar_url || username[0],
         message,
         target_id: foundUser.user_id,
       });
     }
   }
-  function cancelAddFriendHandler() {
-    dispatch(setResult_addFriendRequest(""));
-    setFoundUser({ user_id: "", username: "" });
-    setIsFound(false);
-  }
+
+  useEffect(() => {
+    return () => {
+      dispatch(setResult_addFriendRequest(""));
+    };
+  }, []);
 
   return (
     <main className={styles.main}>
-      <h1>Search friend</h1>
+      <div className={styles.title}>Search Friend</div>
+      <div className={styles.border}></div>
+      <RadioGroup
+        defaultValue="id"
+        className={styles.radio_group}
+        onChange={toggleFindBy}
+      >
+        <FormControlLabel
+          value="id"
+          control={<Radio size="small" />}
+          label={<span className={styles.radio_lable}>Find by ID</span>}
+        />
+        <FormControlLabel
+          value="email"
+          control={<Radio size="small" />}
+          label={<span className={styles.radio_lable}>Find by email</span>}
+        />
+      </RadioGroup>
+
       <form onSubmit={submitSearchHandler}>
         <div className={styles.input_field}>
           {findById
@@ -152,7 +181,7 @@ function SearchUser({ socket }: Props): JSX.Element {
                     requestError=""
                     setInputValues={setIdValue}
                     setInputErrors={setIdError}
-                    // customStyle={customStyleOptions.create_new_group}
+                    size={inputFieldSizes.medium}
                   />
                 );
               })
@@ -166,52 +195,33 @@ function SearchUser({ socket }: Props): JSX.Element {
                     requestError=""
                     setInputValues={setEmailValue}
                     setInputErrors={setEmailError}
-                    // customStyle={customStyleOptions.create_new_group}
+                    size={inputFieldSizes.medium}
                   />
                 );
               })}
         </div>
-        <div className={styles.buttons_wrapper}>
-          <div onClick={toggleFindById} className={styles.find_by}>
-            {findById ? "Find by user email?" : "Find by user ID?"}
-          </div>
-          <Button
-            type="submit"
-            variant="outlined"
-            className={styles.button}
-            onClick={submitSearchHandler}
-          >
-            Search
-          </Button>
-        </div>
+
+        <Button
+          type="submit"
+          variant="outlined"
+          className={styles.button}
+          onClick={submitSearchHandler}
+        >
+          Search
+        </Button>
       </form>
 
       {isFound && friendsList[foundUser.user_id] === undefined && (
-        <h4>
-          User Found: {foundUser.username}
-          <span>
-            <button onClick={addFriendRequestHandler}>Add Friend</button>
-            <button onClick={cancelAddFriendHandler}>cancel</button>
-            <input type="text" value={message} onChange={setMessageHandler} />
-          </span>
-        </h4>
+        <SearchFound
+          username={foundUser.username}
+          avatar_url={foundUser.avatar_url}
+          addFriendRequestHandler={addFriendRequestHandler}
+        />
       )}
-      <div>{errorMsg}</div>
-      <div>Result: {result_addFriendRequest}</div>
+      <div className={styles.error_text}>{errorMsg}</div>
+      <div className={styles.error_text}>{result_addFriendRequest}</div>
     </main>
   );
 }
 
 export default memo(SearchUser);
-
-// <div>
-//   <label>find by user Email</label>
-//   <input
-//     type="text"
-//     name="email"
-//     value={userEmail}
-//     onChange={inputChangeHanlder}
-//   />
-//   <input type="submit" />
-//   <button onClick={toggleFindById}>find by user id</button>
-// </div>

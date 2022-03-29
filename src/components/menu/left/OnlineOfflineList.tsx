@@ -16,6 +16,7 @@ import RenderFriend from "./RenderFriend";
 // UI //
 import styles from "./OnlineOfflineList.module.css";
 import styles_2 from "./GroupsList.module.css";
+import { CircularProgress } from "@mui/material";
 
 interface Props {
   socket: Socket | undefined;
@@ -41,6 +42,10 @@ function OnlineOfflineList({
       <div className={color}></div>
       <div className={styles_2.group_list}>
         {friendsPosition.map((id) => {
+          if (!friendsList[id]) {
+            return <CircularProgress key={id} />;
+          }
+
           let room_id = `${chatType.private}_${id}`;
           let count = 0;
           if (friendNotifications[room_id]) {

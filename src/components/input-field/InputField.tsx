@@ -8,6 +8,7 @@ import {
   onFocusCheck,
   onBlurCheck,
   onChangeCheck,
+  inputFieldSizes,
 } from "../../utils";
 
 // UI //
@@ -43,6 +44,8 @@ interface Props {
   setInputErrors: React.Dispatch<React.SetStateAction<InputErrors>>;
   isDisabled?: boolean;
   customStyle?: customStyleOptions;
+  useMultiline?: boolean;
+  size?: inputFieldSizes;
 }
 
 function InputField({
@@ -54,6 +57,8 @@ function InputField({
   setInputErrors,
   isDisabled,
   customStyle = customStyleOptions.default,
+  useMultiline,
+  size,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
   const isSmall = useMediaQuery("(max-width: 765px)");
@@ -105,18 +110,32 @@ function InputField({
     }
   }, [inputError, requestError]);
 
-  let content: JSX.Element = <></>;
+  let field_size: string = "";
+  let lable_size: string = "";
   let error_text: string = "";
+  switch (size) {
+    default:
+    case inputFieldSizes.large:
+      field_size = styles.input_field_lg;
+      lable_size = styles.input_label_lg;
+      error_text = styles.error_text_lg;
+      break;
+    case inputFieldSizes.medium:
+      field_size = styles.input_field_md;
+      lable_size = styles.input_label_md;
+      error_text = styles.error_text_md;
+      break;
+    case inputFieldSizes.small:
+      break;
+  }
+
+  let content: JSX.Element = <></>;
   switch (customStyle) {
+    default:
     case customStyleOptions.default:
-    case customStyleOptions.create_new_group:
-      let useMultiline =
-        inputName === inputNames.message ||
-        customStyle === customStyleOptions.create_new_group;
-      error_text = styles.error_text_default;
       content = (
         <>
-          <InputLabel htmlFor={inputLabel} className={styles.input_label}>
+          <InputLabel htmlFor={inputLabel} className={lable_size}>
             {inputLabel}
           </InputLabel>
           <OutlinedInput
@@ -131,7 +150,7 @@ function InputField({
             disabled={isDisabled}
             label={inputLabel}
             error={showError}
-            className={styles.input_field_default}
+            className={field_size}
           />
         </>
       );
@@ -139,7 +158,7 @@ function InputField({
 
     case customStyleOptions.change_user_name:
       error_text =
-        styles.error_text_default + " " + styles.error_text_change_user_name;
+        styles.error_text_lg + " " + styles.error_text_change_user_name;
       content = (
         <>
           <TextField

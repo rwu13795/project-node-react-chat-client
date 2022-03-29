@@ -1,6 +1,7 @@
 export * from "./enums/input-names";
 export * from "./enums/loading-status";
 export * from "./enums/avatar-options";
+export * from "./enums/input-field-sizes";
 
 export * from "./helpers/axios-client";
 export * from "./helpers/cap-first-letter";

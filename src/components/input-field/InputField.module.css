@@ -5,13 +5,23 @@
   align-items: flex-start;
 }
 
-.input_label {
+.input_label_lg {
   font-size: 30px;
 }
-.input_field_default {
+.input_label_md {
+  font-size: 22px;
+}
+
+.input_field_lg {
   width: 90vw;
   max-width: 560px;
   background-color: rgba(240, 248, 255, 0.808);
+}
+.input_field_md {
+  width: 90vw;
+  max-width: 460px;
+  background-color: rgba(240, 248, 255, 0.808);
+  font-size: 22px;
 }
 .input_field_change_user_name {
   min-height: 40px;
@@ -19,7 +29,13 @@
   background-color: rgba(240, 248, 255, 0.808);
 }
 
-.error_text_default {
+.error_text_lg {
+  color: red;
+  font-size: 16px;
+  display: flex;
+  flex-flow: wrap;
+}
+.error_text_md {
   color: red;
   font-size: 14px;
   display: flex;

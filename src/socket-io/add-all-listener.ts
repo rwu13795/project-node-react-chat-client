@@ -12,6 +12,7 @@ import {
   joinNewGroup_listener,
   kickedOutOfGroup_listener,
   message_listener,
+  newFriendAdded_listener,
   offline_listener,
   onlineEcho_listener,
   online_listener,
@@ -34,8 +35,6 @@ export default function addAllListeners(
     user_id,
     group_ids,
   });
-  // let all the friends know this user is online
-  online_emitter(socket, { onlineStatus });
 
   // user
   message_listener(socket, dispatch);
@@ -48,6 +47,7 @@ export default function addAllListeners(
   addFriendResponse_listener(socket, dispatch, user_id);
   blockFriend_listener(socket, dispatch);
   check_addFriendRequest_listener(socket, dispatch);
+  newFriendAdded_listener(socket, dispatch, user_id);
 
   // groups
   check_groupInvitation_listener(socket, dispatch);

@@ -352,6 +352,8 @@ const messageSlice = createSlice({
           state.groupNotifications,
           chatType.group
         );
+
+        state.loadingStatus = loadingStatusEnum.getNotifications_succeeded;
       })
 
       /***************  Clear Notifications  ***************/
@@ -437,7 +439,6 @@ export const selectTotalGroupNoteCount = createSelector(
       if (!notes[room_id]) {
         return (x = x + 0);
       }
-      console.log("total", x);
       return (x = x + notes[room_id].count);
     }, 0);
     return totalCount;
@@ -451,7 +452,6 @@ export const selectTotalFriendNoteCount = createSelector(
       if (!notes[room_id]) {
         return (x = x + 0);
       }
-      console.log("total", x);
       return (x = x + notes[room_id].count);
     }, 0);
     return totalCount;
@@ -482,10 +482,13 @@ function pushPositionToTop(position: string[], target_id: string): string[] {
   // array.slice takes O(n), array.indexof takes O(n)
   // Cannot use binary-search on position array since the ids are not sorted
   // it should be more efficient than using array.sort() for the newly added notification
+
   const targetIndex = position.indexOf(target_id);
   const newPosition = [target_id];
   newPosition.push(...position.slice(0, targetIndex));
   newPosition.push(...position.slice(targetIndex + 1));
+
+  console.log("newPosition", [...newPosition]);
 
   return newPosition;
 }

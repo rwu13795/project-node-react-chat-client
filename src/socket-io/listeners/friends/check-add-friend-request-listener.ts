@@ -1,6 +1,10 @@
 import { Dispatch } from "@reduxjs/toolkit";
 import { Socket } from "socket.io-client";
-import { setResult_addFriendRequest } from "../../../redux/user/userSlice";
+import {
+  setLoadingStatus_user,
+  setResult_addFriendRequest,
+} from "../../../redux/user/userSlice";
+import { loadingStatusEnum } from "../../../utils";
 
 interface Data {
   message: string;
@@ -14,5 +18,6 @@ export function check_addFriendRequest_listener(
     console.log(message);
 
     dispatch(setResult_addFriendRequest(message));
+    dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
   });
 }

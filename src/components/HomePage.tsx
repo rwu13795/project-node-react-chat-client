@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 
-import { setCurrentUserId_message } from "../redux/message/messageSlice";
+import {
+  selectLoadingStatus_msg,
+  setCurrentUserId_message,
+  setLoadingStatus_msg,
+} from "../redux/message/messageSlice";
 import {
   selectGroupsToJoin,
   selectIsLoggedIn,
@@ -22,6 +26,8 @@ import styles from "./HomePage.module.css";
 import { CircularProgress } from "@mui/material";
 
 import addAllListeners from "../socket-io/add-all-listener";
+import { loadingStatusEnum } from "../utils";
+import { online_emitter } from "../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -38,6 +44,7 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   const currentUsername = useSelector(selectUsername);
   const currentOnlineStatus = useSelector(selectUserOnlineStatus);
   const groupsToJoin = useSelector(selectGroupsToJoin);
+  const loadingStatus = useSelector(selectLoadingStatus_msg);
 
   useEffect(() => {
     setShowFooter(false);
@@ -70,8 +77,18 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
     }
   }, [isLoggedIn, socket, currentUserId]);
 
-  // /////////////////////////////////////
-  // const [target, setTarget] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    if (
+      loadingStatus === loadingStatusEnum.getNotifications_succeeded &&
+      socket
+    ) {
+      // let all the friends know this user is online only after loading all
+      // the friendList and notications. So when this client received the echo
+      // the friendList[id] will not be undefined
+      online_emitter(socket, { onlineStatus: currentOnlineStatus });
+      dispatch(setLoadingStatus_msg(loadingStatusEnum.idle));
+    }
+  }, [loadingStatus, socket, currentOnlineStatus, dispatch]);
 
   function resizeLeftMenu() {
     let dragDistance = 0,

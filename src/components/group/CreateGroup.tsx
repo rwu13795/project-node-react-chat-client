@@ -11,7 +11,12 @@ import {
   selectUserId,
   setLoadingStatus_user,
 } from "../../redux/user/userSlice";
-import { inputNames, loadingStatusEnum, onSubmitCheck } from "../../utils";
+import {
+  inputFieldSizes,
+  inputNames,
+  loadingStatusEnum,
+  onSubmitCheck,
+} from "../../utils";
 import { createNewGroup_emitter } from "../../socket-io/emitters";
 import { getNotifications } from "../../redux/message/asyncThunk";
 import InputField, {
@@ -83,8 +88,9 @@ function CreateGroup({
 
   return (
     <main className={styles.main}>
-      <h1>Create a new group</h1>
-      <form onSubmit={createGroupHandler}>
+      <div className={styles.title}>Create a New Group</div>
+      <div className={styles.border}></div>
+      <form onSubmit={createGroupHandler} style={{ marginTop: "20px" }}>
         <div className={styles.input_field}>
           {Object.entries(inputValues).map(([name, value]) => {
             return (
@@ -96,7 +102,8 @@ function CreateGroup({
                 requestError={requestErrors[name]}
                 setInputValues={setInputValues}
                 setInputErrors={setInputErrors}
-                customStyle={customStyleOptions.create_new_group}
+                useMultiline={true}
+                size={inputFieldSizes.medium}
                 isDisabled={
                   loadingStatus ===
                     loadingStatusEnum.createNewGroup_succeeded ||

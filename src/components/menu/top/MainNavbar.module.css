@@ -36,7 +36,7 @@
   font-size: 22px;
   font-weight: bold;
   color: var(--main-color-2);
-  text-shadow: 0 0 1px var(--main-color-1);
+  text-shadow: 1px 0 1px var(--main-color-1);
 }
 .logo_wrapper {
   width: 40px;
@@ -59,7 +59,7 @@
   font-size: 44px;
   font-weight: bold;
   color: var(--main-color-2);
-  text-shadow: 0 0 2px var(--main-color-1);
+  text-shadow: 1px 1px 3px var(--main-color-1);
 }
 .logo_no_auth {
   width: 100px;

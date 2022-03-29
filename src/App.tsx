@@ -13,16 +13,18 @@ import MainNavbar from "./components/menu/top/MainNavbar";
 import Auth from "./components/user/auth/Auth";
 import HomePage from "./components/HomePage";
 import UserProfile from "./components/user/profile/UserProfile";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getUserAuth } from "./redux/user/asyncThunk/get-user-auth";
 import { Socket } from "socket.io-client";
 import Page404 from "./components/Page404";
 import Footer from "./components/menu/bottom/Footer";
 import ForgotPassword from "./components/user/auth/ForgotPW";
 import CheckResetToken from "./components/user/auth/CheckResetToken";
+import { selectIsLoggedIn } from "./redux/user/userSlice";
 
 function App(): JSX.Element {
   const dispatch = useDispatch();
+  const isLoggedIn = useSelector(selectIsLoggedIn);
 
   const [socket, setSocket] = useState<Socket>();
   const [showFooter, setShowFooter] = useState<boolean>(true);
@@ -30,6 +32,10 @@ function App(): JSX.Element {
   useEffect(() => {
     dispatch(getUserAuth());
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!isLoggedIn) setSocket(undefined);
+  }, [isLoggedIn]);
 
   /////////////
   const handleOnIdle = (event: any) => {
@@ -41,12 +47,12 @@ function App(): JSX.Element {
   };
 
   const handleOnActive = (event: any) => {
-    console.log("user is active", event);
+    console.log("user is active");
     console.log("time remaining", getRemainingTime());
   };
 
   const handleOnAction = (event: any) => {
-    console.log("user did something", event);
+    console.log("user did something");
   };
 
   const { getRemainingTime, getLastActiveTime, reset } = useIdleTimer({

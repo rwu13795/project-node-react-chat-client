@@ -11,6 +11,7 @@ import {
 } from "../../../redux/message/messageSlice";
 import {
   onlineStatus_enum,
+  selectAddFriendRequests,
   selectFriendsList,
 } from "../../../redux/user/userSlice";
 import SearchUser from "../../friend/SearchUser";
@@ -19,7 +20,7 @@ import OnlineOfflineList from "./OnlineOfflineList";
 // UI //
 import styles from "./GroupsList.module.css";
 import {
-  Button,
+  Tooltip,
   Badge,
   Collapse,
   Fade,
@@ -33,6 +34,7 @@ import {
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import AddFriendRequest from "../../friend/AddFriendRequest";
 
 interface Props {
   socket: Socket | undefined;
@@ -44,6 +46,7 @@ function FriendsList({
   selectTargetChatRoomHandler,
 }: Props): JSX.Element {
   const totalCount = useSelector(selectTotalFriendNoteCount);
+  const addFriendRequests = useSelector(selectAddFriendRequests);
 
   const [expand, setExpand] = useState<boolean>(true);
   const [openModal, setOpenModal] = useState<boolean>(false);
@@ -74,17 +77,24 @@ function FriendsList({
             <ListItemText
               primary={
                 <div className={styles.list_item_text_wrapper}>
-                  <Badge badgeContent={expand ? 0 : totalCount} color="info">
+                  <Badge
+                    badgeContent={
+                      expand ? 0 : totalCount + addFriendRequests.length
+                    }
+                    color="info"
+                  >
                     <div className={styles.list_item_text}>FRIENDS</div>
                   </Badge>
                 </div>
               }
             />
           </ListItemButton>
-          <AddCircleOutlineIcon
-            className={styles.plus_button}
-            onClick={handleOpenModal}
-          />
+          <Tooltip title="Add friend">
+            <AddCircleOutlineIcon
+              className={styles.plus_button}
+              onClick={handleOpenModal}
+            />
+          </Tooltip>
         </div>
         {!expand && <div className={styles.list_item_border_hover}></div>}
         <div className={expand ? styles.list_item_border : ""}></div>
@@ -114,7 +124,7 @@ function FriendsList({
       </Modal>
 
       <Collapse in={expand} timeout="auto" unmountOnExit>
-        {/* <AddFriendRequest socket={socket} /> */}
+        {addFriendRequests.length > 0 && <AddFriendRequest socket={socket} />}
         <List component="div" disablePadding className={styles.group_list}>
           <OnlineOfflineList
             selectTargetChatRoomHandler={selectTargetChatRoomHandler}

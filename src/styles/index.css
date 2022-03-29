@@ -11,12 +11,16 @@
   --navbar-color: #00ccff8f;
   --contrast-color-1: rgb(0, 138, 0);
   --contrast-color-2: #0050858f;
+
   --button-bgc-1: linear-gradient(90deg, transparent, var(--main-color-2));
   --button-bgc-2: linear-gradient(270deg, transparent, var(--main-color-2));
-  --modal-bgc: linear-gradient(
+
+  --modal-bgc: linear-gradient(to top, #00ccff8f 0%, rgb(255, 255, 255) 25%);
+
+  --msg-bg-3: linear-gradient(
     to top,
     rgba(34, 185, 255, 0.5) 0%,
-    rgb(255, 255, 255) 25%
+    rgb(255, 255, 255) 100%
   );
 }
 

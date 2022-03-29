@@ -6,6 +6,7 @@
   justify-content: center;
   align-items: center;
   overflow: hidden;
+  padding-right: 10px;
 }
 .drawer_item_upper {
   display: flex;
@@ -149,14 +150,19 @@
   );
 }
 
+/* use the wrapper to stick the poisition
+  then use its child to adjust the relative postion
+*/
 .close_icon_wrapper {
+  top: 0px;
+  position: sticky;
   height: 0;
   width: 100%;
   text-align: right;
 }
 .close_icon {
   position: relative;
-  right: -10px;
-  bottom: 14px;
+  right: -12px;
+  top: -14px;
   cursor: pointer;
 }

@@ -1,20 +1,29 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
   clearAddFriendRequests,
   selectAddFriendRequests,
+  selectLoadingStatus_user,
   selectUserId,
   selectUsername,
   selectUserOnlineStatus,
+  setLoadingStatus_user,
 } from "../../redux/user/userSlice";
-import { getNotifications } from "../../redux/message/asyncThunk";
-import { getUserAuth } from "../../redux/user/asyncThunk";
-import {
-  addFriendResponse_emitter,
-  online_emitter,
-} from "../../socket-io/emitters";
+
+import { addFriendResponse_emitter } from "../../socket-io/emitters";
+import { AvatarOptions, loadingStatusEnum } from "../../utils";
+import UserAvatar from "../menu/top/UserAvatar";
+
+// UI //
+import styles from "./AddFriendRequest.module.css";
+import styles_2 from "../menu/left/RenderFriend.module.css";
+import styles_3 from "../menu/left/GroupsList.module.css";
+import { LoadingButton } from "@mui/lab";
+import { Backdrop, Badge, Box, Button, Fade, Modal } from "@mui/material";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
 interface Props {
   socket: Socket | undefined;
@@ -27,7 +36,18 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
   const currentUsername = useSelector(selectUsername);
   const currentOnlineStatus = useSelector(selectUserOnlineStatus);
   const addFriendRequests = useSelector(selectAddFriendRequests);
-  const [loading, setLoading] = useState<boolean>(false);
+  const loadingStatus = useSelector(selectLoadingStatus_user);
+
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [reqIndex, setReqIndex] = useState<number>(-1);
+  const [reqSenderId, setReqSenderId] = useState<string>("");
+
+  function handleOpenModal() {
+    setOpenModal(true);
+  }
+  function handleCloseModal() {
+    setOpenModal(false);
+  }
 
   function responseHandler(
     sender_id: string,
@@ -37,6 +57,7 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
   ) {
     if (socket) {
       // update the friends_pair and notificaiton if request is accepted
+      dispatch(setLoadingStatus_user(loadingStatusEnum.addFriend_loading));
       addFriendResponse_emitter(socket, {
         sender_id,
         sender_username,
@@ -45,72 +66,138 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
         accept,
       });
     }
-    if (accept) {
-      // after the user accepted the request, get the updated friends_pair, private_message and
-      // notification from server. Have to wait for a few second since the DB might be being updated
-      // !!!! need to add loading icon here !!!!
-      setLoading(true);
-      setTimeout(() => {
-        // don't initialize the onlineStatus, otherwise all friends will be marked as offline
-        dispatch(getUserAuth());
-        dispatch(getNotifications({ currentUserId }));
-        setLoading(false);
-      }, 4000);
-      // wait for 4 seconds, the getUserAuth() should finish updating the friendList
-      // then let the new added friend know this user is online.
-      setTimeout(() => {
-        if (socket) {
-          online_emitter(socket, {
-            onlineStatus: currentOnlineStatus,
-            target_id: sender_id,
-          });
-        }
-      }, 6000);
-    } else {
-      dispatch(clearAddFriendRequests(index));
-    }
+    setReqIndex(index);
+    setReqSenderId(sender_id);
   }
+
+  useEffect(() => {
+    if (loadingStatus === loadingStatusEnum.addFriend_succeeded) {
+      dispatch(clearAddFriendRequests(reqIndex));
+      dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
+    }
+  }, [
+    loadingStatus,
+    dispatch,
+    reqIndex,
+    reqSenderId,
+    socket,
+    currentOnlineStatus,
+  ]);
+
+  useEffect(() => {
+    if (addFriendRequests.length < 1) handleCloseModal();
+  }, [addFriendRequests]);
 
   return (
     <main>
-      <h3>Add Friend Request</h3>
-      <div>
-        <h4>Add Friend Requests</h4>
-        {addFriendRequests.map((req, index) => {
-          return (
-            <div key={index}>
-              {req.sender_email} username: {req.sender_username} requested
-              add-friend
-              <div>Message: {req.message}</div>
-              <button
-                onClick={() =>
-                  responseHandler(
-                    req.sender_id,
-                    req.sender_username,
-                    true,
-                    index
-                  )
-                }
-              >
-                Accept
-              </button>
-              <button
-                onClick={() =>
-                  responseHandler(
-                    req.sender_id,
-                    req.sender_username,
-                    false,
-                    index
-                  )
-                }
-              >
-                Reject
-              </button>
-              {loading && "Loading ............"}
-            </div>
-          );
-        })}
+      <div className={styles.main}>
+        <Button className={styles_2.button} onClick={handleOpenModal}>
+          <PersonAddIcon sx={{ zIndex: 2 }} />
+          <div className={styles_2.button_text}>Friend Requests</div>
+          <Badge
+            badgeContent={addFriendRequests.length}
+            color="primary"
+            className={styles_2.badge}
+          />
+        </Button>
       </div>
+
+      <Modal
+        disableScrollLock={true}
+        open={openModal}
+        onClose={handleCloseModal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openModal}>
+          <Box className={styles.modal} id="custom_scroll_1">
+            <div className={styles_3.close_icon_wrapper}>
+              <CancelPresentationIcon
+                className={styles_3.close_icon}
+                onClick={handleCloseModal}
+              />
+            </div>
+            <div className={styles.requests_modal}>
+              <div className={styles.title}>Friend Requests</div>
+              {addFriendRequests.map((req, index) => {
+                const {
+                  sender_username,
+                  sender_avatar,
+                  sender_email,
+                  message,
+                  sender_id,
+                } = req;
+                return (
+                  <div key={index} className={styles.requests_wrapper}>
+                    <div className={styles.border}></div>
+                    <div className={styles.avatar_wrapper}>
+                      <UserAvatar
+                        username={sender_username}
+                        avatar_url={sender_avatar}
+                        socket={undefined}
+                        option={AvatarOptions.topAvatar}
+                      />
+                      <div className={styles.user_info}>
+                        <div>Username: {sender_username}</div>
+                        <div>Email: {sender_email}</div>
+                      </div>
+                    </div>
+                    <div className={styles.message_box_wrapper}>
+                      <div className={styles.box_tip}></div>
+                      <div className={styles.message_box}>{message}</div>
+                    </div>
+                    <div className={styles.buttons_wrapper}>
+                      <LoadingButton
+                        className={styles.button}
+                        variant="outlined"
+                        color="primary"
+                        disabled={
+                          loadingStatus === loadingStatusEnum.addFriend_loading
+                        }
+                        loading={
+                          loadingStatus ===
+                            loadingStatusEnum.addFriend_loading &&
+                          index === reqIndex
+                        }
+                        onClick={() =>
+                          responseHandler(
+                            sender_id,
+                            sender_username,
+                            true,
+                            index
+                          )
+                        }
+                      >
+                        Add Friend
+                      </LoadingButton>
+                      <Button
+                        variant="outlined"
+                        color="error"
+                        disabled={
+                          loadingStatus === loadingStatusEnum.addFriend_loading
+                        }
+                        onClick={() =>
+                          responseHandler(
+                            sender_id,
+                            sender_username,
+                            false,
+                            index
+                          )
+                        }
+                      >
+                        Reject
+                      </Button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </Box>
+        </Fade>
+      </Modal>
     </main>
   );
 }

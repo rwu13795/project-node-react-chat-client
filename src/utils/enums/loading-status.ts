@@ -16,4 +16,12 @@ export enum loadingStatusEnum {
   changingTargetRoom = "changingTargetRoom",
 
   joiningNewGroup = "joiningNewGroup",
+
+  addFriend_loading = "addFriend_loading",
+  addFriend_succeeded = "addFriend_succeeded",
+
+  addFriendRequest_loading = "addFriendRequest_loading",
+  addFriendRequest_succeeded = "addFriendRequest_succeeded",
+
+  getNotifications_succeeded = "getNotifications_succeeded",
 }

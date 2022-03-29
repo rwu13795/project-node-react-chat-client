@@ -124,6 +124,19 @@ export function onBlurCheck(
         break;
       }
 
+      case inputNames.message: {
+        if (inputValue.length > 250) {
+          setInputErrors((prev) => {
+            return {
+              ...prev,
+              [inputName]: "The message exceeds 250-charater limit",
+            };
+          });
+          hasError = true;
+        }
+        break;
+      }
+
       default:
         break;
     }

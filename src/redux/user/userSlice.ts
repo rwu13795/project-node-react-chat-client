@@ -37,6 +37,7 @@ export interface AddFriendRequest {
   sender_id: string;
   sender_username: string;
   sender_email: string;
+  sender_avatar: string;
   message: string;
 }
 export interface GroupInvitation {
@@ -126,6 +127,7 @@ const userSlice = createSlice({
       action: PayloadAction<{ sender_id: string; status: string }>
     ) {
       const { sender_id, status } = action.payload;
+      if (!state.friendsList[sender_id]) return;
       state.friendsList[sender_id].onlineStatus = status;
     },
     setAddFriendRequests(state, action: PayloadAction<AddFriendRequest>) {
@@ -269,16 +271,13 @@ const userSlice = createSlice({
           }
         }
 
+        // initialize the friendsList if it is not initialized
         for (let friend of friendsList) {
           if (!state.friendsList[friend.friend_id]) {
             state.friendsList[friend.friend_id] = friend;
             state.friendsList[friend.friend_id].onlineStatus =
               onlineStatus_enum.offline;
           }
-          // if (require_initialize) {
-          //   state.friendsList[friend.friend_id].onlineStatus =
-          //     onlineStatus_enum.offline;
-          // }
         }
       })
 

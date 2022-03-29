@@ -6,6 +6,7 @@ export function addFriendRequest_emitter(
     sender_id: string;
     sender_username: string;
     sender_email: string;
+    sender_avatar: string;
     message: string;
     target_id: string;
   }

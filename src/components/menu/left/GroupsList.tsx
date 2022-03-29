@@ -34,6 +34,7 @@ import {
   Modal,
   Backdrop,
   Box,
+  Tooltip,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
@@ -76,8 +77,6 @@ function GroupsList({
     setOpenModal(false);
   }
 
-  console.log(totalCount);
-
   return (
     <main>
       <div className={styles.drawer}>
@@ -106,10 +105,12 @@ function GroupsList({
               }
             />
           </ListItemButton>
-          <AddCircleOutlineIcon
-            className={styles.plus_button}
-            onClick={handleOpenModal}
-          />
+          <Tooltip title="Create new group">
+            <AddCircleOutlineIcon
+              className={styles.plus_button}
+              onClick={handleOpenModal}
+            />
+          </Tooltip>
         </div>
         {!expand && <div className={styles.list_item_border_hover}></div>}
         <div className={expand ? styles.list_item_border : ""}></div>

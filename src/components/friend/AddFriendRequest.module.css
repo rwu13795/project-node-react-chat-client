@@ -1,0 +1,131 @@
+.requests_modal {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.requests_wrapper {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.border {
+  margin: 10px 0;
+  height: 5px;
+  min-width: 110%;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    var(--contrast-color-2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+.close_icon_wrapper {
+  height: 0;
+  width: 100%;
+  text-align: right;
+}
+.close_icon {
+  position: relative;
+  right: -10px;
+  bottom: 14px;
+  cursor: pointer;
+}
+
+.avatar_wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+.user_info {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 18px;
+}
+
+.message_box_wrapper {
+  width: 70%;
+  height: auto;
+}
+
+.message_box {
+  width: 100%;
+  height: auto;
+  border: solid 4px var(--main-color-2);
+  background-color: white;
+  background-image: var(--msg-bg-3);
+  border-radius: 6px;
+  padding: 10px;
+  z-index: 2;
+  font-size: 18px;
+  overflow-wrap: break-word;
+}
+
+.box_tip {
+  position: relative;
+  top: 14px;
+  left: 46px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--main-color-2);
+  transform: rotate(45deg);
+  z-index: -1;
+}
+.buttons_wrapper {
+  width: 80%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.button:hover {
+  background: var(--button-bgc-2);
+}
+
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  max-height: 800px;
+  background-color: white;
+  background-image: var(--modal-bgc);
+  border: 2px solid #000;
+  padding: 20px;
+  box-shadow: 3px 6px 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.loading_modal {
+  position: absolute;
+  top: 0;
+  left: -10%;
+  width: 120%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.288);
+  z-index: 3;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

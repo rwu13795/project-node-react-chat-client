@@ -100,7 +100,7 @@ function RoomLists({ socket }: Props): JSX.Element {
   }
 
   return (
-    <main className={styles.main}>
+    <main className={styles.main} id="custom_scroll_2">
       <GroupsList
         socket={socket}
         selectTargetChatRoomHandler={selectTargetChatRoomHandler}

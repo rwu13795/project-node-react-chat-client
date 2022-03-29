@@ -40,7 +40,7 @@ function UserProfile({ socket, setSocket }: Props): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { avatar_url, user_id, username, email, onlineStatus } =
+  const { avatar_url, user_id, username, email } =
     useSelector(selectCurrentUser);
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const group_ids = useSelector(selectGroupsToJoin);
@@ -62,7 +62,6 @@ function UserProfile({ socket, setSocket }: Props): JSX.Element {
       addAllListeners(newSocket, dispatch, {
         user_id,
         group_ids,
-        onlineStatus,
       });
     }
   }, [isLoggedIn, socket, user_id]);

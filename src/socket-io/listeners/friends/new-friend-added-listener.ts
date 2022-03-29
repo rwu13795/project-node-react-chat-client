@@ -16,6 +16,7 @@ export function newFriendAdded_listener(
     // after the current user accepted a friend request, the server will emit the
     // "new-friend-added" to client, to let the client know that the DB has been updated
     // So fetch the new friendList and notifications
+
     dispatch(getUserAuth());
     dispatch(getNotifications({ currentUserId }));
 

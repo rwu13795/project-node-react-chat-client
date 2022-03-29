@@ -1,8 +1,5 @@
 .main_grid {
-  /* display: flex;
-  flex-flow: row nowrap; */
   width: 100vw;
-  /* gap: 10px; */
   height: 100%;
   max-height: calc(100vh - 100px);
 }
@@ -10,9 +7,10 @@
 .left_grid {
   float: left;
   position: absolute;
-  width: 28vw;
+  min-width: 275px;
+  width: 275px;
   height: 100%;
-  max-height: calc(100vh - 115px);
+  max-height: calc(100vh - 105px);
   overflow: hidden;
   border: red solid 2px;
   z-index: 8;
@@ -20,14 +18,19 @@
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
+  padding: 0;
 }
-.left_grid:hover .resize_button {
+.left_grid:hover .resize_handle_wrapper {
   visibility: visible;
 }
+.left_grid:active .resize_handle_wrapper {
+  visibility: visible;
+}
+
 .room_list {
-  width: 94%; /* leave some room for the drag-button */
+  width: calc(100% - 30px); /* leave  room for the drag-button */
   height: 100%;
-  max-height: calc(100vh - 115px);
+  max-height: calc(100vh - 105px);
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
@@ -36,8 +39,8 @@
 
 .right_grid {
   float: right;
-  width: 68vw;
-  height: 100%;
+  width: calc(100vw - 275px);
+  height: calc(100vh - 105px);
   max-height: calc(100vh - 105px);
   border: red solid 2px;
   display: flex;
@@ -47,19 +50,40 @@
   gap: 4px;
 }
 .menu_wrapper {
-  min-width: calc(70vw - 14px);
+  width: 100%;
 }
 
-.resize_button {
+.resize_handle_wrapper {
   position: absolute;
-  min-width: 20px;
-  max-width: 20px;
-  height: 20px;
-  background-color: red;
-  content: "";
+  height: 50vh;
   z-index: 9;
-  padding: 10px;
-  width: 100%;
   right: 0px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
   visibility: hidden;
+}
+
+.resize_handle {
+  padding: 4px;
+  border-radius: 20rem;
+  transform: rotate(90deg);
+  cursor: grab;
+}
+
+.resize_handle:hover,
+.resize_handle:active {
+  background-color: var(--navbar-color);
+}
+
+.resize_bar_top {
+  width: 3px;
+  height: 45%;
+  background: var(--button-bgc-3);
+}
+.resize_bar_bot {
+  width: 3px;
+  height: 45%;
+  background: var(--button-bgc-4);
 }

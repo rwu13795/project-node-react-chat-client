@@ -2,7 +2,8 @@
   max-height: calc(100vh - 100px);
   height: 100%;
   width: 100%;
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
   padding-left: 10px;
   background: linear-gradient(
     135deg,
@@ -10,11 +11,4 @@
     rgb(255, 255, 255) 90%
   );
   background-color: white;
-
-  /* background-image: linear-gradient(
-    to bottom,
-    var(--navbar-color) 0%,
-    rgb(255, 255, 255) 85%
-  ); */
-  /* background: linear-gradient(310deg, transparent, var(--navbar-color)); */
 }

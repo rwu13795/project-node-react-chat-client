@@ -30,7 +30,5 @@ export const getNotifications = createAsyncThunk<
     serverUrl + `/chat/get-notifications?user_id=${currentUserId}`
   );
 
-  console.log("response.data notification", response.data);
-
   return response.data;
 });

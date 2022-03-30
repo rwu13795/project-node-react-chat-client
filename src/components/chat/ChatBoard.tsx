@@ -25,6 +25,10 @@ import ImageInput from "./ImageInput";
 import { client } from "../../redux/utils";
 import { loadingStatusEnum } from "../../utils";
 
+// UI //
+
+import background from "../../images/background.jpg";
+
 interface Props {
   socket: Socket | undefined;
 }
@@ -106,9 +110,7 @@ function ChatBoard({ socket }: Props): JSX.Element {
 
   return (
     <main>
-      {targetChatRoom.id === "" ? (
-        <h2>Empty chatBoard</h2>
-      ) : (
+      {targetChatRoom.id && (
         <div>
           <div
             style={{

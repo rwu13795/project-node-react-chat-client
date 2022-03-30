@@ -14,7 +14,7 @@
 .avatar {
   width: 90%;
   height: 90%;
-  border: solid 4px #008badc2;
+  border: solid 4px #00a7d1;
   cursor: pointer;
   transition: 0.5s;
 }
@@ -34,9 +34,9 @@
 }
 
 .popover_box {
-  border: solid var(--navbar-color) 3px;
+  border: solid var(--main-color-2) 3px;
   border-radius: 4px;
-  background: linear-gradient(to top, var(--navbar-color) 0%, white 50%);
+  background: var(--modal-bgc-2);
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-around;

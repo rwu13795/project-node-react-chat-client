@@ -7,7 +7,7 @@ import { useCheckToken } from "../../../utils";
 // UI //
 import styles from "./CheckResetToken.module.css";
 import styles_2 from "./ForgotPW.module.css";
-import background_3 from "../../../images/background_3.jpg";
+import background_3 from "../../../images/background_3.webp";
 import CircularProgress from "@mui/material/CircularProgress";
 
 function CheckResetToken(): JSX.Element {

@@ -8,17 +8,28 @@
   --main-color-2: #00ccff;
   --main-color-3: #003b49;
   --main-color-4: #000000e0;
-  --navbar-color: #00ccff8f;
-  --contrast-color-1: rgb(0, 138, 0);
+  --main-color-5: #00ccff9c;
+
+  --navbar-color: rgb(143, 205, 245);
+  --contrast-color-1: rgb(0, 175, 0);
   --contrast-color-2: #0050858f;
 
   --button-bgc-1: linear-gradient(90deg, transparent, var(--main-color-2));
   --button-bgc-2: linear-gradient(270deg, transparent, var(--main-color-2));
 
-  --button-bgc-3: linear-gradient(180deg, transparent, var(--navbar-color));
-  --button-bgc-4: linear-gradient(0deg, transparent, var(--navbar-color));
+  --button-bgc-3: linear-gradient(180deg, transparent, var(--main-color-2));
+  --button-bgc-4: linear-gradient(0deg, transparent, var(--main-color-2));
 
-  --modal-bgc: linear-gradient(to top, #00ccff8f 0%, rgb(255, 255, 255) 25%);
+  --modal-bgc-1: linear-gradient(
+    to top,
+    var(--main-color-5) 0%,
+    rgb(255, 255, 255) 25%
+  );
+  --modal-bgc-2: linear-gradient(
+    to top,
+    var(--main-color-5) 0%,
+    rgb(255, 255, 255) 50%
+  );
 
   --msg-bg-3: linear-gradient(
     to top,

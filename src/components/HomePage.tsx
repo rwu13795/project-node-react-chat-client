@@ -1,4 +1,4 @@
-import { memo, useEffect } from "react";
+import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
@@ -45,6 +45,8 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   const currentOnlineStatus = useSelector(selectUserOnlineStatus);
   const groupsToJoin = useSelector(selectGroupsToJoin);
   const loadingStatus = useSelector(selectLoadingStatus_msg);
+
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setShowFooter(false);
@@ -95,17 +97,34 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
     }
   }, [loadingStatus, currentOnlineStatus, socket, dispatch]);
 
+  const [down, setDown] = useState<boolean>(false);
+  function showResizeHandle() {
+    // because the "resize_handle_wrapper" is not a child nor a sibling of the "left-menu"
+    // I have to use Ref to set the visibility
+    if (wrapperRef.current) {
+      wrapperRef.current.style.visibility = "visible";
+    }
+  }
+  function hideResizeHandle() {
+    if (wrapperRef.current) {
+      wrapperRef.current.style.visibility = "hidden";
+    }
+  }
+
   return (
     <main className={styles.main_grid}>
       {isLoggedIn === undefined ? (
         <CircularProgress />
       ) : (
         <>
-          <div className={styles.left_grid} id="left_menu">
+          <div
+            id="left_menu"
+            className={styles.left_grid}
+            // onMouseEnter={showResizeHandle}
+          >
             <div className={styles.room_list}>
               <RoomLists socket={socket} />
             </div>
-
             <div className={styles.resize_handle_wrapper}>
               <div className={styles.resize_bar_top}></div>
               <DragHandleIcon
@@ -116,7 +135,11 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
             </div>
           </div>
 
-          <div className={styles.right_grid} id="right_menu">
+          <div
+            className={styles.right_grid}
+            id="right_menu"
+            // onMouseEnter={hideResizeHandle}
+          >
             <div className={styles.menu_wrapper}>
               <ChatRoomMenu socket={socket} />
               <ChatBoard socket={socket} />

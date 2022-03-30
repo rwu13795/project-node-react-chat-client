@@ -269,6 +269,18 @@ const messageSlice = createSlice({
         chatType.group
       );
     },
+
+    resetAfterSignOut_msg(state) {
+      state.targetChatRoom = initialState.targetChatRoom;
+      state.chatHistory = initialState.chatHistory;
+      state.groupNotifications = initialState.groupNotifications;
+      state.friendNotifications = initialState.friendNotifications;
+      state.groupsPosition = initialState.groupsPosition;
+      state.friendsPosition = initialState.friendsPosition;
+      state.visitedRoom = initialState.visitedRoom;
+      state.currentUserId_message = initialState.currentUserId_message;
+      state.infiniteScrollStats = initialState.infiniteScrollStats;
+    },
   },
 
   extraReducers: (builder) => {
@@ -379,6 +391,7 @@ export const {
   resetVisitedRoom,
   setLoadingStatus_msg,
   updateGroupNote_afterJoining,
+  resetAfterSignOut_msg,
 } = messageSlice.actions;
 
 export default messageSlice.reducer;

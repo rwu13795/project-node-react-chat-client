@@ -116,7 +116,7 @@
   transform: translate(-50%, -50%);
   width: 680px;
   background-color: white;
-  background-image: var(--modal-bgc);
+  background-image: var(--modal-bgc-1);
   border: 2px solid #000;
   padding: 20px;
   box-shadow: 3px 6px 8px;

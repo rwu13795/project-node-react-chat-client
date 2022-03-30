@@ -20,7 +20,13 @@ import Page404 from "./components/Page404";
 import Footer from "./components/menu/bottom/Footer";
 import ForgotPassword from "./components/user/auth/ForgotPW";
 import CheckResetToken from "./components/user/auth/CheckResetToken";
-import { selectIsLoggedIn } from "./redux/user/userSlice";
+import {
+  selectIsLoggedIn,
+  selectLoadingStatus_user,
+  setLoadingStatus_user,
+} from "./redux/user/userSlice";
+import { loadingStatusEnum } from "./utils";
+import { resetAfterSignOut_msg } from "./redux/message/messageSlice";
 
 function App(): JSX.Element {
   const dispatch = useDispatch();
@@ -28,6 +34,7 @@ function App(): JSX.Element {
 
   const [socket, setSocket] = useState<Socket>();
   const [showFooter, setShowFooter] = useState<boolean>(true);
+  const [isAuth, setIsAuth] = useState(false);
 
   useEffect(() => {
     dispatch(getUserAuth());
@@ -67,13 +74,13 @@ function App(): JSX.Element {
   return (
     <Router>
       <div className="App">
-        <div className="navbar">
+        <div className={isAuth ? "navbar_1" : "navbar_2"}>
           <MainNavbar socket={socket} />
         </div>
 
         <div className="body">
           <Routes>
-            <Route path="/" element={<Auth />} />
+            <Route path="/" element={<Auth setIsAuth={setIsAuth} />} />
             <Route path="/auth/forgot-password" element={<ForgotPassword />} />
             <Route path="/auth/reset-password" element={<CheckResetToken />} />
 
@@ -97,7 +104,7 @@ function App(): JSX.Element {
         </div>
 
         {showFooter && (
-          <div className="footer">
+          <div className={isAuth ? "footer_1" : "footer_2"}>
             <Footer />
           </div>
         )}

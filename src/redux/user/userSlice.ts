@@ -117,7 +117,7 @@ const initialState: UserState = {
 
 const userSlice = createSlice({
   name: "user",
-  initialState,
+  initialState: { ...initialState },
   reducers: {
     setLoadingStatus_user(state, action: PayloadAction<string>) {
       state.loadingStatus = action.payload;
@@ -331,9 +331,20 @@ const userSlice = createSlice({
       })
 
       /***************  SIGN OUT  ***************/
-      .addCase(signOut.fulfilled, (state, action): void => {
-        state.currentUser = { ...initialState.currentUser };
-        state.loadingStatus = loadingStatusEnum.idle;
+      .addCase(signOut.fulfilled, (state): void => {
+        // resetting the "state" directly using state = initialState does NOT work
+        state.currentUser = initialState.currentUser;
+        state.friendsList = initialState.friendsList;
+        state.addFriendRequests = initialState.addFriendRequests;
+        state.result_addFriendRequest = initialState.result_addFriendRequest;
+        state.groupInvitations = initialState.groupInvitations;
+        state.result_groupInvitation = initialState.result_groupInvitation;
+        state.groupsList = initialState.groupsList;
+        state.groupsToJoin = initialState.groupsToJoin;
+        state.newGroupToJoin = initialState.newGroupToJoin;
+        state.requestErrors = initialState.requestErrors;
+        // signal the messageSlice to reset
+        state.loadingStatus = loadingStatusEnum.signOut_succeeded;
       })
 
       /***************  CREATE A NEW GROUP  ***************/

@@ -24,4 +24,6 @@ export enum loadingStatusEnum {
   addFriendRequest_succeeded = "addFriendRequest_succeeded",
 
   getNotifications_succeeded = "getNotifications_succeeded",
+
+  signOut_succeeded = "signOut_succeeded",
 }

@@ -19,7 +19,7 @@
 .popover_box {
   border: solid var(--navbar-color) 3px;
   border-radius: 4px;
-  background: linear-gradient(to top, var(--navbar-color) 0%, white 66%);
+  background: var(--modal-bgc-2);
   min-width: 140px;
   display: flex;
   gap: 6px;

@@ -60,31 +60,25 @@ export function resizeMenu() {
     console.log("distance", dragDistance);
 
     // set the element's new position:
-    if (!handle || !leftMenu || !righMenu) return;
+    if (!leftMenu || !righMenu) return;
 
     console.log("leftMenu.scrollWidth", leftMenu.scrollWidth);
-    console.log("handle.offsetLeft", handle.offsetLeft);
     console.log("righMenu.scrollWidth", righMenu.scrollWidth);
     // console.dir(leftMenu);
     let width = leftMenu.scrollWidth - dragDistance;
+    console.log("width", width);
     if (width > 550) {
       leftMenu.style.width = 550 + "px";
-      righMenu.style.width = "calc(100vw - 550px)";
-    } else if (width < 275) {
-      leftMenu.style.width = 275 + "px";
-      righMenu.style.width = "calc(100vw - 275px)";
+      // right menu has to overlap on the left menu, the 25px difference is
+      // to make the background of right menu to overlap the "resize_handle_wrapper"
+      // take a look at the HomePage CSS for more detail
+      righMenu.style.width = "calc(100vw - 525px)";
+    } else if (width < 295) {
+      leftMenu.style.width = 294 + "px";
+      righMenu.style.width = "calc(100vw - 269px)";
     } else {
       leftMenu.style.width = width + "px";
       righMenu.style.width = righMenu.scrollWidth + dragDistance + "px";
-    }
-
-    let pos = handle.offsetLeft - dragDistance;
-    if (pos > 510) {
-      handle.style.left = 520 + "px";
-    } else if (pos < 250) {
-      handle.style.left = 250 + "px";
-    } else {
-      handle.style.left = pos + "px";
     }
   }
 

@@ -7,57 +7,66 @@
 .left_grid {
   float: left;
   position: absolute;
-  min-width: 275px;
-  width: 275px;
+  min-width: 294px;
+  width: 294px;
   height: 100%;
   max-height: calc(100vh - 105px);
   overflow: hidden;
-  border: red solid 2px;
   z-index: 8;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: center;
-  padding: 0;
+}
+
+.left_grid:active .resize_handle_wrapper {
+  visibility: visible;
 }
 .left_grid:hover .resize_handle_wrapper {
   visibility: visible;
 }
-.left_grid:active .resize_handle_wrapper {
-  visibility: visible;
-}
 
 .room_list {
-  width: calc(100% - 30px); /* leave  room for the drag-button */
+  width: calc(100% - 25px); /* leave  room for the drag-button */
   height: 100%;
-  max-height: calc(100vh - 105px);
+  max-height: calc(100vh - 101px);
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
 }
 
+/* to make the right_grid overlap the resize_handle_wrapper in the left_grip
+  the width 269px is the size of the room_list width calc(100% - 25px)
+*/
 .right_grid {
   float: right;
-  width: calc(100vw - 275px);
-  height: calc(100vh - 105px);
-  max-height: calc(100vh - 105px);
-  border: red solid 2px;
+  width: calc(100vw - 269px);
+  height: calc(100vh - 101px);
+  max-height: calc(100vh - 101px);
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
   gap: 4px;
+  background-image: url("../images/bg-1.webp");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 .menu_wrapper {
   width: 100%;
 }
 
+/* the handle itself does not change position while being dragged
+  only the size of left and right menu changes. the handle is contained inside
+  the left menu and stick to the right, so its position looks like 
+  changing while the size of the right menu is changing
+*/
 .resize_handle_wrapper {
   position: absolute;
-  height: 50vh;
-  z-index: 9;
-  right: 0px;
+  height: 70vh;
+  right: 0;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -74,16 +83,16 @@
 
 .resize_handle:hover,
 .resize_handle:active {
-  background-color: var(--navbar-color);
+  background-color: var(--main-color-2);
 }
 
 .resize_bar_top {
-  width: 3px;
+  width: 4px;
   height: 45%;
   background: var(--button-bgc-3);
 }
 .resize_bar_bot {
-  width: 3px;
+  width: 4px;
   height: 45%;
   background: var(--button-bgc-4);
 }

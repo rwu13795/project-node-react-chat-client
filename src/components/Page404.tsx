@@ -6,7 +6,7 @@ import { scrollToTop } from "../utils";
 // UI //
 import styles from "./Page404.module.css";
 import { Button } from "@mui/material";
-import image from "../images/nothing.jpeg";
+import image from "../images/nothing.webp";
 
 function Page404(): JSX.Element {
   const navigate = useNavigate();

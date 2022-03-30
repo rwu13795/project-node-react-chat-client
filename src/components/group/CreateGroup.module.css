@@ -40,7 +40,7 @@
   background-image: linear-gradient(
     to right,
     rgba(255, 255, 255, 0) 0%,
-    var(--contrast-color-2) 50%,
+    var(--main-color-5) 50%,
     rgba(255, 255, 255, 0) 100%
   );
 }

@@ -18,7 +18,7 @@ import { inputNames, loadingStatusEnum, onSubmitCheck } from "../../../utils";
 // UI //
 import styles from "./ForgotPW.module.css";
 import styles_2 from "./SignIn.module.css";
-import background_2 from "../../../images/background_2.jpg";
+import background_2 from "../../../images/background_2.webp";
 import { Button } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 

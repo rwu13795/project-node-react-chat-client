@@ -1,15 +1,25 @@
 .main {
   display: flex;
   flex-flow: column nowrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
+  min-height: calc(100vh - 100px);
+  background-image: url("../../../images/bg-2.webp");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.main_body {
+  margin-top: 110px;
+  height: 100%;
 }
 
 .bg_image {
   position: absolute;
   display: block;
   width: 100%;
-  height: 90%;
+  height: 92%;
   min-height: 55vw;
   object-fit: cover;
   top: 100px;

@@ -14,18 +14,35 @@ import styles from "./common.module.css";
 
 interface Props {
   socket: Socket | undefined;
+  setOpenMemberList: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenFriendsForGroup: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenGroupsForFriend: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function ChatRoomMenu({ socket }: Props): JSX.Element {
+function ChatRoomMenu({
+  socket,
+  setOpenMemberList,
+  setOpenFriendsForGroup,
+  setOpenGroupsForFriend,
+}: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
 
   return (
     <main>
       {targetChatRoom.type === chatType.group && (
-        <GroupChatMenu target_id={targetChatRoom.id} socket={socket} />
+        <GroupChatMenu
+          target_id={targetChatRoom.id}
+          socket={socket}
+          setOpenMemberList={setOpenMemberList}
+          setOpenFriendsForGroup={setOpenFriendsForGroup}
+        />
       )}
       {targetChatRoom.type === chatType.private && (
-        <PrivateChatMenu friend_id={targetChatRoom.id} socket={socket} />
+        <PrivateChatMenu
+          friend_id={targetChatRoom.id}
+          socket={socket}
+          setOpenGroupsForFriend={setOpenGroupsForFriend}
+        />
       )}
     </main>
   );

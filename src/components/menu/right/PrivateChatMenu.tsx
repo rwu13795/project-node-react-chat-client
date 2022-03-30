@@ -1,4 +1,4 @@
-import { memo } from "react";
+import { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Socket } from "socket.io-client";
@@ -20,12 +20,25 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 interface Props {
   friend_id: string;
   socket: Socket | undefined;
+  setOpenGroupsForFriend: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function PrivateChatMenu({ friend_id, socket }: Props): JSX.Element {
+function PrivateChatMenu({
+  friend_id,
+  socket,
+  setOpenGroupsForFriend,
+}: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetFriend = useSelector(selectTargetFriend(friend_id));
   const result_invitation = useSelector(selectResult_groupInvitation);
+
+  useEffect(() => {
+    setOpenGroupsForFriend(false);
+  }, [targetChatRoom]);
+
+  function openGroupsForFriendHandler() {
+    setOpenGroupsForFriend((prev) => !prev);
+  }
 
   return (
     <main className={styles.chat_menu}>
@@ -34,7 +47,12 @@ function PrivateChatMenu({ friend_id, socket }: Props): JSX.Element {
           Chatting with {targetChatRoom.name}-{targetChatRoom.id}
         </div>
         <div className={styles.chat_menu_grid_right}>
-          <SelectGroupForFriend socket={socket} friend_id={friend_id} />
+          {/* <SelectGroupForFriend socket={socket} friend_id={friend_id} />
+          
+          */}
+          <button onClick={openGroupsForFriendHandler}>
+            invite friend to groups
+          </button>
           {targetFriend.user_blocked_friend ? (
             <UnblockFriend friend_id={friend_id} socket={socket} />
           ) : (

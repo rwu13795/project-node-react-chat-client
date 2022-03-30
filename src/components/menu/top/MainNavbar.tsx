@@ -40,6 +40,7 @@ function MainNavbar({ socket }: Props): JSX.Element {
             avatar_url={avatar_url}
             socket={socket}
             option={AvatarOptions.topAvatar}
+            hasPopoverMenu={true}
           />
           <StatusDot
             onlineStatus={onlineStatus}

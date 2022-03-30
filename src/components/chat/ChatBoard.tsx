@@ -1,4 +1,4 @@
-import { memo, useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
@@ -28,12 +28,21 @@ import { loadingStatusEnum } from "../../utils";
 // UI //
 
 import background from "../../images/background.jpg";
+import { Drawer, Slide } from "@mui/material";
 
 interface Props {
   socket: Socket | undefined;
+  openMemberList: boolean;
+  openFriendsForGroup: boolean;
+  openGroupsForFriend: boolean;
 }
 
-function ChatBoard({ socket }: Props): JSX.Element {
+function ChatBoard({
+  socket,
+  openMemberList,
+  openFriendsForGroup,
+  openGroupsForFriend,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const chatHistory = useSelector(selectTargetChatRoom_history);
@@ -48,6 +57,9 @@ function ChatBoard({ socket }: Props): JSX.Element {
   const MSG_PER_PAGE = 10;
 
   const [showLoader, setShowLoader] = useState<boolean>(false);
+
+  // drawer //
+  const containerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (infiniteScrollStats[`${targetChatRoom.type}_${targetChatRoom.id}`]) {
@@ -108,15 +120,30 @@ function ChatBoard({ socket }: Props): JSX.Element {
     chatHistory.length,
   ]);
 
+  console.log("openFriendsForGroup", openFriendsForGroup);
+
   return (
-    <main>
+    <main
+      style={{
+        height: "700px",
+      }}
+    >
       {targetChatRoom.id && (
-        <div>
+        <div
+          style={{
+            height: "100%",
+            width: "90%",
+            border: "green solid 2px",
+            overflow: "hidden",
+          }}
+          id="drawer-container"
+          ref={containerRef}
+        >
           <div
             style={{
-              width: "90%",
-              minHeight: "40vh",
-              maxHeight: "40vh",
+              width: "100%",
+              minHeight: "50%",
+              maxHeight: "50%",
               border: "solid black 2px",
               overflowY: "auto",
               overflowX: "hidden",
@@ -194,15 +221,88 @@ function ChatBoard({ socket }: Props): JSX.Element {
               )}
             </InfiniteScroll>
           </div>
+
           <br />
           <MessageInput socket={socket} />
           <ImageInput socket={socket} />
+
+          {targetChatRoom.type === chatType.group && (
+            <Slide
+              direction="left"
+              in={openMemberList}
+              container={containerRef.current}
+              style={{
+                backgroundColor: "white",
+                zIndex: 9,
+                position: "relative",
+                width: "100%",
+                height: "100%",
+                border: "solid red 2px",
+                bottom: "80%",
+              }}
+            >
+              <div>Member list</div>
+            </Slide>
+          )}
+          {targetChatRoom.type === chatType.group && (
+            <Slide
+              direction="left"
+              in={openFriendsForGroup}
+              container={containerRef.current}
+            >
+              <div
+                style={{
+                  backgroundColor: "white",
+                  zIndex: 9,
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  border: "solid red 2px",
+                  bottom: "180%",
+                }}
+              >
+                open Friends For Group
+              </div>
+            </Slide>
+          )}
+          {targetChatRoom.type === chatType.private && (
+            <Slide
+              direction="left"
+              in={openGroupsForFriend}
+              container={containerRef.current}
+            >
+              <div
+                style={{
+                  backgroundColor: "white",
+                  zIndex: 9,
+                  position: "relative",
+                  width: "100%",
+                  height: "100%",
+                  border: "solid red 2px",
+                  bottom: "101%",
+                }}
+              >
+                open Groups For Friend
+              </div>
+            </Slide>
+          )}
         </div>
       )}
-
-      {/* {imageFile && <img src={URL.createObjectURL(imageFile)} alt="input" />} */}
     </main>
   );
 }
 
 export default memo(ChatBoard);
+
+/**<Drawer
+              anchor="right"
+              variant="persistent"
+              open={true}
+              // onClose={toggleDrawer(anchor, false)}
+              ModalProps={{
+    container: document.getElementById('drawer-container'),
+    style: { position: 'absolute' }
+  }}
+            >
+              <div style={{ width: "200px" }}>the drawer</div>
+            </Drawer> */

@@ -19,6 +19,7 @@ interface Props {
   avatar_url: string | undefined;
   socket: Socket | undefined;
   option: AvatarOptions;
+  hasPopoverMenu?: boolean;
 }
 
 function UserAvatar({
@@ -26,6 +27,7 @@ function UserAvatar({
   avatar_url,
   socket,
   option,
+  hasPopoverMenu,
 }: Props): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -69,7 +71,7 @@ function UserAvatar({
         className={avatar}
         onClick={openListHandler}
       />
-      {option !== AvatarOptions.listAvatar && (
+      {hasPopoverMenu && (
         <Popover
           open={open}
           anchorEl={anchorEl}

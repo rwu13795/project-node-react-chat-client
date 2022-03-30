@@ -54,9 +54,6 @@
   background-repeat: no-repeat;
   background-size: cover;
 }
-.menu_wrapper {
-  width: 100%;
-}
 
 /* the handle itself does not change position while being dragged
   only the size of left and right menu changes. the handle is contained inside

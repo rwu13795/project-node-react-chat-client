@@ -24,6 +24,8 @@ import styles from "./SignIn.module.css";
 import { LoadingButton } from "@mui/lab";
 import { Checkbox } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import GoogleLogin from "react-google-login";
+import GoogleLoginComponent from "./GoogleLoginComponent";
 
 const inputFields = [inputNames.email, inputNames.password];
 
@@ -114,6 +116,7 @@ function SignIn(): JSX.Element {
             SIGN IN
           </LoadingButton>
         </div>
+        <GoogleLoginComponent />
       </form>
     </main>
   );

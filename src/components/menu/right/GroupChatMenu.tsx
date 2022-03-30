@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
@@ -16,9 +16,16 @@ import SelectFriendForGroup from "../../group/SelectFriendForGroup";
 interface Props {
   target_id: string;
   socket: Socket | undefined;
+  setOpenMemberList: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenFriendsForGroup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function GroupChatMenu({ target_id, socket }: Props): JSX.Element {
+function GroupChatMenu({
+  target_id,
+  socket,
+  setOpenMemberList,
+  setOpenFriendsForGroup,
+}: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const {
     group_id,
@@ -30,10 +37,19 @@ function GroupChatMenu({ target_id, socket }: Props): JSX.Element {
   } = useSelector(selectTargetGroup(target_id));
   const result_invitation = useSelector(selectResult_groupInvitation);
 
-  const [openMembersList, setOpenMembersList] = useState<boolean>(false);
+  useEffect(() => {
+    setOpenFriendsForGroup(false);
+    setOpenMemberList(false);
+  }, [targetChatRoom]);
 
   function openMembersListHandler() {
-    setOpenMembersList((prev) => !prev);
+    setOpenMemberList((prev) => !prev);
+    setOpenFriendsForGroup(false);
+  }
+
+  function openFriendsForGroupHandler() {
+    setOpenFriendsForGroup((prev) => !prev);
+    setOpenMemberList(false);
   }
 
   return (
@@ -53,13 +69,16 @@ function GroupChatMenu({ target_id, socket }: Props): JSX.Element {
         ) : (
           <>
             <button onClick={openMembersListHandler}>Members list</button>
-            {openMembersList && <MembersList socket={socket} />}
-            <SelectFriendForGroup
+            <button onClick={openFriendsForGroupHandler}>
+              Invite friends to group
+            </button>
+            {/* {openMembersList && <MembersList socket={socket} />} */}
+            {/* <SelectFriendForGroup
               socket={socket}
               group_id={group_id}
               group_name={group_name}
               admin_user_id={admin_user_id}
-            />
+            /> */}
             <LeaveGroup
               socket={socket}
               group_id={group_id}

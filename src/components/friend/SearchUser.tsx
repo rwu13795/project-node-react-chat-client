@@ -74,6 +74,7 @@ function SearchUser({ socket }: Props): JSX.Element {
   ) {
     e.preventDefault();
     setErrorMsg("");
+    setIsFound(false);
     setFoundUser({ user_id: "", username: "", avatar_url: "" });
     dispatch(setResult_addFriendRequest(""));
 
@@ -149,7 +150,7 @@ function SearchUser({ socket }: Props): JSX.Element {
 
   return (
     <main className={styles.main}>
-      <div className={styles.title}>Search Friend</div>
+      <div className={styles.title}>Add a Friend</div>
       <div className={styles.border}></div>
       <RadioGroup
         defaultValue="id"

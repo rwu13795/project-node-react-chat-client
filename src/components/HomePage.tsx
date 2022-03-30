@@ -28,6 +28,7 @@ import DragHandleIcon from "@mui/icons-material/DragHandle";
 import addAllListeners from "../socket-io/add-all-listener";
 import { loadingStatusEnum, resizeMenu } from "../utils";
 import { online_emitter } from "../socket-io/emitters";
+import ChatRoom from "./menu/right/ChatRoom";
 
 interface Props {
   socket: Socket | undefined;
@@ -135,15 +136,8 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
             </div>
           </div>
 
-          <div
-            className={styles.right_grid}
-            id="right_menu"
-            // onMouseEnter={hideResizeHandle}
-          >
-            <div className={styles.menu_wrapper}>
-              <ChatRoomMenu socket={socket} />
-              <ChatBoard socket={socket} />
-            </div>
+          <div className={styles.right_grid} id="right_menu">
+            <ChatRoom socket={socket} />
           </div>
         </>
       )}

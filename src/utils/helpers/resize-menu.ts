@@ -27,11 +27,13 @@ export function resizeMenu() {
 
   function dragOnTouchStart(e: TouchEvent) {
     e.preventDefault();
-    // get the mouse cursor position at startup:
+
+    // set the "handle" background-color on touch-drag
+    if (handle) handle.style.backgroundColor = "#00ccff";
+
     startClientX = e.touches[0].clientX;
 
     document.ontouchend = clearListeners;
-    // call a function whenever the cursor moves:
     document.ontouchmove = dragElement_touch;
   }
 
@@ -87,6 +89,7 @@ export function resizeMenu() {
       leftMenu.style.cursor = "auto";
       righMenu.style.cursor = "auto";
     }
+    if (handle) handle.style.backgroundColor = "#ffffff00";
     document.onmouseup = null;
     document.onmousemove = null;
     document.ontouchstart = null;

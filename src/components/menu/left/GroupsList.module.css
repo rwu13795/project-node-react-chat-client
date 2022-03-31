@@ -54,6 +54,7 @@
   font-weight: bold;
   color: var(--contrast-color-1);
   text-align: center;
+  text-shadow: 2px 1px 1px var(--contrast-color-3);
 }
 .list_item_border {
   position: relative;
@@ -127,8 +128,7 @@
   flex-flow: column nowrap;
   gap: 8px;
   justify-content: center;
-  align-items: center;
-  margin-left: 4px;
+  align-items: flex-start;
 }
 
 .no_group_wrapper {

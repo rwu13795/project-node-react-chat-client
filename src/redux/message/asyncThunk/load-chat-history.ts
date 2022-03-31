@@ -1,7 +1,9 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
 import { client, serverUrl } from "../../utils";
+import { MessageState } from "../messageSlice";
 
 interface MessageObject_res {
   msg_body: string;
@@ -67,3 +69,36 @@ export const loadChatHistory_database = createAsyncThunk<
     };
   }
 );
+
+export function loadChatHistory_database_fulfilled(
+  state: WritableDraft<MessageState>,
+  action: PayloadAction<Payload>
+) {
+  const currentUsername = action.payload.currentUsername;
+  const currentUserId = action.payload.currentUserId;
+  const { type, id, name } = state.targetChatRoom;
+
+  const chatHistory = action.payload.chatHistory;
+
+  if (action.payload.wasHistoryLoaded) return;
+
+  // map the chat history for different room_type `${type}_${id}`
+  state.chatHistory[`${type}_${id}`] = chatHistory.map((msg) => {
+    return {
+      sender_id: msg.sender_id,
+      sender_name: msg.sender_id === currentUserId ? currentUsername : name,
+      recipient_id: msg.recipient_id,
+      recipient_name:
+        msg.recipient_id === currentUserId ? currentUsername : name,
+      msg_body: msg.msg_body,
+      msg_type: msg.msg_type,
+      file_name: msg.file_name,
+      file_url: msg.file_url,
+      file_type: msg.file_type,
+      created_at: msg.created_at,
+    };
+  });
+  // set this room as visited, so it won't fetch message from server again unless
+  // the user is scrolling up for older messages
+  state.visitedRoom[`${type}_${id}`] = true;
+}

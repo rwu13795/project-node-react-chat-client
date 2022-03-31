@@ -24,8 +24,7 @@ import styles from "./SignIn.module.css";
 import { LoadingButton } from "@mui/lab";
 import { Checkbox } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import GoogleLogin from "react-google-login";
-import GoogleLoginComponent from "./GoogleLoginComponent";
+import GoogleSignIn from "./GoogleSignIn";
 
 const inputFields = [inputNames.email, inputNames.password];
 
@@ -104,19 +103,21 @@ function SignIn(): JSX.Element {
             Forgot password?
           </Link>
 
-          <LoadingButton
-            type="submit"
-            variant="contained"
-            color="secondary"
-            disabled={loading === loadingStatusEnum.loading}
-            loading={loading === loadingStatusEnum.loading}
-            onClick={onSubmitHandler}
-            className={styles.button}
-          >
-            SIGN IN
-          </LoadingButton>
+          <div className={styles.buttons_wrapper}>
+            <LoadingButton
+              type="submit"
+              variant="contained"
+              color="secondary"
+              disabled={loading === loadingStatusEnum.loading}
+              loading={loading === loadingStatusEnum.loading}
+              onClick={onSubmitHandler}
+              className={styles.button}
+            >
+              SIGN IN
+            </LoadingButton>
+            <GoogleSignIn />
+          </div>
         </div>
-        <GoogleLoginComponent />
       </form>
     </main>
   );

@@ -11,8 +11,9 @@
   --main-color-5: #00ccff9c;
 
   --navbar-color: rgb(143, 205, 245);
-  --contrast-color-1: rgb(0, 175, 0);
+  --contrast-color-1: #00ca00;
   --contrast-color-2: #0050858f;
+  --contrast-color-3: rgb(0, 102, 0);
 
   --button-bgc-1: linear-gradient(90deg, transparent, var(--main-color-2));
   --button-bgc-2: linear-gradient(270deg, transparent, var(--main-color-2));
@@ -49,6 +50,12 @@ div {
   -moz-osx-font-smoothing: grayscale;
 }
 body {
+  font-family: "Quantico", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  margin: 0;
+}
+span {
   font-family: "Quantico", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

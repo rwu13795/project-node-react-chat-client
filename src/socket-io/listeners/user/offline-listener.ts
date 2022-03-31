@@ -1,9 +1,7 @@
 import { Dispatch } from "@reduxjs/toolkit";
 import { Socket } from "socket.io-client";
-import {
-  onlineStatus_enum,
-  setFriendsOnlineStatus,
-} from "../../../redux/user/userSlice";
+import { setFriendsOnlineStatus } from "../../../redux/user/userSlice";
+import { onlineStatus_enum } from "../../../utils";
 
 interface Data {
   sender_id: string;

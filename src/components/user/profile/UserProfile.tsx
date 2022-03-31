@@ -29,7 +29,7 @@ import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import EditIcon from "@mui/icons-material/Edit";
 import connectSocket from "../../../socket-io/socketConnection";
 import addAllListeners from "../../../socket-io/add-all-listener";
-import { setCurrentUserId_message } from "../../../redux/message/messageSlice";
+import { setCurrentUserId_msg } from "../../../redux/message/messageSlice";
 
 interface Props {
   socket: Socket | undefined;
@@ -56,7 +56,7 @@ function UserProfile({ socket, setSocket }: Props): JSX.Element {
       if (!user_id) return;
       if (socket) return;
 
-      dispatch(setCurrentUserId_message(user_id));
+      dispatch(setCurrentUserId_msg(user_id));
       let newSocket: Socket = connectSocket(user_id, username);
       setSocket(newSocket);
       addAllListeners(newSocket, dispatch, {

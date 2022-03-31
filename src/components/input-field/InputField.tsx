@@ -32,6 +32,7 @@ export interface InputErrors {
 export enum customStyleOptions {
   default = "default",
   change_user_name = "change_user_name",
+  change_group_name = "change_group_name",
   create_new_group = "create_new_group",
 }
 
@@ -157,6 +158,7 @@ function InputField({
       break;
 
     case customStyleOptions.change_user_name:
+    case customStyleOptions.change_group_name:
       error_text =
         styles.error_text_lg + " " + styles.error_text_change_user_name;
       content = (

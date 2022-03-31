@@ -1,7 +1,10 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { WritableDraft } from "immer/dist/internal";
 import { RootState } from "../..";
+import { loadingStatusEnum } from "../../../utils";
 
 import { client, serverUrl } from "../../utils";
+import { UserState } from "../userSlice";
 
 interface Res_body {
   token: string;
@@ -22,3 +25,26 @@ export const forgotPasswordReset = createAsyncThunk<
     return thunkAPI.rejectWithValue(err.response.data);
   }
 });
+
+export function forgotPasswordReset_fulfilled(state: WritableDraft<UserState>) {
+  state.loadingStatus = loadingStatusEnum.succeeded;
+}
+
+export function forgotPasswordReset_pending(state: WritableDraft<UserState>) {
+  state.loadingStatus = loadingStatusEnum.loading;
+}
+
+export function forgotPasswordReset_rejected(
+  state: WritableDraft<UserState>,
+  action: PayloadAction<any>
+) {
+  for (let err of action.payload.errors) {
+    state.requestErrors[err.field] = err.message;
+    if (err.field === "expired_link") {
+      state.loadingStatus = loadingStatusEnum.time_out;
+    }
+  }
+  if (state.loadingStatus !== loadingStatusEnum.time_out) {
+    state.loadingStatus = loadingStatusEnum.failed;
+  }
+}

@@ -7,16 +7,14 @@ import {
   selectFriendsPosition,
   selectFriendNotifications,
 } from "../../../redux/message/messageSlice";
-import {
-  onlineStatus_enum,
-  selectFriendsList,
-} from "../../../redux/user/userSlice";
+import { selectFriendsList } from "../../../redux/user/userSlice";
 import RenderFriend from "./RenderFriend";
 
 // UI //
 import styles from "./OnlineOfflineList.module.css";
 import styles_2 from "./GroupsList.module.css";
 import { CircularProgress } from "@mui/material";
+import { onlineStatus_enum } from "../../../utils";
 
 interface Props {
   socket: Socket | undefined;

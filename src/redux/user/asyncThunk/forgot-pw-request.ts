@@ -1,7 +1,10 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { WritableDraft } from "immer/dist/internal";
 import { RootState } from "../..";
+import { loadingStatusEnum } from "../../../utils";
 
 import { client, serverUrl } from "../../utils";
+import { UserState } from "../userSlice";
 
 interface Res_body {
   email: string;
@@ -19,3 +22,23 @@ export const forgotPasswordRequest = createAsyncThunk<
     return thunkAPI.rejectWithValue(err.response.data);
   }
 });
+
+export function forgotPasswordRequest_fulfilled(
+  state: WritableDraft<UserState>
+) {
+  state.loadingStatus = loadingStatusEnum.succeeded;
+}
+
+export function forgotPasswordRequest_pending(state: WritableDraft<UserState>) {
+  state.loadingStatus = loadingStatusEnum.loading;
+}
+
+export function forgotPasswordRequest_rejected(
+  state: WritableDraft<UserState>,
+  action: PayloadAction<any>
+) {
+  state.loadingStatus = loadingStatusEnum.failed;
+  for (let err of action.payload.errors) {
+    state.requestErrors[err.field] = err.message;
+  }
+}

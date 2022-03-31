@@ -1,19 +1,9 @@
-import { Fragment, memo, useState } from "react";
+import { memo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import {
-  chatType,
-  selectFriendsPosition,
-  selectFriendNotifications,
-  selectTargetChatRoom,
-  selectTotalFriendNoteCount,
-} from "../../../redux/message/messageSlice";
-import {
-  onlineStatus_enum,
-  selectAddFriendRequests,
-  selectFriendsList,
-} from "../../../redux/user/userSlice";
+import { selectTotalFriendNoteCount } from "../../../redux/message/messageSlice";
+import { selectAddFriendRequests } from "../../../redux/user/userSlice";
 import SearchUser from "../../friend/SearchUser";
 import OnlineOfflineList from "./OnlineOfflineList";
 

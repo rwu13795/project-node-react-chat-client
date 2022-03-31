@@ -1,26 +1,63 @@
 import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 import type { RootState } from "../index";
-import { inputNames, loadingStatusEnum } from "../../utils";
+import { loadingStatusEnum, onlineStatus_enum } from "../../utils";
 import {
   changePassword,
+  changePassword_fulfilled,
+  changePassword_pending,
+  changePassword_rejected,
   changeUsername,
+  changeUsername_fulfilled,
+  changeUsername_pending,
+  changeUsername_rejected,
   createNewGroup,
+  createNewGroup_fulfilled,
+  createNewGroup_pending,
+  createNewGroup_rejected,
   forgotPasswordRequest,
+  forgotPasswordRequest_fulfilled,
+  forgotPasswordRequest_pending,
+  forgotPasswordRequest_rejected,
   forgotPasswordReset,
+  forgotPasswordReset_fulfilled,
+  forgotPasswordReset_pending,
+  forgotPasswordReset_rejected,
   getGroupMembersList_database,
+  getGroupMembersList_database_fulfilled,
   getUserAuth,
+  getUserAuth_fulfilled,
   signIn,
+  signIn_fulfilled,
+  signIn_pending,
+  signIn_rejected,
   signOut,
+  signOut_fulfilled,
   signUp,
+  signUp_fulfilled,
+  signUp_pending,
+  signUp_rejected,
 } from "./asyncThunk";
-
-export enum onlineStatus_enum {
-  online = "Online",
-  away = "Away",
-  busy = "Busy",
-  offline = "Offline",
-}
+import {
+  changeAvatar_reducer,
+  clearAddFriendRequests_reducer,
+  clearLeftMember_reducer,
+  clearRequestError_reducer,
+  leaveGroup_reducer,
+  removeGroup_reducer,
+  respondToGroupInvitation_reducer,
+  setAddFriendRequests_reducer,
+  setBlockFriend_reducer,
+  setFriendsOnlineStatus_reducer,
+  setGroupInvitation_reducer,
+  setIsLoggedIn_reducer,
+  setLoadingStatus_user_reducer,
+  setResult_addFriendRequest_reducer,
+  setResult_groupInvitation_reducer,
+  setUserOnlineStatus_reducer,
+  updateGroupAdmin_reducer,
+  updateGroupsList_reducer,
+} from "./reducers";
 
 export interface CurrentUser {
   username: string;
@@ -95,7 +132,7 @@ export interface UserState {
   requestErrors: RequestErrors;
 }
 
-const initialState: UserState = {
+export const initialState_user: UserState = {
   currentUser: {
     username: "",
     email: "",
@@ -117,343 +154,93 @@ const initialState: UserState = {
 
 const userSlice = createSlice({
   name: "user",
-  initialState: { ...initialState },
+  initialState: initialState_user,
   reducers: {
-    setLoadingStatus_user(state, action: PayloadAction<string>) {
-      state.loadingStatus = action.payload;
-    },
-    setFriendsOnlineStatus(
-      state,
-      action: PayloadAction<{ sender_id: string; status: string }>
-    ) {
-      const { sender_id, status } = action.payload;
-      if (!state.friendsList[sender_id]) return;
-      state.friendsList[sender_id].onlineStatus = status;
-    },
-    setAddFriendRequests(state, action: PayloadAction<AddFriendRequest>) {
-      state.addFriendRequests.push(action.payload);
-    },
-    clearAddFriendRequests(state, action: PayloadAction<number>) {
-      state.addFriendRequests = state.addFriendRequests.filter(
-        (value, index) => index !== action.payload
-      );
+    setLoadingStatus_user: setLoadingStatus_user_reducer,
 
-      console.log(state.addFriendRequests);
-    },
+    setFriendsOnlineStatus: setFriendsOnlineStatus_reducer,
 
-    setResult_addFriendRequest(state, action: PayloadAction<string>) {
-      state.result_addFriendRequest = action.payload;
-    },
-    setResult_groupInvitation(state, action: PayloadAction<string>) {
-      state.result_groupInvitation = action.payload;
-    },
-    setGroupInvitation(state, action: PayloadAction<GroupInvitation>) {
-      state.groupInvitations.push(action.payload);
-    },
-    respondToGroupInvitation(state, action: PayloadAction<number>) {
-      state.groupInvitations[action.payload].was_responded = true;
-    },
-    updateGroupsList(state, action: PayloadAction<Group[]>) {
-      for (let group of action.payload) {
-        state.groupsList[group.group_id] = group;
-      }
-    },
-    leaveGroup(
-      state,
-      action: PayloadAction<{ group_id: string; was_kicked: boolean }>
-    ) {
-      state.groupsList[action.payload.group_id].was_kicked =
-        action.payload.was_kicked;
-      state.groupsList[action.payload.group_id].user_left = true;
-      state.groupsList[action.payload.group_id].user_left_at =
-        new Date().toString();
-    },
-    clearLeftMember(
-      state,
-      action: PayloadAction<{ group_id: string; member_user_id: string }>
-    ) {
-      const { group_id, member_user_id } = action.payload;
-      state.groupsList[group_id].group_members = state.groupsList[
-        group_id
-      ].group_members?.filter((member) => {
-        return member.user_id !== member_user_id;
-      });
-    },
-    removeGroup(state, action: PayloadAction<{ group_id: string }>) {
-      delete state.groupsList[action.payload.group_id];
-    },
-    setBlockFriend(
-      state,
-      action: PayloadAction<{
-        friend_id: string;
-        block: boolean;
-        being_blocked: boolean;
-      }>
-    ) {
-      const { friend_id, block, being_blocked } = action.payload;
-      if (being_blocked) {
-        state.friendsList[friend_id].friend_blocked_user = block;
-        state.friendsList[friend_id].friend_blocked_user_at =
-          new Date().toString();
-      } else {
-        state.friendsList[friend_id].user_blocked_friend = block;
-        state.friendsList[friend_id].user_blocked_friend_at =
-          new Date().toString();
-      }
-    },
-    setUserOnlineStatus(state, action: PayloadAction<string>) {
-      state.currentUser.onlineStatus = action.payload;
-    },
-    changeAvatar(state, action: PayloadAction<string>) {
-      state.currentUser.avatar_url = action.payload;
-    },
-    clearRequestError(state, action: PayloadAction<string>) {
-      const name = action.payload;
-      if (name === "all") {
-        state.requestErrors = {};
-        return;
-      }
-      if (
-        name === inputNames.password ||
-        name === inputNames.confirm_password
-      ) {
-        state.requestErrors[inputNames.password] = "";
-        state.requestErrors[inputNames.confirm_password] = "";
-        return;
-      }
-      if (
-        name === inputNames.new_password ||
-        name === inputNames.confirm_new_password
-      ) {
-        state.requestErrors[inputNames.new_password] = "";
-        state.requestErrors[inputNames.confirm_new_password] = "";
-        return;
-      }
-      state.requestErrors[name] = "";
-    },
-    setIsLoggedIn(state, action: PayloadAction<boolean>) {
-      state.currentUser.isLoggedIn = action.payload;
-    },
-    updateGroupAdmin(
-      state,
-      action: PayloadAction<{ newAdmin: string; group_id: string }>
-    ) {
-      const { newAdmin, group_id } = action.payload;
-      state.groupsList[group_id].admin_user_id = newAdmin;
-    },
+    setAddFriendRequests: setAddFriendRequests_reducer,
+
+    clearAddFriendRequests: clearAddFriendRequests_reducer,
+
+    setResult_addFriendRequest: setResult_addFriendRequest_reducer,
+
+    setResult_groupInvitation: setResult_groupInvitation_reducer,
+
+    setGroupInvitation: setGroupInvitation_reducer,
+
+    respondToGroupInvitation: respondToGroupInvitation_reducer,
+
+    updateGroupsList: updateGroupsList_reducer,
+
+    leaveGroup: leaveGroup_reducer,
+
+    clearLeftMember: clearLeftMember_reducer,
+
+    removeGroup: removeGroup_reducer,
+
+    setBlockFriend: setBlockFriend_reducer,
+
+    setUserOnlineStatus: setUserOnlineStatus_reducer,
+
+    changeAvatar: changeAvatar_reducer,
+
+    clearRequestError: clearRequestError_reducer,
+
+    setIsLoggedIn: setIsLoggedIn_reducer,
+
+    updateGroupAdmin: updateGroupAdmin_reducer,
   },
 
   extraReducers: (builder) => {
     builder
       /***************  GET AUTH  ***************/
-      .addCase(getUserAuth.fulfilled, (state, action): void => {
-        if (!action.payload.currentUser.isLoggedIn) {
-          state.currentUser = action.payload.currentUser;
-          return;
-        }
-        const {
-          currentUser,
-          addFriendRequests,
-          groupInvitations,
-          groupsList,
-          friendsList,
-        } = action.payload;
-
-        state.currentUser = currentUser;
-        state.addFriendRequests = addFriendRequests;
-        state.groupInvitations = groupInvitations;
-        // map the groupsList into groupsList. It would be easier to put
-        // the group_members in the respective group when user enters a group room
-        for (let group of groupsList) {
-          state.groupsList[group.group_id] = group;
-          if (!group.user_left) {
-            state.groupsToJoin.push(group.group_id);
-          }
-        }
-
-        // initialize the friendsList if it is not initialized
-        for (let friend of friendsList) {
-          if (!state.friendsList[friend.friend_id]) {
-            state.friendsList[friend.friend_id] = friend;
-            state.friendsList[friend.friend_id].onlineStatus =
-              onlineStatus_enum.offline;
-          }
-        }
-      })
+      .addCase(getUserAuth.fulfilled, getUserAuth_fulfilled)
 
       /***************  SIGN IN  ***************/
-      .addCase(signIn.fulfilled, (state, action): void => {
-        state.currentUser = action.payload.currentUser;
-        state.addFriendRequests = action.payload.addFriendRequests;
-        state.groupInvitations = action.payload.groupInvitations;
-
-        for (let group of action.payload.groupsList) {
-          state.groupsList[group.group_id] = group;
-          if (!group.user_left) {
-            state.groupsToJoin.push(group.group_id);
-          }
-        }
-
-        for (let friend of action.payload.friendsList) {
-          state.friendsList[friend.friend_id] = friend;
-          state.friendsList[friend.friend_id].onlineStatus =
-            onlineStatus_enum.offline;
-        }
-        state.loadingStatus = loadingStatusEnum.idle;
-      })
-      .addCase(signIn.pending, (state): void => {
-        state.loadingStatus = loadingStatusEnum.loading;
-      })
-      .addCase(signIn.rejected, (state, action: PayloadAction<any>): void => {
-        for (let err of action.payload.errors) {
-          state.requestErrors[err.field] = err.message;
-        }
-        state.loadingStatus = loadingStatusEnum.failed;
-      })
+      .addCase(signIn.fulfilled, signIn_fulfilled)
+      .addCase(signIn.pending, signIn_pending)
+      .addCase(signIn.rejected, signIn_rejected)
 
       /***************  SIGN UP  ***************/
-      .addCase(
-        signUp.fulfilled,
-        (state, action: PayloadAction<CurrentUser>): void => {
-          state.currentUser = action.payload;
-          state.currentUser.onlineStatus = onlineStatus_enum.online;
-          state.loadingStatus = loadingStatusEnum.idle;
-        }
-      )
-      .addCase(signUp.pending, (state): void => {
-        state.loadingStatus = loadingStatusEnum.loading;
-      })
-      .addCase(signUp.rejected, (state, action: PayloadAction<any>): void => {
-        for (let err of action.payload.errors) {
-          state.requestErrors[err.field] = err.message;
-        }
-        state.loadingStatus = loadingStatusEnum.failed;
-      })
+      .addCase(signUp.fulfilled, signUp_fulfilled)
+      .addCase(signUp.pending, signUp_pending)
+      .addCase(signUp.rejected, signUp_rejected)
 
       /***************  SIGN OUT  ***************/
-      .addCase(signOut.fulfilled, (state): void => {
-        // resetting the "state" directly using state = initialState does NOT work
-        state.currentUser = initialState.currentUser;
-        state.friendsList = initialState.friendsList;
-        state.addFriendRequests = initialState.addFriendRequests;
-        state.result_addFriendRequest = initialState.result_addFriendRequest;
-        state.groupInvitations = initialState.groupInvitations;
-        state.result_groupInvitation = initialState.result_groupInvitation;
-        state.groupsList = initialState.groupsList;
-        state.groupsToJoin = initialState.groupsToJoin;
-        state.newGroupToJoin = initialState.newGroupToJoin;
-        state.requestErrors = initialState.requestErrors;
-        // signal the messageSlice to reset
-        state.loadingStatus = loadingStatusEnum.signOut_succeeded;
-      })
+      .addCase(signOut.fulfilled, signOut_fulfilled)
 
       /***************  CREATE A NEW GROUP  ***************/
-      .addCase(createNewGroup.fulfilled, (state, action): void => {
-        state.groupsList[action.payload.group_id] = action.payload;
-        state.loadingStatus = loadingStatusEnum.createNewGroup_succeeded;
-        state.newGroupToJoin = action.payload.group_id;
-      })
-      .addCase(createNewGroup.pending, (state): void => {
-        state.loadingStatus = loadingStatusEnum.createNewGroup_loading;
-      })
-      .addCase(
-        createNewGroup.rejected,
-        (state, action: PayloadAction<any>): void => {
-          // each user can only create 5 groups (for demo)
-          // the "groups_limit" is the field name
-          state.loadingStatus = loadingStatusEnum.failed;
-          for (let err of action.payload.errors) {
-            state.requestErrors[err.field] = err.message;
-          }
-        }
-      )
+      .addCase(createNewGroup.fulfilled, createNewGroup_fulfilled)
+      .addCase(createNewGroup.pending, createNewGroup_pending)
+      .addCase(createNewGroup.rejected, createNewGroup_rejected)
 
       /***************  GET GROUP MEMBERS  ***************/
       .addCase(
         getGroupMembersList_database.fulfilled,
-        (state, action): void => {
-          const { group_id, group_members, wasMembersListLoaded } =
-            action.payload;
-          if (wasMembersListLoaded) return;
-
-          state.groupsList[group_id].group_members = group_members;
-          state.groupsList[group_id].wasMembersListLoaded = true;
-          // state.loadingStatus = "succeeded";
-        }
+        getGroupMembersList_database_fulfilled
       )
 
       /***************  FORGOT PASSWORD REQUEST  ***************/
-      .addCase(forgotPasswordRequest.fulfilled, (state, action): void => {
-        state.loadingStatus = loadingStatusEnum.succeeded;
-      })
-      .addCase(forgotPasswordRequest.pending, (state): void => {
-        state.loadingStatus = loadingStatusEnum.loading;
-      })
-      .addCase(
-        forgotPasswordRequest.rejected,
-        (state, action: PayloadAction<any>): void => {
-          state.loadingStatus = loadingStatusEnum.failed;
-          for (let err of action.payload.errors) {
-            state.requestErrors[err.field] = err.message;
-          }
-        }
-      )
+      .addCase(forgotPasswordRequest.fulfilled, forgotPasswordRequest_fulfilled)
+      .addCase(forgotPasswordRequest.pending, forgotPasswordRequest_pending)
+      .addCase(forgotPasswordRequest.rejected, forgotPasswordRequest_rejected)
 
-      /***************  RESET PASSWORD  ***************/
-      .addCase(forgotPasswordReset.fulfilled, (state): void => {
-        state.loadingStatus = loadingStatusEnum.succeeded;
-      })
-      .addCase(forgotPasswordReset.pending, (state): void => {
-        state.loadingStatus = loadingStatusEnum.loading;
-      })
-      .addCase(
-        forgotPasswordReset.rejected,
-        (state, action: PayloadAction<any>): void => {
-          for (let err of action.payload.errors) {
-            state.requestErrors[err.field] = err.message;
-            if (err.field === "expired_link") {
-              state.loadingStatus = loadingStatusEnum.time_out;
-            }
-          }
-          if (state.loadingStatus !== loadingStatusEnum.time_out) {
-            state.loadingStatus = loadingStatusEnum.failed;
-          }
-        }
-      )
+      /***************  FORGOT PASSWORD RESET  ***************/
+      .addCase(forgotPasswordReset.fulfilled, forgotPasswordReset_fulfilled)
+      .addCase(forgotPasswordReset.pending, forgotPasswordReset_pending)
+      .addCase(forgotPasswordReset.rejected, forgotPasswordReset_rejected)
 
       /***************  CHANGE PASSWORD  ***************/
-      .addCase(changePassword.fulfilled, (state): void => {
-        state.loadingStatus = loadingStatusEnum.resetPW_succeeded;
-      })
-      .addCase(changePassword.pending, (state): void => {
-        state.loadingStatus = loadingStatusEnum.resetPW_loading;
-      })
-      .addCase(
-        changePassword.rejected,
-        (state, action: PayloadAction<any>): void => {
-          for (let err of action.payload.errors) {
-            state.requestErrors[err.field] = err.message;
-          }
-          state.loadingStatus = loadingStatusEnum.resetPW_failed;
-        }
-      )
+      .addCase(changePassword.fulfilled, changePassword_fulfilled)
+      .addCase(changePassword.pending, changePassword_pending)
+      .addCase(changePassword.rejected, changePassword_rejected)
 
       /***************  CHANGE USERNAME  ***************/
-      .addCase(changeUsername.fulfilled, (state, action): void => {
-        state.currentUser.username = action.payload.username;
-        state.loadingStatus = loadingStatusEnum.succeeded;
-      })
-      .addCase(changeUsername.pending, (state): void => {
-        state.loadingStatus = loadingStatusEnum.loading;
-      })
-      .addCase(
-        changeUsername.rejected,
-        (state, action: PayloadAction<any>): void => {
-          for (let err of action.payload.errors) {
-            state.requestErrors[err.field] = err.message;
-          }
-        }
-      );
+      .addCase(changeUsername.fulfilled, changeUsername_fulfilled)
+      .addCase(changeUsername.pending, changeUsername_pending)
+      .addCase(changeUsername.rejected, changeUsername_rejected);
   },
 });
 

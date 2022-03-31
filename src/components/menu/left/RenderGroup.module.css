@@ -1,5 +1,5 @@
 .main {
-  width: 100%;
+  width: 98%;
 }
 
 .button {
@@ -45,7 +45,7 @@
 
 .button_text {
   text-align: left;
-  max-width: 100%;
+  width: calc(100% - 46px); /* leave room for the badge */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

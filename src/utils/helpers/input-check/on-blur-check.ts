@@ -87,11 +87,11 @@ export function onBlurCheck(
         break;
       }
       case inputNames.username: {
-        if (inputValue.length > 20) {
+        if (inputValue.length > 40) {
           setInputErrors((prev) => {
             return {
               ...prev,
-              [inputName]: "Your username cannot be longer than 20 characters",
+              [inputName]: "Your username cannot be longer than 40 characters",
             };
           });
           hasError = true;
@@ -99,11 +99,11 @@ export function onBlurCheck(
         break;
       }
       case inputNames.new_group_name: {
-        if (inputValue.length > 30) {
+        if (inputValue.length > 40) {
           setInputErrors((prev) => {
             return {
               ...prev,
-              [inputName]: "The group name cannot be longer than 30 characters",
+              [inputName]: "The group name cannot be longer than 40 characters",
             };
           });
           hasError = true;

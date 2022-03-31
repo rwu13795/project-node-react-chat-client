@@ -98,16 +98,18 @@ function ChangeUsername({ username }: Props): JSX.Element {
             </>
           ) : (
             <>
-              {username}
-              <Button
-                variant="contained"
-                color="secondary"
-                className={styles_2.edit_button}
-                onClick={toggleEditing}
-              >
-                <EditIcon fontSize="small" />
-                Edit
-              </Button>
+              <div className={styles.text_button_wrapper}>
+                {username}
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  className={styles_2.edit_button}
+                  onClick={toggleEditing}
+                >
+                  <EditIcon fontSize="small" />
+                  Edit
+                </Button>
+              </div>
             </>
           )}
         </>

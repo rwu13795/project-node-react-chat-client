@@ -69,12 +69,12 @@ export function resizeMenu() {
     // console.dir(leftMenu);
     let width = leftMenu.scrollWidth - dragDistance;
     console.log("width", width);
-    if (width > 550) {
-      leftMenu.style.width = 550 + "px";
+    if (width > 675) {
+      leftMenu.style.width = 675 + "px";
       // right menu has to overlap on the left menu, the 25px difference is
       // to make the background of right menu to overlap the "resize_handle_wrapper"
       // take a look at the HomePage CSS for more detail
-      righMenu.style.width = "calc(100vw - 525px)";
+      righMenu.style.width = "calc(100vw - 650px)";
     } else if (width < 295) {
       leftMenu.style.width = 294 + "px";
       righMenu.style.width = "calc(100vw - 269px)";

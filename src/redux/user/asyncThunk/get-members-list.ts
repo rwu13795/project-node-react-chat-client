@@ -1,9 +1,10 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { WritableDraft } from "immer/dist/internal";
 import { RootState } from "../..";
 import { chatType } from "../../message/messageSlice";
 
 import { client, serverUrl } from "../../utils";
-import { GroupMember } from "../userSlice";
+import { GroupMember, UserState } from "../userSlice";
 
 interface Req_body {
   group_id: string;
@@ -44,3 +45,15 @@ export const getGroupMembersList_database = createAsyncThunk<
     wasMembersListLoaded: false,
   };
 });
+
+export function getGroupMembersList_database_fulfilled(
+  state: WritableDraft<UserState>,
+  action: PayloadAction<Payload>
+) {
+  const { group_id, group_members, wasMembersListLoaded } = action.payload;
+  if (wasMembersListLoaded) return;
+
+  state.groupsList[group_id].group_members = group_members;
+  state.groupsList[group_id].wasMembersListLoaded = true;
+  // state.loadingStatus = "succeeded";
+}

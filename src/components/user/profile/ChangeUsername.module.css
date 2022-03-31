@@ -4,3 +4,12 @@
   align-items: baseline;
   gap: 8px;
 }
+
+.text_button_wrapper {
+  overflow-wrap: break-word;
+  max-width: 460px;
+  display: flex;
+  flex-flow: row wrap;
+  gap: 5px;
+  align-items: baseline;
+}

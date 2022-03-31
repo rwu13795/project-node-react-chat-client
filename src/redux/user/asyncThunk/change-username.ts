@@ -1,7 +1,10 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { WritableDraft } from "immer/dist/internal";
 import { RootState } from "../..";
+import { loadingStatusEnum } from "../../../utils";
 
 import { client, serverUrl } from "../../utils";
+import { UserState } from "../userSlice";
 
 interface Res_body {
   username: string;
@@ -26,3 +29,24 @@ export const changeUsername = createAsyncThunk<
     return thunkAPI.rejectWithValue(err.response.data);
   }
 });
+
+export function changeUsername_fulfilled(
+  state: WritableDraft<UserState>,
+  action: PayloadAction<Payload>
+) {
+  state.currentUser.username = action.payload.username;
+  state.loadingStatus = loadingStatusEnum.succeeded;
+}
+
+export function changeUsername_pending(state: WritableDraft<UserState>) {
+  state.loadingStatus = loadingStatusEnum.loading;
+}
+
+export function changeUsername_rejected(
+  state: WritableDraft<UserState>,
+  action: PayloadAction<any>
+) {
+  for (let err of action.payload.errors) {
+    state.requestErrors[err.field] = err.message;
+  }
+}

@@ -1,0 +1,19 @@
+.sign_in_button {
+  float: right;
+  height: 44px;
+  width: 44%;
+  min-width: 200px;
+  max-width: 300px;
+  font-size: 18px;
+  border-radius: 6px !important;
+  border: 0 !important;
+}
+
+/* disble the default style */
+.sign_in_button div {
+  padding: 0 !important;
+}
+.sign_in_button div svg {
+  height: 0px !important;
+  width: 0px !important;
+}

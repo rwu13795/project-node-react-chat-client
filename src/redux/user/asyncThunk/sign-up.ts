@@ -1,8 +1,10 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
+import { loadingStatusEnum, onlineStatus_enum } from "../../../utils";
 import { client, serverUrl } from "../../utils";
-import { CurrentUser } from "../userSlice";
+import { CurrentUser, UserState } from "../userSlice";
 
 interface Res_body {
   email: string;
@@ -29,3 +31,26 @@ export const signUp = createAsyncThunk<
     return thunkAPI.rejectWithValue(err.response.data);
   }
 });
+
+export function signUp_fulfilled(
+  state: WritableDraft<UserState>,
+  action: PayloadAction<CurrentUser>
+) {
+  state.currentUser = action.payload;
+  state.currentUser.onlineStatus = onlineStatus_enum.online;
+  state.loadingStatus = loadingStatusEnum.idle;
+}
+
+export function signUp_pending(state: WritableDraft<UserState>) {
+  state.loadingStatus = loadingStatusEnum.loading;
+}
+
+export function signUp_rejected(
+  state: WritableDraft<UserState>,
+  action: PayloadAction<any>
+) {
+  for (let err of action.payload.errors) {
+    state.requestErrors[err.field] = err.message;
+  }
+  state.loadingStatus = loadingStatusEnum.failed;
+}

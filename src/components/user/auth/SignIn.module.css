@@ -23,6 +23,15 @@
   align-items: baseline;
   font-size: 20px;
 }
+
+.buttons_wrapper {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
 .button {
   width: 44%;
   min-width: 200px;

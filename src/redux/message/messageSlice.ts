@@ -8,7 +8,21 @@ import {
   loadChatHistory_database,
   clearNotifications,
   getNotifications,
+  loadChatHistory_database_fulfilled,
+  getNotifications_fulfilled,
+  clearNotifications_fulfilled,
 } from "./asyncThunk";
+import {
+  addNewMessageToHistory_memory_reducer,
+  loadMoreOldChatHistory_database_reducer,
+  resetAfterSignOut_msg_reducer,
+  resetVisitedRoom_reducer,
+  setCurrentUserId_msg_reducer,
+  setInfiniteScrollStats_reducer,
+  setLoadingStatus_msg_reducer,
+  setTargetChatRoom_reducer,
+  updateGroupNote_afterJoining_reducer,
+} from "./reducers";
 
 export enum chatType {
   group = "group",
@@ -51,7 +65,7 @@ export interface Notifications {
   [room_id: string]: { count: number; last_added_at: number };
 }
 
-interface MessageState {
+export interface MessageState {
   targetChatRoom: TargetChatRoom;
   chatHistory: ChatHistory;
   // need to seperate the group and friend notifications, otherwise both group and
@@ -71,7 +85,7 @@ interface MessageState {
   loadingStatus: string;
 }
 
-const initialState: MessageState = {
+export const initialState_msg: MessageState = {
   targetChatRoom: { id: "", name: "", type: "", date_limit: "" },
   chatHistory: {},
   groupNotifications: {},
@@ -86,299 +100,40 @@ const initialState: MessageState = {
 
 const messageSlice = createSlice({
   name: "message",
-  initialState,
+  initialState: initialState_msg,
   reducers: {
-    setCurrentUserId_message(state, action: PayloadAction<string>): void {
-      state.currentUserId_message = action.payload;
-    },
-    setTargetChatRoom(state, action: PayloadAction<TargetChatRoom>): void {
-      state.targetChatRoom = action.payload;
-      const { type, id } = action.payload;
-      // initialize the infiniteScrollStats whenever user enters a room
-      if (!state.infiniteScrollStats[`${type}_${id}`]) {
-        state.infiniteScrollStats[`${type}_${id}`] = {
-          hasMore: true,
-          pageNum: 2,
-        };
-      }
-    },
+    setCurrentUserId_msg: setCurrentUserId_msg_reducer,
 
-    setInfiniteScrollStats(
-      state,
-      action: PayloadAction<{ hasMore?: boolean; pageNum?: number }>
-    ): void {
-      // the infinite scroll will be broken if user re-enters a visited room
-      // the local component "hasMore" and "pageNum" will be reset.
-      // So each room needs to have its own chatHistory "hasMore" and "pageNum" values
-      // in the store
-      const { hasMore, pageNum } = action.payload;
-      const { type, id } = state.targetChatRoom;
-      if (hasMore !== undefined) {
-        state.infiniteScrollStats[`${type}_${id}`].hasMore = hasMore;
-      }
-      if (pageNum !== undefined) {
-        state.infiniteScrollStats[`${type}_${id}`].pageNum = pageNum;
-      }
-    },
+    setTargetChatRoom: setTargetChatRoom_reducer,
 
-    addNewMessageToHistory_memory(
-      state,
-      action: PayloadAction<{ messageObject: MessageObject; room_type: string }>
-    ) {
-      const { messageObject, room_type } = action.payload;
-      const { sender_id, recipient_id } = messageObject;
-      const currentUserId = state.currentUserId_message;
+    setInfiniteScrollStats: setInfiniteScrollStats_reducer,
 
-      const userIsInChatRoom = `${state.targetChatRoom.type}_${state.targetChatRoom.id}`;
-      // since this listener handles all types of live messages
-      // have to figure out which room the live message is belonged to
-      let room_id = "";
-      if (room_type === chatType.private) {
-        if (sender_id === currentUserId) {
-          // when the current user is the sender, then the recipient_id is the room_id
-          room_id = `${room_type}_${recipient_id}`;
-          // reposition the friend in the order of latest notification
-          // both sender and recipient should push the latest chat to top
-          state.friendsPosition = pushPositionToTop(
-            state.friendsPosition,
-            recipient_id
-          );
-        } else {
-          // when the current user is the recipient, then then sender_id is the room_id
-          room_id = `${room_type}_${sender_id}`;
-          // reposition the friend in the order of latest notification
-          state.friendsPosition = pushPositionToTop(
-            state.friendsPosition,
-            sender_id
-          );
-        }
-        // update the live message notification for private chat room
-        // only show notification if user is not in the target room
-        if (!state.friendNotifications[room_id]) {
-          state.friendNotifications[room_id] = { count: 0, last_added_at: 0 };
-        }
-        if (userIsInChatRoom !== room_id) {
-          state.friendNotifications[room_id].count += 1;
-          state.friendNotifications[room_id].last_added_at = Date.now();
-        }
-      } else {
-        // all group rooms are always the recipient
-        room_id = `${room_type}_${recipient_id}`;
-        state.groupsPosition = pushPositionToTop(
-          state.groupsPosition,
-          recipient_id
-        );
-        // update the live message notification for private or group chat rooms
-        if (!state.groupNotifications[room_id]) {
-          state.groupNotifications[room_id] = { count: 0, last_added_at: 0 };
-        }
+    addNewMessageToHistory_memory: addNewMessageToHistory_memory_reducer,
 
-        if (userIsInChatRoom !== room_id) {
-          state.groupNotifications[room_id].count += 1;
-          state.groupNotifications[room_id].last_added_at = Date.now();
-        }
-      }
+    loadMoreOldChatHistory_database: loadMoreOldChatHistory_database_reducer,
 
-      // add message to chat history for the specific room
-      if (!state.chatHistory[room_id]) {
-        state.chatHistory[room_id] = [];
-      }
-      state.chatHistory[room_id].unshift(messageObject);
-    },
+    resetVisitedRoom: resetVisitedRoom_reducer,
 
-    loadMoreOldChatHistory_database(
-      state,
-      action: PayloadAction<{
-        chatHistory: MessageObject[];
-        room_id: string;
-        currentUserId: string;
-        currentUsername: string;
-      }>
-    ) {
-      const { room_id, currentUserId, currentUsername, chatHistory } =
-        action.payload;
-      const friendName = state.targetChatRoom.name;
+    setLoadingStatus_msg: setLoadingStatus_msg_reducer,
 
-      // since the target room is specified when the user clicks on the room
-      // no need to figure out what the room_id is , like I did in
-      // the addNewMessageToHistory_memory
-      const oldChatHistoy: MessageObject[] = chatHistory.map((msg) => {
-        return {
-          sender_id: msg.sender_id,
-          sender_name:
-            msg.sender_id === currentUserId ? currentUsername : friendName,
-          recipient_id: msg.recipient_id,
-          recipient_name:
-            msg.recipient_id === currentUserId ? currentUsername : friendName,
-          msg_body: msg.msg_body,
-          msg_type: msg.msg_type,
-          file_name: msg.file_name,
-          file_url: msg.file_url,
-          created_at: msg.created_at,
-        };
-      });
+    updateGroupNote_afterJoining: updateGroupNote_afterJoining_reducer,
 
-      state.chatHistory[room_id] = [
-        ...state.chatHistory[room_id],
-        ...oldChatHistoy,
-      ];
-    },
-
-    resetVisitedRoom(
-      state,
-      action: PayloadAction<{ room_id: string; visited: boolean }>
-    ): void {
-      const { room_id, visited } = action.payload;
-      state.visitedRoom[room_id] = visited;
-      state.chatHistory[room_id] = [];
-      state.infiniteScrollStats[room_id] = {
-        hasMore: true,
-        pageNum: 2,
-      };
-    },
-
-    setLoadingStatus_msg(state, action: PayloadAction<string>) {
-      state.loadingStatus = action.payload;
-    },
-
-    updateGroupNote_afterJoining(
-      state,
-      action: PayloadAction<NewGroupNotification>
-    ) {
-      // push the new group to top by adding the new notification
-      const note = action.payload;
-      let target_id = `${chatType.group}_${note.group_id}`;
-      if (!state.groupNotifications[target_id]) {
-        state.groupNotifications[target_id] = {
-          count: 0,
-          last_added_at: 0,
-        };
-        // if this is a new group, push the new group_id to the position array
-        // otherwise, do nothing, since user who got kicked or left can join in the same group
-        state.groupsPosition.push(note.group_id);
-      }
-      state.groupNotifications[target_id].count = note.count;
-      state.groupNotifications[target_id].last_added_at = new Date(
-        note.last_added_at
-      ).getTime();
-
-      // use the sort to initialize the position of Groups by the lastest notification
-      state.groupsPosition = sortByLastAdded(
-        state.groupsPosition,
-        state.groupNotifications,
-        chatType.group
-      );
-    },
-
-    resetAfterSignOut_msg(state) {
-      state.targetChatRoom = initialState.targetChatRoom;
-      state.chatHistory = initialState.chatHistory;
-      state.groupNotifications = initialState.groupNotifications;
-      state.friendNotifications = initialState.friendNotifications;
-      state.groupsPosition = initialState.groupsPosition;
-      state.friendsPosition = initialState.friendsPosition;
-      state.visitedRoom = initialState.visitedRoom;
-      state.currentUserId_message = initialState.currentUserId_message;
-      state.infiniteScrollStats = initialState.infiniteScrollStats;
-    },
+    resetAfterSignOut_msg: resetAfterSignOut_msg_reducer,
   },
 
   extraReducers: (builder) => {
     builder
       /***************  Load Chat History  ***************/
-      .addCase(loadChatHistory_database.fulfilled, (state, action): void => {
-        const currentUsername = action.payload.currentUsername;
-        const currentUserId = action.payload.currentUserId;
-        const { type, id, name } = state.targetChatRoom;
-
-        const chatHistory = action.payload.chatHistory;
-
-        if (action.payload.wasHistoryLoaded) return;
-
-        // map the chat history for different room_type `${type}_${id}`
-        state.chatHistory[`${type}_${id}`] = chatHistory.map((msg) => {
-          return {
-            sender_id: msg.sender_id,
-            sender_name:
-              msg.sender_id === currentUserId ? currentUsername : name,
-            recipient_id: msg.recipient_id,
-            recipient_name:
-              msg.recipient_id === currentUserId ? currentUsername : name,
-            msg_body: msg.msg_body,
-            msg_type: msg.msg_type,
-            file_name: msg.file_name,
-            file_url: msg.file_url,
-            file_type: msg.file_type,
-            created_at: msg.created_at,
-          };
-        });
-        // set this room as visited, so it won't fetch message from server again unless
-        // the user is scrolling up for older messages
-        state.visitedRoom[`${type}_${id}`] = true;
-      })
+      .addCase(
+        loadChatHistory_database.fulfilled,
+        loadChatHistory_database_fulfilled
+      )
 
       /***************  Get Notifications  ***************/
-      .addCase(getNotifications.fulfilled, (state, action): void => {
-        // initialize the private chat notification
-        state.friendsPosition = [];
-        action.payload.private.forEach((note) => {
-          let target_id = `${chatType.private}_${note.sender_id}`;
-          if (!state.friendNotifications[target_id]) {
-            state.friendNotifications[target_id] = {
-              count: 0,
-              last_added_at: 0,
-            };
-          }
-          state.friendNotifications[target_id].count = note.count;
-          state.friendNotifications[target_id].last_added_at = new Date(
-            note.last_added_at
-          ).getTime();
-          state.friendsPosition.push(note.sender_id);
-        });
-        // use the sort to initialize the position of Friends by the lastest notification
-        state.friendsPosition = sortByLastAdded(
-          state.friendsPosition,
-          state.friendNotifications,
-          chatType.private
-        );
-
-        // initialize the group chat notification
-        state.groupsPosition = [];
-        action.payload.group.forEach((note) => {
-          let target_id = `${chatType.group}_${note.group_id}`;
-          if (!state.groupNotifications[target_id]) {
-            state.groupNotifications[target_id] = {
-              count: 0,
-              last_added_at: 0,
-            };
-          }
-          state.groupNotifications[target_id].count = note.count;
-          state.groupNotifications[target_id].last_added_at = new Date(
-            note.last_added_at
-          ).getTime();
-          state.groupsPosition.push(note.group_id);
-        });
-        // use the sort to initialize the position of Groups by the lastest notification
-        state.groupsPosition = sortByLastAdded(
-          state.groupsPosition,
-          state.groupNotifications,
-          chatType.group
-        );
-
-        state.loadingStatus = loadingStatusEnum.getNotifications_succeeded;
-      })
+      .addCase(getNotifications.fulfilled, getNotifications_fulfilled)
 
       /***************  Clear Notifications  ***************/
-      .addCase(clearNotifications.fulfilled, (state, action): void => {
-        const { type, id } = action.payload;
-        if (type === chatType.group) {
-          if (!state.groupNotifications[`${type}_${id}`]) return;
-          state.groupNotifications[`${type}_${id}`].count = 0;
-        } else {
-          if (!state.friendNotifications[`${type}_${id}`]) return;
-          state.friendNotifications[`${type}_${id}`].count = 0;
-        }
-      });
+      .addCase(clearNotifications.fulfilled, clearNotifications_fulfilled);
   },
 });
 
@@ -386,7 +141,7 @@ export const {
   setTargetChatRoom,
   addNewMessageToHistory_memory,
   loadMoreOldChatHistory_database,
-  setCurrentUserId_message,
+  setCurrentUserId_msg,
   setInfiniteScrollStats,
   resetVisitedRoom,
   setLoadingStatus_msg,
@@ -472,7 +227,7 @@ export const selectTotalFriendNoteCount = createSelector(
 );
 
 // the user/group with the lastest notification will be on top of the list
-function sortByLastAdded(
+export function sortByLastAdded(
   position: string[],
   notifications: Notifications,
   type: string
@@ -491,7 +246,10 @@ function sortByLastAdded(
   return position;
 }
 
-function pushPositionToTop(position: string[], target_id: string): string[] {
+export function pushPositionToTop(
+  position: string[],
+  target_id: string
+): string[] {
   // array.slice takes O(n), array.indexof takes O(n)
   // Cannot use binary-search on position array since the ids are not sorted
   // it should be more efficient than using array.sort() for the newly added notification

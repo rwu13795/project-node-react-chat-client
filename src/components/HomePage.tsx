@@ -5,7 +5,7 @@ import { Socket } from "socket.io-client";
 
 import {
   selectLoadingStatus_msg,
-  setCurrentUserId_message,
+  setCurrentUserId_msg,
   setLoadingStatus_msg,
 } from "../redux/message/messageSlice";
 import {
@@ -70,7 +70,7 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
       if (socket) return;
 
       dispatch(getNotifications({ currentUserId }));
-      dispatch(setCurrentUserId_message(currentUserId));
+      dispatch(setCurrentUserId_msg(currentUserId));
       // only initialize the socket once. Pass all the user_id to socket-server to let
       // the server identify this socket-client
       let newSocket: Socket = connectSocket(currentUserId, currentUsername);

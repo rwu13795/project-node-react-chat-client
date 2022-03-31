@@ -1,6 +1,8 @@
-import { createAsyncThunk } from "@reduxjs/toolkit";
+import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
+import { loadingStatusEnum, onlineStatus_enum } from "../../../utils";
 import { client, serverUrl } from "../../utils";
 import {
   AddFriendRequest,
@@ -8,6 +10,7 @@ import {
   Friend,
   Group,
   GroupInvitation,
+  UserState,
 } from "../userSlice";
 
 interface SignIn_body {
@@ -57,3 +60,40 @@ export const signIn = createAsyncThunk<
     }
   }
 );
+
+export function signIn_fulfilled(
+  state: WritableDraft<UserState>,
+  action: PayloadAction<Payload>
+) {
+  state.currentUser = action.payload.currentUser;
+  state.addFriendRequests = action.payload.addFriendRequests;
+  state.groupInvitations = action.payload.groupInvitations;
+
+  for (let group of action.payload.groupsList) {
+    state.groupsList[group.group_id] = group;
+    if (!group.user_left) {
+      state.groupsToJoin.push(group.group_id);
+    }
+  }
+
+  for (let friend of action.payload.friendsList) {
+    state.friendsList[friend.friend_id] = friend;
+    state.friendsList[friend.friend_id].onlineStatus =
+      onlineStatus_enum.offline;
+  }
+  state.loadingStatus = loadingStatusEnum.idle;
+}
+
+export function signIn_pending(state: WritableDraft<UserState>) {
+  state.loadingStatus = loadingStatusEnum.loading;
+}
+
+export function signIn_rejected(
+  state: WritableDraft<UserState>,
+  action: PayloadAction<any>
+) {
+  for (let err of action.payload.errors) {
+    state.requestErrors[err.field] = err.message;
+  }
+  state.loadingStatus = loadingStatusEnum.failed;
+}

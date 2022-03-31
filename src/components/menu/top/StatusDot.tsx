@@ -1,7 +1,6 @@
 import { memo, useEffect, useLayoutEffect, useState } from "react";
 
-import { onlineStatus_enum } from "../../../redux/user/userSlice";
-import { AvatarOptions } from "../../../utils";
+import { AvatarOptions, onlineStatus_enum } from "../../../utils";
 
 // UI //
 import styles from "./StatusDot.module.css";

@@ -28,6 +28,10 @@ import {
   getUserAuth,
   getUserAuth_fulfilled,
   signIn,
+  signInWithGoogle,
+  signInWithGoogle_fulfilled,
+  signInWithGoogle_pending,
+  signInWithGoogle_rejected,
   signIn_fulfilled,
   signIn_pending,
   signIn_rejected,
@@ -63,9 +67,10 @@ export interface CurrentUser {
   username: string;
   email: string;
   user_id: string;
+  onlineStatus: string;
   avatar_url?: string;
   isLoggedIn?: boolean;
-  onlineStatus: string;
+  loggedInWithGoogle?: boolean;
 }
 export interface RequestErrors {
   [inputField: string]: string;
@@ -240,7 +245,12 @@ const userSlice = createSlice({
       /***************  CHANGE USERNAME  ***************/
       .addCase(changeUsername.fulfilled, changeUsername_fulfilled)
       .addCase(changeUsername.pending, changeUsername_pending)
-      .addCase(changeUsername.rejected, changeUsername_rejected);
+      .addCase(changeUsername.rejected, changeUsername_rejected)
+
+      /***************  GOOGLE SIGN IN  ***************/
+      .addCase(signInWithGoogle.fulfilled, signInWithGoogle_fulfilled)
+      .addCase(signInWithGoogle.pending, signInWithGoogle_pending)
+      .addCase(signInWithGoogle.rejected, signInWithGoogle_rejected);
   },
 });
 

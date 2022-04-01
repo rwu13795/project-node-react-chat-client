@@ -50,6 +50,7 @@ function Auth({ setIsAuth }: Props): JSX.Element {
     if (loadingStatus === loadingStatusEnum.signOut_succeeded) {
       // when user sign out and try to login again without refresh the page,
       // the client should reset all the previous store states to prevent some unforeseen circumstances
+
       dispatch(resetAfterSignOut_msg());
       dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
     }

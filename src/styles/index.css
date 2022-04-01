@@ -17,7 +17,6 @@
 
   --button-bgc-1: linear-gradient(90deg, transparent, var(--main-color-2));
   --button-bgc-2: linear-gradient(270deg, transparent, var(--main-color-2));
-
   --button-bgc-3: linear-gradient(180deg, transparent, var(--main-color-2));
   --button-bgc-4: linear-gradient(0deg, transparent, var(--main-color-2));
 

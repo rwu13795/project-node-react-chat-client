@@ -51,6 +51,7 @@ function UserAvatar({
     if (socket) {
       logout_emitter(socket);
     }
+
     dispatch(signOut());
     dispatch(setIsLoggedIn(false));
     navigate("/");

@@ -115,7 +115,7 @@ function SignIn(): JSX.Element {
             >
               SIGN IN
             </LoadingButton>
-            <GoogleSignIn />
+            <GoogleSignIn appearOffline={appearOffline} />
           </div>
         </div>
       </form>

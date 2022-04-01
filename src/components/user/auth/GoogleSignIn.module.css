@@ -4,9 +4,25 @@
   width: 44%;
   min-width: 200px;
   max-width: 300px;
-  font-size: 18px;
   border-radius: 6px !important;
   border: 0 !important;
+  margin-bottom: 6px;
+  transition: all 1s;
+}
+
+.sign_in_button:hover {
+  background-image: var(--modal-bgc-1);
+  transition: all 1s;
+}
+
+.sign_in_button span {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 6px;
+  padding: 0 !important;
+  width: 100%;
 }
 
 /* disble the default style */
@@ -16,4 +32,24 @@
 .sign_in_button div svg {
   height: 0px !important;
   width: 0px !important;
+}
+
+.text {
+  color: black;
+  font-size: 16px;
+}
+
+.loading {
+  width: 24px;
+  color: var(--main-color-2);
+}
+
+.logo {
+  width: 30px;
+}
+
+.error {
+  text-align: left;
+  font-size: 14px;
+  color: red;
 }

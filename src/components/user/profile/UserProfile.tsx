@@ -40,7 +40,7 @@ function UserProfile({ socket, setSocket }: Props): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const { avatar_url, user_id, username, email } =
+  const { avatar_url, user_id, username, email, loggedInWithGoogle } =
     useSelector(selectCurrentUser);
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const group_ids = useSelector(selectGroupsToJoin);
@@ -130,12 +130,17 @@ function UserProfile({ socket, setSocket }: Props): JSX.Element {
             </div>
           </div>
 
-          <div className={styles.title} id="main_title">
-            Change Password
-          </div>
-          <div className={styles.lower_body}>
-            <ChangePW />
-          </div>
+          {!loggedInWithGoogle && (
+            <>
+              <div className={styles.title} id="main_title">
+                Change Password
+              </div>
+
+              <div className={styles.lower_body}>
+                <ChangePW />
+              </div>
+            </>
+          )}
 
           <img src={background_2} alt="bg" className={styles.img_wrapper} />
 

@@ -6,18 +6,22 @@ import ChatRoomMenu from "./ChatRoomMenu";
 
 // UI //
 import styles from "./ChatRoom.module.css";
+import { useSelector } from "react-redux";
+import { selectTargetChatRoom } from "../../../redux/message/messageSlice";
 
 interface Props {
   socket: Socket | undefined;
 }
 
 function ChatRoom({ socket }: Props): JSX.Element {
+  const targetChatRoom = useSelector(selectTargetChatRoom);
+
   const [openMemberList, setOpenMemberList] = useState<boolean>(false);
   const [openFriendsForGroup, setOpenFriendsForGroup] =
     useState<boolean>(false);
   const [openGroupsForFriend, setGroupsForFriend] = useState<boolean>(false);
 
-  return (
+  return targetChatRoom.id ? (
     <main className={styles.main}>
       <ChatRoomMenu
         socket={socket}
@@ -32,6 +36,8 @@ function ChatRoom({ socket }: Props): JSX.Element {
         openGroupsForFriend={openGroupsForFriend}
       />
     </main>
+  ) : (
+    <main className={styles.no_target}></main>
   );
 }
 

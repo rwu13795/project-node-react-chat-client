@@ -22,18 +22,14 @@ import {
   TextField,
 } from "@mui/material";
 
-export interface InputValues {
+export interface InputFields {
   [inputName: string]: string;
 }
-export interface InputErrors {
-  [inputField: string]: string;
-}
 
-export enum customStyleOptions {
+export enum inputFieldStyles {
   default = "default",
   change_user_name = "change_user_name",
   change_group_name = "change_group_name",
-  create_new_group = "create_new_group",
 }
 
 interface Props {
@@ -41,10 +37,10 @@ interface Props {
   inputValue: string;
   inputError: string;
   requestError: string;
-  setInputValues: React.Dispatch<React.SetStateAction<InputValues>>;
-  setInputErrors: React.Dispatch<React.SetStateAction<InputErrors>>;
+  setInputValues: React.Dispatch<React.SetStateAction<InputFields>>;
+  setInputErrors: React.Dispatch<React.SetStateAction<InputFields>>;
   isDisabled?: boolean;
-  customStyle?: customStyleOptions;
+  customStyle?: inputFieldStyles;
   useMultiline?: boolean;
   size?: inputFieldSizes;
 }
@@ -57,7 +53,7 @@ function InputField({
   setInputValues,
   setInputErrors,
   isDisabled,
-  customStyle = customStyleOptions.default,
+  customStyle = inputFieldStyles.default,
   useMultiline,
   size,
 }: Props): JSX.Element {
@@ -133,7 +129,7 @@ function InputField({
   let content: JSX.Element = <></>;
   switch (customStyle) {
     default:
-    case customStyleOptions.default:
+    case inputFieldStyles.default:
       content = (
         <>
           <InputLabel htmlFor={inputLabel} className={lable_size}>
@@ -157,8 +153,8 @@ function InputField({
       );
       break;
 
-    case customStyleOptions.change_user_name:
-    case customStyleOptions.change_group_name:
+    case inputFieldStyles.change_user_name:
+    case inputFieldStyles.change_group_name:
       error_text =
         styles.error_text_lg + " " + styles.error_text_change_user_name;
       content = (

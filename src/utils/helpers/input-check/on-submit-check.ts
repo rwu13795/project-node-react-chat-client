@@ -1,17 +1,14 @@
 import { Dispatch, SetStateAction } from "react";
-import {
-  InputErrors,
-  InputValues,
-} from "../../../components/input-field/InputField";
+import { InputFields } from "../../../components/input-field/InputField";
 import { onBlurCheck } from "./on-blur-check";
 
 export function onSubmitCheck(
-  inputValues: InputValues,
-  setInputErrors: Dispatch<SetStateAction<InputErrors>>
+  inputValues: InputFields,
+  setInputErrors: Dispatch<SetStateAction<InputFields>>
 ): boolean {
   let hasError = false;
 
-  // set error on the untouched empty field
+  // set error on the un-touched empty field
   for (let [name, value] of Object.entries(inputValues)) {
     if (value === "") {
       setInputErrors((prev) => {

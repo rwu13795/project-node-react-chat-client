@@ -1,4 +1,4 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 
 import type { RootState } from "../index";
 import { loadingStatusEnum, onlineStatus_enum } from "../../utils";
@@ -62,6 +62,7 @@ import {
   updateGroupAdmin_reducer,
   updateGroupsList_reducer,
 } from "./reducers";
+import { InputFields } from "../../components/input-field/InputField";
 
 export interface CurrentUser {
   username: string;
@@ -72,9 +73,8 @@ export interface CurrentUser {
   isLoggedIn?: boolean;
   loggedInWithGoogle?: boolean;
 }
-export interface RequestErrors {
-  [inputField: string]: string;
-}
+export interface RequestErrors extends InputFields {}
+
 export interface AddFriendRequest {
   sender_id: string;
   sender_username: string;

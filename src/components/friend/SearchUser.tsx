@@ -19,21 +19,16 @@ import {
 import { client, serverUrl } from "../../redux/utils";
 import { addFriendRequest_emitter } from "../../socket-io/emitters";
 import {
-  AvatarOptions,
   inputFieldSizes,
   inputNames,
   loadingStatusEnum,
   onSubmitCheck,
 } from "../../utils";
-import InputField, {
-  InputErrors,
-  InputValues,
-} from "../input-field/InputField";
+import InputField, { InputFields } from "../input-field/InputField";
 
 // UI //
 import styles from "./SearchUser.module.css";
 import { Button, FormControlLabel, Radio, RadioGroup } from "@mui/material";
-import UserAvatar from "../menu/top/UserAvatar";
 import SearchFound from "./SearchFound";
 
 interface Props {
@@ -47,17 +42,17 @@ function SearchUser({ socket }: Props): JSX.Element {
   const currentUser = useSelector(selectCurrentUser);
   const result_addFriendRequest = useSelector(selectResult_addFriendRequest);
 
-  const [emailValue, setEmailValue] = useState<InputValues>({
+  const [idInput, setIdInput] = useState<InputFields>({
+    [inputNames.user_ID]: "",
+  });
+  const [idError, setIdError] = useState<InputFields>({
+    [inputNames.user_ID]: "",
+  });
+  const [emailInput, setEmailInput] = useState<InputFields>({
     [inputNames.email]: "",
   });
-  const [emailError, setEmailError] = useState<InputErrors>({
+  const [emailError, setEmailError] = useState<InputFields>({
     [inputNames.email]: "",
-  });
-  const [idValue, setIdValue] = useState<InputValues>({
-    User_ID: "",
-  });
-  const [idError, setIdError] = useState<InputErrors>({
-    User_ID: "",
   });
 
   const [foundUser, setFoundUser] = useState<{
@@ -80,15 +75,16 @@ function SearchUser({ socket }: Props): JSX.Element {
 
     let hasError = false;
     if (findById) {
-      hasError = onSubmitCheck(idValue, setIdError);
-      console.log(currentUser.user_id, idValue.User_ID);
-      if (currentUser.user_id === idValue.User_ID) {
+      hasError = onSubmitCheck(idInput, setIdInput);
+      console.log("hasError", hasError, idError);
+      console.log(currentUser.user_id, idInput[inputNames.user_ID]);
+      if (currentUser.user_id === idInput[inputNames.user_ID]) {
         setErrorMsg("You cannot add yourself as a friend.....");
         hasError = true;
       }
     } else {
-      hasError = onSubmitCheck(emailValue, setEmailError);
-      if (currentUser.email === emailValue.email) {
+      hasError = onSubmitCheck(emailInput, setEmailError);
+      if (currentUser.email === emailInput[inputNames.email]) {
         setErrorMsg("You cannot add yourself as a friend.....");
         hasError = true;
       }
@@ -99,12 +95,12 @@ function SearchUser({ socket }: Props): JSX.Element {
       const { data } = await client.post<
         { user_id: string; username: string; avatar_url: string }[]
       >(serverUrl + `/user/search-user`, {
-        user_id: idValue.User_ID,
-        user_email: emailValue[inputNames.email],
+        user_id: idInput[inputNames.user_ID],
+        user_email: emailInput[inputNames.email],
       });
 
       if (data.length === 0) {
-        setErrorMsg("This user is does not exist in our record.");
+        setErrorMsg("This user does not exist in our record.");
         setIsFound(false);
       } else {
         setFoundUser({ ...data[0] });
@@ -171,35 +167,27 @@ function SearchUser({ socket }: Props): JSX.Element {
 
       <form onSubmit={submitSearchHandler}>
         <div className={styles.input_field}>
-          {findById
-            ? Object.entries(idValue).map(([name, value]) => {
-                return (
-                  <InputField
-                    key={name}
-                    inputName={name}
-                    inputValue={value}
-                    inputError={idError[name]}
-                    requestError=""
-                    setInputValues={setIdValue}
-                    setInputErrors={setIdError}
-                    size={inputFieldSizes.medium}
-                  />
-                );
-              })
-            : Object.entries(emailValue).map(([name, value]) => {
-                return (
-                  <InputField
-                    key={name}
-                    inputName={name}
-                    inputValue={value}
-                    inputError={emailError[name]}
-                    requestError=""
-                    setInputValues={setEmailValue}
-                    setInputErrors={setEmailError}
-                    size={inputFieldSizes.medium}
-                  />
-                );
-              })}
+          {findById ? (
+            <InputField
+              inputName={inputNames.user_ID}
+              inputValue={idInput[inputNames.user_ID]}
+              inputError={idError[inputNames.user_ID]}
+              requestError=""
+              setInputValues={setIdInput}
+              setInputErrors={setIdError}
+              size={inputFieldSizes.medium}
+            />
+          ) : (
+            <InputField
+              inputName={inputNames.email}
+              inputValue={emailInput[inputNames.email]}
+              inputError={emailError[inputNames.email]}
+              requestError=""
+              setInputValues={setEmailInput}
+              setInputErrors={setEmailError}
+              size={inputFieldSizes.medium}
+            />
+          )}
         </div>
 
         <Button

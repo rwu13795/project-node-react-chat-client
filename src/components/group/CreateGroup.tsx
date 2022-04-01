@@ -19,11 +19,7 @@ import {
 } from "../../utils";
 import { createNewGroup_emitter } from "../../socket-io/emitters";
 import { getNotifications } from "../../redux/message/asyncThunk";
-import InputField, {
-  customStyleOptions,
-  InputErrors,
-  InputValues,
-} from "../input-field/InputField";
+import InputField, { InputFields } from "../input-field/InputField";
 
 // UI //
 import styles from "./CreateGroup.module.css";
@@ -47,10 +43,10 @@ function CreateGroup({
   const loadingStatus = useSelector(selectLoadingStatus_user);
   const requestErrors = useSelector(selectRequestErrors);
 
-  const [inputValues, setInputValues] = useState<InputValues>({
+  const [inputValues, setInputValues] = useState<InputFields>({
     [inputNames.new_group_name]: "",
   });
-  const [inputErrors, setInputErrors] = useState<InputErrors>({
+  const [inputErrors, setInputErrors] = useState<InputFields>({
     [inputNames.new_group_name]: "",
   });
 

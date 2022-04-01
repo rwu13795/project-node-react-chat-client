@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { InputErrors } from "../../../components/input-field/InputField";
+import { InputFields } from "../../../components/input-field/InputField";
 import { inputNames } from "../../enums/input-names";
 
 export const regex_numbers = /^[0-9]*$/;
@@ -10,7 +10,7 @@ export function onBlurCheck(
   inputName: string,
   inputValue: string,
   touched: boolean,
-  setInputErrors: Dispatch<SetStateAction<InputErrors>>
+  setInputErrors: Dispatch<SetStateAction<InputFields>>
 ): boolean {
   let hasError = false;
   if (touched && inputValue === "") {

@@ -13,11 +13,7 @@ import {
   loadingStatusEnum,
   onSubmitCheck,
 } from "../../../utils";
-import InputField, {
-  customStyleOptions,
-  InputErrors,
-  InputValues,
-} from "../../input-field/InputField";
+import InputField, { InputFields } from "../../input-field/InputField";
 
 // UI //
 import styles from "./ChangePW.module.css";
@@ -37,11 +33,11 @@ function ChangePW(): JSX.Element {
   const requestErrors = useSelector(selectRequestErrors);
   const loading = useSelector(selectLoadingStatus_user);
 
-  const [inputValues, setInputValues] = useState<InputValues>(
-    initializeValues<InputValues>(inputFields)
+  const [inputValues, setInputValues] = useState<InputFields>(
+    initializeValues(inputFields)
   );
-  const [inputErrors, setInputErrors] = useState<InputErrors>(
-    initializeValues<InputErrors>(inputFields)
+  const [inputErrors, setInputErrors] = useState<InputFields>(
+    initializeValues(inputFields)
   );
   const [isChanged, setIsChanged] = useState<boolean>(false);
 

@@ -10,6 +10,7 @@ export enum inputNames {
   last_name = "last_name",
   username = "username",
   message = "message",
+  user_ID = "User_ID",
 
   // group
   new_group_name = "new_group_name",

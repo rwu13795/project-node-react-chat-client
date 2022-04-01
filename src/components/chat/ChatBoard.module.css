@@ -1,0 +1,21 @@
+.main {
+  min-height: 90%;
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+  border: green solid 2px;
+}
+
+.chat_logs {
+  min-height: 70%;
+  max-height: 70%;
+  min-width: 100%;
+}
+.input_container {
+  min-height: 30%;
+  max-height: 30%;
+  min-width: 100%;
+}

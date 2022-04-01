@@ -1,3 +1,16 @@
 .main {
-  width: 100%;
+  width: 94%;
+  min-height: calc(100vh - 110px);
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  border: solid red 4px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.no_target {
+  width: 94%;
+  height: calc(100vh - 110px);
 }

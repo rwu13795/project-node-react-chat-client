@@ -7,10 +7,7 @@ import {
   loadingStatusEnum,
   onSubmitCheck,
 } from "../../utils";
-import InputField, {
-  InputErrors,
-  InputValues,
-} from "../input-field/InputField";
+import InputField, { InputFields } from "../input-field/InputField";
 import UserAvatar from "../menu/top/UserAvatar";
 
 // UI //
@@ -32,10 +29,10 @@ function SearchFound({
 }: Props): JSX.Element {
   const loadingStatus = useSelector(selectLoadingStatus_user);
 
-  const [messageInput, setMessageInput] = useState<InputValues>({
+  const [messageInput, setMessageInput] = useState<InputFields>({
     [inputNames.message]: "",
   });
-  const [messageError, setMessageError] = useState<InputErrors>({
+  const [messageError, setMessageError] = useState<InputFields>({
     [inputNames.message]: "",
   });
 
@@ -59,21 +56,17 @@ function SearchFound({
         {username}
       </div>
 
-      {Object.entries(messageInput).map(([name, value]) => {
-        return (
-          <InputField
-            key={name}
-            inputName={name}
-            inputValue={value}
-            inputError={messageError[name]}
-            requestError=""
-            setInputValues={setMessageInput}
-            setInputErrors={setMessageError}
-            size={inputFieldSizes.medium}
-            useMultiline={true}
-          />
-        );
-      })}
+      <InputField
+        inputName={inputNames.message}
+        inputValue={messageInput[inputNames.message]}
+        inputError={messageError[inputNames.message]}
+        requestError=""
+        setInputValues={setMessageInput}
+        setInputErrors={setMessageError}
+        size={inputFieldSizes.medium}
+        useMultiline={true}
+      />
+
       <div className={styles.button_wrapper}>
         <LoadingButton
           variant="outlined"

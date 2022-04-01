@@ -2,10 +2,7 @@ import { FormEvent, memo, MouseEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
-import InputField, {
-  InputErrors,
-  InputValues,
-} from "../../input-field/InputField";
+import InputField, { InputFields } from "../../input-field/InputField";
 import {
   clearRequestError,
   selectLoadingStatus_user,
@@ -37,11 +34,11 @@ function ResetPassword({ expirationInMS, token, user_id }: Props): JSX.Element {
   const [minute, setMinute] = useState<number>(0);
   const [isExpired, setIsExpired] = useState<boolean>(false);
 
-  const [inputValues, setInputValues] = useState<InputValues>({
+  const [inputValues, setInputValues] = useState<InputFields>({
     [inputNames.new_password]: "",
     [inputNames.confirm_new_password]: "",
   });
-  const [inputErrors, setInputErrors] = useState<InputErrors>({
+  const [inputErrors, setInputErrors] = useState<InputFields>({
     [inputNames.new_password]: "",
     [inputNames.confirm_new_password]: "",
   });

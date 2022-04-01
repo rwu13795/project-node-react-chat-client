@@ -10,7 +10,7 @@ import GroupChatMenu from "./GroupChatMenu";
 import PrivateChatMenu from "./PrivateChatMenu";
 
 // UI //
-import styles from "./common.module.css";
+import styles from "./ChatRoomMenu.module.css";
 
 interface Props {
   socket: Socket | undefined;
@@ -28,7 +28,7 @@ function ChatRoomMenu({
   const targetChatRoom = useSelector(selectTargetChatRoom);
 
   return (
-    <main>
+    <main className={styles.chat_menu}>
       {targetChatRoom.type === chatType.group && (
         <GroupChatMenu
           target_id={targetChatRoom.id}

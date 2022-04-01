@@ -1,35 +1,4 @@
 .chat_menu {
-  width: 90%;
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  padding: 0 26px;
-}
-
-.chat_menu_grid {
   width: 100%;
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.chat_menu_grid_left {
-  display: flex;
-}
-.chat_menu_grid_right {
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 20px;
-}
-
-.notification_div {
-  color: red;
-  width: 90%;
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.3s ease-in-out;
+  height: 10%;
 }

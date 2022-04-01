@@ -8,10 +8,7 @@ import {
   selectRequestErrors,
   setLoadingStatus_user,
 } from "../../../redux/user/userSlice";
-import InputField, {
-  InputValues,
-  InputErrors,
-} from "../../input-field/InputField";
+import InputField, { InputFields } from "../../input-field/InputField";
 import { forgotPasswordRequest } from "../../../redux/user/asyncThunk";
 import { inputNames, loadingStatusEnum, onSubmitCheck } from "../../../utils";
 
@@ -29,10 +26,10 @@ function ForgotPassword(): JSX.Element {
   const loading = useSelector(selectLoadingStatus_user);
   const requestErrors = useSelector(selectRequestErrors);
 
-  const [inputValues, setInputValues] = useState<InputValues>({
+  const [inputValues, setInputValues] = useState<InputFields>({
     [inputNames.email]: "",
   });
-  const [inputErrors, setInputErrors] = useState<InputErrors>({
+  const [inputErrors, setInputErrors] = useState<InputFields>({
     [inputNames.email]: "",
   });
   const [succeeded, setSucceeded] = useState<boolean>(false);

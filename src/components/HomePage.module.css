@@ -29,7 +29,7 @@
 .room_list {
   width: calc(100% - 25px); /* leave  room for the drag-button */
   height: 100%;
-  max-height: calc(100vh - 101px);
+  max-height: calc(100vh - 102px);
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
@@ -42,17 +42,15 @@
 .right_grid {
   float: right;
   width: calc(100vw - 269px);
-  height: calc(100vh - 101px);
-  max-height: calc(100vh - 101px);
-  display: flex;
-  flex-flow: row nowrap;
-  justify-content: center;
-  align-items: center;
-  gap: 4px;
+  height: calc(100vh - 102px);
+  max-height: calc(100vh - 102px);
   background-image: url("../images/bg-1.webp");
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
 }
 
 /* the handle itself does not change position while being dragged

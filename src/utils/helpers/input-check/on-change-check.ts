@@ -1,12 +1,12 @@
 import { Dispatch, SetStateAction } from "react";
-import { InputErrors } from "../../../components/input-field/InputField";
+import { InputFields } from "../../../components/input-field/InputField";
 import { inputNames } from "../../enums/input-names";
 import { regex_numbers } from "./on-blur-check";
 
 export function onChangeCheck(
   inputName: string,
   inputValue: string,
-  setInputErrors: Dispatch<SetStateAction<InputErrors>>
+  setInputErrors: Dispatch<SetStateAction<InputFields>>
 ): boolean {
   let hasError = false;
   if (

@@ -9,9 +9,8 @@ import {
 } from "../../../redux/user/userSlice";
 import { inputNames, loadingStatusEnum, onSubmitCheck } from "../../../utils";
 import InputField, {
-  customStyleOptions,
-  InputErrors,
-  InputValues,
+  inputFieldStyles,
+  InputFields,
 } from "../../input-field/InputField";
 import { changeUsername } from "../../../redux/user/asyncThunk";
 
@@ -32,8 +31,8 @@ function ChangeUsername({ username }: Props): JSX.Element {
   const requestErrors = useSelector(selectRequestErrors);
   const loading = useSelector(selectLoadingStatus_user);
 
-  const [inputValues, setInputValues] = useState<InputValues>({});
-  const [inputErrors, setInputErrors] = useState<InputErrors>({});
+  const [inputValues, setInputValues] = useState<InputFields>({});
+  const [inputErrors, setInputErrors] = useState<InputFields>({});
   const [editing, setEditing] = useState<boolean>(false);
 
   // have to initialize the inputValues in useEffect since the username is not loaded
@@ -84,7 +83,7 @@ function ChangeUsername({ username }: Props): JSX.Element {
                 requestError={requestErrors[inputNames.username]}
                 setInputValues={setInputValues}
                 setInputErrors={setInputErrors}
-                customStyle={customStyleOptions.change_user_name}
+                customStyle={inputFieldStyles.change_user_name}
               />
               <Button
                 variant="contained"

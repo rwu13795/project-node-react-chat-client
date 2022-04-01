@@ -13,10 +13,7 @@ import {
   onSubmitCheck,
   initializeValues,
 } from "../../../utils";
-import InputField, {
-  InputErrors,
-  InputValues,
-} from "../../input-field/InputField";
+import InputField, { InputFields } from "../../input-field/InputField";
 
 // UI //
 import styles from "./SignIn.module.css";
@@ -34,11 +31,11 @@ function SignUp(): JSX.Element {
   const requestErrors = useSelector(selectRequestErrors);
   const loading = useSelector(selectLoadingStatus_user);
 
-  const [inputValues, setInputValues] = useState<InputValues>(
-    initializeValues<InputValues>(inputFields)
+  const [inputValues, setInputValues] = useState<InputFields>(
+    initializeValues(inputFields)
   );
-  const [inputErrors, setInputErrors] = useState<InputErrors>(
-    initializeValues<InputErrors>(inputFields)
+  const [inputErrors, setInputErrors] = useState<InputFields>(
+    initializeValues(inputFields)
   );
 
   function onSubmitHandler(

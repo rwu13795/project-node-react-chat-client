@@ -22,7 +22,7 @@
 }
 
 .body {
-  min-height: calc(100vh - 100px);
+  min-height: calc(100vh - 102px);
   max-width: 100vw;
   overflow-x: hidden;
 }

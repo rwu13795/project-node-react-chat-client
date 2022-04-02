@@ -6,7 +6,7 @@ export * from "./clearAddFriendRequests";
 export * from "./setResult_addFriendRequest";
 export * from "./setResult_groupInvitation";
 export * from "./setGroupInvitation";
-export * from "./respondToGroupInvitation";
+export * from "./deleteGroupInvitation";
 export * from "./updateGroupsList";
 export * from "./leaveGroup";
 export * from "./clearLeftMember";

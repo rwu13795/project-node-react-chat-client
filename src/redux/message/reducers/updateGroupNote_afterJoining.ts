@@ -17,7 +17,7 @@ export function updateGroupNote_afterJoining_reducer(
     };
     // if this is a new group, push the new group_id to the position array
     // otherwise, do nothing, since user who got kicked or left can join in the same group
-    state.groupsPosition.push(note.group_id);
+    state.groupsPosition.push(note.group_id.toString());
   }
   state.groupNotifications[target_id].count = note.count;
   state.groupNotifications[target_id].last_added_at = new Date(

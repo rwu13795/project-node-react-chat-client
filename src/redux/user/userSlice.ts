@@ -49,7 +49,7 @@ import {
   clearRequestError_reducer,
   leaveGroup_reducer,
   removeGroup_reducer,
-  respondToGroupInvitation_reducer,
+  deleteGroupInvitation_reducer,
   setAddFriendRequests_reducer,
   setBlockFriend_reducer,
   setFriendsOnlineStatus_reducer,
@@ -85,7 +85,7 @@ export interface AddFriendRequest {
 export interface GroupInvitation {
   group_id: string;
   group_name: string;
-  inviter_name: string;
+  inviter_id: string;
   was_responded: boolean;
 }
 
@@ -175,7 +175,7 @@ const userSlice = createSlice({
 
     setGroupInvitation: setGroupInvitation_reducer,
 
-    respondToGroupInvitation: respondToGroupInvitation_reducer,
+    deleteGroupInvitation: deleteGroupInvitation_reducer,
 
     updateGroupsList: updateGroupsList_reducer,
 
@@ -262,7 +262,7 @@ export const {
   setResult_addFriendRequest,
   setResult_groupInvitation,
   setGroupInvitation,
-  respondToGroupInvitation,
+  deleteGroupInvitation,
   updateGroupsList,
   leaveGroup,
   clearLeftMember,

@@ -47,8 +47,6 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   const groupsToJoin = useSelector(selectGroupsToJoin);
   const loadingStatus = useSelector(selectLoadingStatus_msg);
 
-  const wrapperRef = useRef<HTMLDivElement | null>(null);
-
   useEffect(() => {
     setShowFooter(false);
     return () => {
@@ -85,7 +83,6 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
 
   useEffect(() => {
     if (loadingStatus === loadingStatusEnum.getNotifications_succeeded) {
-      console.log(loadingStatus);
       // let all the friends know this user is online only after loading all
       // the friendList and notications. So when this client received the echo
       // the friendList[id] will not be undefined
@@ -97,20 +94,6 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
       dispatch(setLoadingStatus_msg(loadingStatusEnum.idle));
     }
   }, [loadingStatus, currentOnlineStatus, socket, dispatch]);
-
-  const [down, setDown] = useState<boolean>(false);
-  function showResizeHandle() {
-    // because the "resize_handle_wrapper" is not a child nor a sibling of the "left-menu"
-    // I have to use Ref to set the visibility
-    if (wrapperRef.current) {
-      wrapperRef.current.style.visibility = "visible";
-    }
-  }
-  function hideResizeHandle() {
-    if (wrapperRef.current) {
-      wrapperRef.current.style.visibility = "hidden";
-    }
-  }
 
   return (
     <main className={styles.main_grid}>

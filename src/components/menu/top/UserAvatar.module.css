@@ -28,9 +28,11 @@
 
 .avatar_size_1 {
   font-size: 46px;
+  background-color: var(--main-color-1);
 }
 .avatar_size_2 {
-  font-size: 32px;
+  font-size: 30px;
+  background-color: var(--main-color-1);
 }
 
 .popover_box {

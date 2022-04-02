@@ -67,7 +67,7 @@ function UserAvatar({
   return (
     <main className={main}>
       <Avatar
-        src={avatar_url}
+        src={avatar_url ? avatar_url : username[0]}
         alt={username[0]}
         className={avatar}
         onClick={openListHandler}

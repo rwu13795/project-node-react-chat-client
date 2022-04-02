@@ -45,7 +45,6 @@ function SelectGroupForFriend({ socket, friend_id }: Props): JSX.Element {
         friend_id,
         group_id,
         group_name,
-        inviter_name: currentUsername,
         admin_user_id,
       });
     }

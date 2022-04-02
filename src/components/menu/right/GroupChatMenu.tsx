@@ -54,9 +54,9 @@ function GroupChatMenu({
 
   return (
     <main>
-      <h3>
+      <div>
         Chatting with {targetChatRoom.name}-{targetChatRoom.id}
-      </h3>
+      </div>
       {user_left_at && (
         <div>
           You {was_kicked ? "were kicked out from" : "have left"} this group on{" "}
@@ -73,12 +73,12 @@ function GroupChatMenu({
               Invite friends to group
             </button>
             {/* {openMembersList && <MembersList socket={socket} />} */}
-            {/* <SelectFriendForGroup
+            <SelectFriendForGroup
               socket={socket}
               group_id={group_id}
               group_name={group_name}
               admin_user_id={admin_user_id}
-            /> */}
+            />
             <LeaveGroup
               socket={socket}
               group_id={group_id}

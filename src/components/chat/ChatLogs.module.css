@@ -11,7 +11,7 @@
 }
 
 .logs_container {
-  margin: 30px 10px 10px 10px;
+  margin: 20px 10px 10px 10px;
   display: flex;
   flex-direction: column-reverse;
   height: 100%;

@@ -6,7 +6,13 @@ import {
   resetVisitedRoom,
   updateGroupNote_afterJoining,
 } from "../../../redux/message/messageSlice";
-import { Group, updateGroupsList } from "../../../redux/user/userSlice";
+import {
+  deleteGroupInvitation,
+  Group,
+  setLoadingStatus_user,
+  updateGroupsList,
+} from "../../../redux/user/userSlice";
+import { loadingStatusEnum } from "../../../utils";
 
 export interface NewGroupNotification {
   group_id: string;
@@ -34,12 +40,17 @@ export function joinNewGroup_listener(socket: Socket, dispatch: Dispatch<any>) {
         visited: false,
       })
     );
+
+    console.log("note", note);
+
     dispatch(updateGroupNote_afterJoining(note));
-    // force the user who just joined the group enter the group room
-    let elem = document.getElementById(`${chatType.group}_${newGroupId}`);
-    if (elem) {
-      console.log("enter room ", newGroupId);
-      elem.click();
-    }
+    dispatch(deleteGroupInvitation(newGroupId));
+    dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
+    // // force the user who just joined the group enter the group room
+    // let elem = document.getElementById(`${chatType.group}_${newGroupId}`);
+    // if (elem) {
+    //   console.log("enter room ", newGroupId);
+    //   elem.click();
+    // }
   });
 }

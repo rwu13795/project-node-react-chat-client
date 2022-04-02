@@ -54,7 +54,7 @@ export function getNotifications_fulfilled(
     state.friendNotifications[target_id].last_added_at = new Date(
       note.last_added_at
     ).getTime();
-    state.friendsPosition.push(note.sender_id);
+    state.friendsPosition.push(note.sender_id.toString());
   });
   // use the sort to initialize the position of Friends by the lastest notification
   state.friendsPosition = sortByLastAdded(
@@ -77,7 +77,7 @@ export function getNotifications_fulfilled(
     state.groupNotifications[target_id].last_added_at = new Date(
       note.last_added_at
     ).getTime();
-    state.groupsPosition.push(note.group_id);
+    state.groupsPosition.push(note.group_id.toString());
   });
   // use the sort to initialize the position of Groups by the lastest notification
   state.groupsPosition = sortByLastAdded(

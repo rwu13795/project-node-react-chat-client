@@ -15,12 +15,7 @@
   margin-top: 20px;
   height: 5px;
   min-width: 145%;
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0) 0%,
-    var(--contrast-color-2) 50%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background-image: var(--border-color-2);
 }
 
 .avatar_wrapper {

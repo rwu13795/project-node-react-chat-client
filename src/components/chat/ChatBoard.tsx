@@ -34,15 +34,15 @@ import ChatLogs from "./ChatLogs";
 interface Props {
   socket: Socket | undefined;
   openMemberList: boolean;
-  openFriendsForGroup: boolean;
-  openGroupsForFriend: boolean;
+  openFriendForGroup: boolean;
+  openGroupForFriend: boolean;
 }
 
 function ChatBoard({
   socket,
   openMemberList,
-  openFriendsForGroup,
-  openGroupsForFriend,
+  openFriendForGroup,
+  openGroupForFriend,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
 
@@ -80,7 +80,7 @@ function ChatBoard({
             width: "100%",
             minHeight: "100%",
             border: "solid red 2px",
-            bottom: "80%",
+            bottom: "100%",
           }}
         >
           <div>Member list</div>
@@ -89,7 +89,7 @@ function ChatBoard({
       {targetChatRoom.type === chatType.group && (
         <Slide
           direction="left"
-          in={openFriendsForGroup}
+          in={openFriendForGroup}
           container={containerRef.current}
         >
           <div
@@ -98,9 +98,9 @@ function ChatBoard({
               zIndex: 9,
               position: "relative",
               width: "100%",
-              height: "100%",
+              minHeight: "100%",
               border: "solid red 2px",
-              bottom: "180%",
+              bottom: "201%",
             }}
           >
             open Friends For Group
@@ -110,7 +110,7 @@ function ChatBoard({
       {targetChatRoom.type === chatType.private && (
         <Slide
           direction="left"
-          in={openGroupsForFriend}
+          in={openGroupForFriend}
           container={containerRef.current}
         >
           <div
@@ -119,9 +119,9 @@ function ChatBoard({
               zIndex: 9,
               position: "relative",
               width: "100%",
-              height: "100%",
+              minHeight: "100%",
               border: "solid red 2px",
-              bottom: "101%",
+              bottom: "100%",
             }}
           >
             open Groups For Friend

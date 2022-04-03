@@ -18,6 +18,7 @@ import { loadingStatusEnum } from "../../utils";
 
 // UI //
 import styles from "./ChatLogs.module.css";
+import { CircularProgress } from "@mui/material";
 
 function ChatLogs(): JSX.Element {
   const dispatch = useDispatch();
@@ -109,8 +110,11 @@ function ChatLogs(): JSX.Element {
         scrollableTarget="chat-board"
         loader={showLoader ? <h4>Loading...</h4> : <div></div>}
       >
-        {loadingStatus === loadingStatusEnum.changingTargetRoom ? (
-          <h2>Loading shit load of msg</h2>
+        {loadingStatus === loadingStatusEnum.changingTargetRoom ||
+        loadingStatus === loadingStatusEnum.loadChatHistory_loading ? (
+          <h2>
+            Loading shit load of messages <CircularProgress />
+          </h2>
         ) : (
           chatHistory.map((msg, index) => {
             let folder = "users";

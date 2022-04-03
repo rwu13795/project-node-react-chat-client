@@ -1,0 +1,23 @@
+.main {
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  padding: 14px;
+  gap: 30px;
+}
+
+.text {
+  font-size: 24px;
+}
+
+.buttons_wrapper {
+  width: 100%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: center;
+}
+.button {
+  width: 120px;
+}

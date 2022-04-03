@@ -98,7 +98,7 @@ function ChangeUsername({ username }: Props): JSX.Element {
           ) : (
             <>
               <div className={styles.text_button_wrapper}>
-                {username}
+                <div className={styles.username}>{username}</div>
                 <Button
                   variant="contained"
                   color="secondary"

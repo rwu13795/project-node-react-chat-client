@@ -11,9 +11,11 @@
   --main-color-5: #00ccff9c;
 
   --navbar-color: rgb(143, 205, 245);
+
   --contrast-color-1: #00ca00;
   --contrast-color-2: #0050858f;
   --contrast-color-3: rgb(0, 102, 0);
+  --contrast-color-4: rgba(158, 158, 158, 0.555);
 
   --nav-bgc-color-1: linear-gradient(
     to right,
@@ -46,6 +48,24 @@
     to top,
     rgba(34, 185, 255, 0.5) 0%,
     rgb(255, 255, 255) 100%
+  );
+
+  --border-color-1: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    var(--main-color-5) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  --border-color-2: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0) 0%,
+    var(--contrast-color-2) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  --border-color-3: linear-gradient(
+    to right,
+    var(--contrast-color-2) 0%,
+    rgba(255, 255, 255, 0) 100%
   );
 }
 

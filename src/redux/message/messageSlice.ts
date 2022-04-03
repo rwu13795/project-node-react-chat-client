@@ -11,6 +11,7 @@ import {
   loadChatHistory_database_fulfilled,
   getNotifications_fulfilled,
   clearNotifications_fulfilled,
+  loadChatHistory_database_pending,
 } from "./asyncThunk";
 import {
   addNewMessageToHistory_memory_reducer,
@@ -131,6 +132,10 @@ const messageSlice = createSlice({
       .addCase(
         loadChatHistory_database.fulfilled,
         loadChatHistory_database_fulfilled
+      )
+      .addCase(
+        loadChatHistory_database.pending,
+        loadChatHistory_database_pending
       )
 
       /***************  Get Notifications  ***************/

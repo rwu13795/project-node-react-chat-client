@@ -15,20 +15,26 @@ import SelectFriendForGroup from "../../group/SelectFriendForGroup";
 
 // UI //
 import styles from "./GroupChatMenu.module.css";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
+import { Tooltip, useMediaQuery } from "@mui/material";
+import MembersListAvatars from "../../group/MembersListAvatars";
+import GroupAddIcon from "@mui/icons-material/GroupAdd";
 
 interface Props {
   target_id: string;
   socket: Socket | undefined;
   setOpenMemberList: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpenFriendsForGroup: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenFriendForGroup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function GroupChatMenu({
   target_id,
   socket,
   setOpenMemberList,
-  setOpenFriendsForGroup,
+  setOpenFriendForGroup,
 }: Props): JSX.Element {
+  const isSmall = useMediaQuery("(max-width:765px)");
+
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const {
     group_id,
@@ -37,29 +43,33 @@ function GroupChatMenu({
     user_left_at,
     was_kicked,
     user_left,
+    group_members,
   } = useSelector(selectTargetGroup(target_id));
   const result_invitation = useSelector(selectResult_groupInvitation);
 
   useEffect(() => {
-    setOpenFriendsForGroup(false);
+    setOpenFriendForGroup(false);
     setOpenMemberList(false);
   }, [targetChatRoom]);
 
   function openMembersListHandler() {
     setOpenMemberList((prev) => !prev);
-    setOpenFriendsForGroup(false);
+    setOpenFriendForGroup(false);
   }
 
-  function openFriendsForGroupHandler() {
-    setOpenFriendsForGroup((prev) => !prev);
+  function openFriendForGroupHandler() {
+    setOpenFriendForGroup((prev) => !prev);
     setOpenMemberList(false);
   }
 
   return (
     <main className={styles.main}>
-      <div>back icon here</div>
+      <div className={styles.left}>
+        {isSmall && <ArrowBackIosIcon className={styles.back_arrow} />}
+      </div>
       <div className={styles.center}>
         <div className={styles.center_upper}>{targetChatRoom.name}</div>
+        <div className={styles.center_boreder}></div>
         {user_left_at && (
           <div className={styles.center_lower}>
             You {was_kicked ? "were kicked out from" : "have left"} this group
@@ -72,23 +82,33 @@ function GroupChatMenu({
           <RemoveGroup />
         ) : (
           <>
-            <button onClick={openMembersListHandler}>Members list</button>
-            <button onClick={openFriendsForGroupHandler}>
-              Invite friends to group
-            </button>
-            {/* {openMembersList && <MembersList socket={socket} />} */}
-            <SelectFriendForGroup
-              socket={socket}
-              group_id={group_id}
-              group_name={group_name}
-              admin_user_id={admin_user_id}
-            />
-            <LeaveGroup
-              socket={socket}
-              group_id={group_id}
-              group_name={group_name}
-              admin_user_id={admin_user_id}
-            />
+            <Tooltip title="Group Info">
+              <div
+                className={styles.group_info}
+                onClick={openMembersListHandler}
+              >
+                <MembersListAvatars group_members={group_members} />
+              </div>
+            </Tooltip>
+
+            <Tooltip title="Invite Friend">
+              <div
+                className={styles.icon_wrapper}
+                onClick={openFriendForGroupHandler}
+              >
+                <GroupAddIcon className={styles.invite_friends} />
+              </div>
+            </Tooltip>
+            <Tooltip title="Leave Group">
+              <div className={styles.icon_wrapper}>
+                <LeaveGroup
+                  socket={socket}
+                  group_id={group_id}
+                  group_name={group_name}
+                  admin_user_id={admin_user_id}
+                />
+              </div>
+            </Tooltip>
           </>
         )}
       </div>

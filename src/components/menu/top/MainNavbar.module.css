@@ -6,7 +6,7 @@
 }
 
 .left_grid {
-  max-width: 70%;
+  max-width: 85%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
@@ -20,7 +20,7 @@
 }
 
 .right_grid {
-  max-width: 30%;
+  max-width: 15%;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-end;

@@ -58,7 +58,7 @@ function ChangeOnlineStatus({
     <main>
       <div className={styles.button_wrapper}>
         <Button onClick={openListHandler} className={styles.button}>
-          {username}
+          <div className={styles.username}>{username}</div>
           <KeyboardArrowDownIcon />
         </Button>
         <div className={styles.status}>

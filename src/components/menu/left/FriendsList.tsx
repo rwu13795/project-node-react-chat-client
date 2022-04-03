@@ -90,6 +90,22 @@ function FriendsList({
         <div className={expand ? styles.list_item_border : ""}></div>
       </div>
 
+      <Collapse in={expand} timeout="auto" unmountOnExit>
+        {addFriendRequests.length > 0 && <AddFriendRequest socket={socket} />}
+        <List component="div" disablePadding className={styles.group_list}>
+          <OnlineOfflineList
+            selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+            socket={socket}
+            isOnline={true}
+          />
+          <OnlineOfflineList
+            selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+            socket={socket}
+            isOnline={false}
+          />
+        </List>
+      </Collapse>
+
       <Modal
         disableScrollLock={true}
         open={openModal}
@@ -112,22 +128,6 @@ function FriendsList({
           </Box>
         </Fade>
       </Modal>
-
-      <Collapse in={expand} timeout="auto" unmountOnExit>
-        {addFriendRequests.length > 0 && <AddFriendRequest socket={socket} />}
-        <List component="div" disablePadding className={styles.group_list}>
-          <OnlineOfflineList
-            selectTargetChatRoomHandler={selectTargetChatRoomHandler}
-            socket={socket}
-            isOnline={true}
-          />
-          <OnlineOfflineList
-            selectTargetChatRoomHandler={selectTargetChatRoomHandler}
-            socket={socket}
-            isOnline={false}
-          />
-        </List>
-      </Collapse>
     </main>
   );
 }

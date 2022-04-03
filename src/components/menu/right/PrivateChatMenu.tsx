@@ -20,24 +20,24 @@ import GroupAddIcon from "@mui/icons-material/GroupAdd";
 interface Props {
   friend_id: string;
   socket: Socket | undefined;
-  setOpenGroupsForFriend: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenGroupForFriend: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function PrivateChatMenu({
   friend_id,
   socket,
-  setOpenGroupsForFriend,
+  setOpenGroupForFriend,
 }: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetFriend = useSelector(selectTargetFriend(friend_id));
   const result_invitation = useSelector(selectResult_groupInvitation);
 
   useEffect(() => {
-    setOpenGroupsForFriend(false);
+    setOpenGroupForFriend(false);
   }, [targetChatRoom]);
 
-  function openGroupsForFriendHandler() {
-    setOpenGroupsForFriend((prev) => !prev);
+  function openGroupForFriendHandler() {
+    setOpenGroupForFriend((prev) => !prev);
   }
 
   return (
@@ -50,7 +50,7 @@ function PrivateChatMenu({
           {/* <SelectGroupForFriend socket={socket} friend_id={friend_id} />
           
           */}
-          <button onClick={openGroupsForFriendHandler}>
+          <button onClick={openGroupForFriendHandler}>
             invite friend to groups
           </button>
           {targetFriend.user_blocked_friend ? (

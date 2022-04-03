@@ -6,6 +6,9 @@ import { selectTargetChatRoom } from "../../redux/message/messageSlice";
 import { selectTargetGroup, selectUserId } from "../../redux/user/userSlice";
 import KickMember from "./KickMember";
 
+// UI //
+import styles from "./MembersList.module.css";
+
 interface Props {
   socket: Socket | undefined;
 }

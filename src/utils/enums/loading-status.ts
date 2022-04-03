@@ -28,4 +28,7 @@ export enum loadingStatusEnum {
   signOut_succeeded = "signOut_succeeded",
 
   googleSignIn_loading = "googleSignIn_loading",
+
+  loadChatHistory_succeeded = "loadChatHistory_succeeded",
+  loadChatHistory_loading = "loadChatHistory_loading",
 }

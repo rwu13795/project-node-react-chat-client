@@ -116,33 +116,6 @@ function GroupsList({
         <div className={expand ? styles.list_item_border : ""}></div>
       </div>
 
-      <Modal
-        disableScrollLock={true}
-        open={openModal}
-        onClose={handleCloseModal}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500,
-        }}
-      >
-        <Fade in={openModal}>
-          <Box className={styles.modal}>
-            <div className={styles.close_icon_wrapper}>
-              <CancelPresentationIcon
-                className={styles.close_icon}
-                onClick={handleCloseModal}
-              />
-            </div>
-            <CreateGroup
-              socket={socket}
-              selectTargetChatRoomHandler={selectTargetChatRoomHandler}
-              handleCloseModal={handleCloseModal}
-            />
-          </Box>
-        </Fade>
-      </Modal>
-
       <Collapse in={expand} timeout="auto" unmountOnExit>
         {groupInvitations.length > 0 && (
           <GroupInvitation
@@ -183,6 +156,33 @@ function GroupsList({
           </div>
         )}
       </Collapse>
+
+      <Modal
+        disableScrollLock={true}
+        open={openModal}
+        onClose={handleCloseModal}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={openModal}>
+          <Box className={styles.modal}>
+            <div className={styles.close_icon_wrapper}>
+              <CancelPresentationIcon
+                className={styles.close_icon}
+                onClick={handleCloseModal}
+              />
+            </div>
+            <CreateGroup
+              socket={socket}
+              selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+              handleCloseModal={handleCloseModal}
+            />
+          </Box>
+        </Fade>
+      </Modal>
     </main>
   );
 }

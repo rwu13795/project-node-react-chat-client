@@ -2,6 +2,7 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
+import { loadingStatusEnum } from "../../../utils";
 import { client, serverUrl } from "../../utils";
 import { MessageState } from "../messageSlice";
 
@@ -101,4 +102,12 @@ export function loadChatHistory_database_fulfilled(
   // set this room as visited, so it won't fetch message from server again unless
   // the user is scrolling up for older messages
   state.visitedRoom[`${type}_${id}`] = true;
+
+  state.loadingStatus = loadingStatusEnum.idle;
+}
+
+export function loadChatHistory_database_pending(
+  state: WritableDraft<MessageState>
+) {
+  state.loadingStatus = loadingStatusEnum.loadChatHistory_loading;
 }

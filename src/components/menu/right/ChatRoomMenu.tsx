@@ -15,15 +15,15 @@ import styles from "./ChatRoomMenu.module.css";
 interface Props {
   socket: Socket | undefined;
   setOpenMemberList: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpenFriendsForGroup: React.Dispatch<React.SetStateAction<boolean>>;
-  setOpenGroupsForFriend: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenFriendForGroup: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenGroupForFriend: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function ChatRoomMenu({
   socket,
   setOpenMemberList,
-  setOpenFriendsForGroup,
-  setOpenGroupsForFriend,
+  setOpenFriendForGroup,
+  setOpenGroupForFriend,
 }: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
 
@@ -34,14 +34,14 @@ function ChatRoomMenu({
           target_id={targetChatRoom.id}
           socket={socket}
           setOpenMemberList={setOpenMemberList}
-          setOpenFriendsForGroup={setOpenFriendsForGroup}
+          setOpenFriendForGroup={setOpenFriendForGroup}
         />
       )}
       {targetChatRoom.type === chatType.private && (
         <PrivateChatMenu
           friend_id={targetChatRoom.id}
           socket={socket}
-          setOpenGroupsForFriend={setOpenGroupsForFriend}
+          setOpenGroupForFriend={setOpenGroupForFriend}
         />
       )}
     </main>

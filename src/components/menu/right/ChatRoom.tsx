@@ -17,23 +17,22 @@ function ChatRoom({ socket }: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
 
   const [openMemberList, setOpenMemberList] = useState<boolean>(false);
-  const [openFriendsForGroup, setOpenFriendsForGroup] =
-    useState<boolean>(false);
-  const [openGroupsForFriend, setGroupsForFriend] = useState<boolean>(false);
+  const [openFriendForGroup, setOpenFriendForGroup] = useState<boolean>(false);
+  const [openGroupForFriend, setGroupForFriend] = useState<boolean>(false);
 
   return targetChatRoom.id ? (
     <main className={styles.main}>
       <ChatRoomMenu
         socket={socket}
         setOpenMemberList={setOpenMemberList}
-        setOpenFriendsForGroup={setOpenFriendsForGroup}
-        setOpenGroupsForFriend={setGroupsForFriend}
+        setOpenFriendForGroup={setOpenFriendForGroup}
+        setOpenGroupForFriend={setGroupForFriend}
       />
       <ChatBoard
         socket={socket}
         openMemberList={openMemberList}
-        openFriendsForGroup={openFriendsForGroup}
-        openGroupsForFriend={openGroupsForFriend}
+        openFriendForGroup={openFriendForGroup}
+        openGroupForFriend={openGroupForFriend}
       />
     </main>
   ) : (

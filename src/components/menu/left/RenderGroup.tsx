@@ -79,11 +79,7 @@ function RenderGroup({
       </main>
     );
   } else {
-    return (
-      <main>
-        <h3>Loading ................</h3>
-      </main>
-    );
+    return <main></main>;
   }
 }
 

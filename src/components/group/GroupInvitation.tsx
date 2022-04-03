@@ -106,7 +106,7 @@ function GroupInvitation({ groupInvitations, socket }: Props): JSX.Element {
               return (
                 <div key={group_id} className={styles.invitation_wrapper}>
                   <div className={styles.invitation}>
-                    <div className={styles.username}>
+                    <div className={styles.user_wrapper}>
                       <div className={styles.avatar_wrapper}>
                         <UserAvatar
                           socket={undefined}
@@ -115,7 +115,7 @@ function GroupInvitation({ groupInvitations, socket }: Props): JSX.Element {
                           option={AvatarOptions.topAvatar}
                         />
                       </div>
-                      <div>{friend_username}</div>
+                      <div className={styles.username}>{friend_username}</div>
                     </div>
                     <div className={styles.inv_text}>invites you to</div>
                     <div className={styles.group_name}>

@@ -24,6 +24,7 @@ import InputField, { InputFields } from "../input-field/InputField";
 // UI //
 import styles from "./CreateGroup.module.css";
 import { Button } from "@mui/material";
+import { LoadingButton } from "@mui/lab";
 
 interface Props {
   socket: Socket | undefined;
@@ -63,7 +64,7 @@ function CreateGroup({
         chatType.group
       );
       handleCloseModal();
-      dispatch(setLoadingStatus_user("idle"));
+      dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
     }
   }, [loadingStatus, newGroupToJoin]);
 
@@ -74,6 +75,7 @@ function CreateGroup({
 
     const hasError = onSubmitCheck(inputValues, setInputErrors);
     if (hasError) return;
+    dispatch(setLoadingStatus_user(loadingStatusEnum.createNewGroup_loading));
     dispatch(
       createNewGroup({
         group_name: inputValues[inputNames.new_group_name],
@@ -103,25 +105,26 @@ function CreateGroup({
                 isDisabled={
                   loadingStatus ===
                     loadingStatusEnum.createNewGroup_succeeded ||
-                  loadingStatus === loadingStatusEnum.loading
+                  loadingStatus === loadingStatusEnum.createNewGroup_loading
                 }
               />
             );
           })}
         </div>
 
-        <Button
+        <LoadingButton
           type="submit"
           variant="outlined"
           className={styles.button}
           onClick={createGroupHandler}
+          loading={loadingStatus === loadingStatusEnum.createNewGroup_loading}
           disabled={
             loadingStatus === loadingStatusEnum.createNewGroup_succeeded ||
-            loadingStatus === loadingStatusEnum.loading
+            loadingStatus === loadingStatusEnum.createNewGroup_loading
           }
         >
           Create
-        </Button>
+        </LoadingButton>
       </form>
 
       <div className={styles.error_groups_limit}>

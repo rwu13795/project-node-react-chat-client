@@ -46,11 +46,12 @@ export function joinNewGroup_listener(socket: Socket, dispatch: Dispatch<any>) {
     dispatch(updateGroupNote_afterJoining(note));
     dispatch(deleteGroupInvitation(newGroupId));
     dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
-    // // force the user who just joined the group enter the group room
-    // let elem = document.getElementById(`${chatType.group}_${newGroupId}`);
-    // if (elem) {
-    //   console.log("enter room ", newGroupId);
-    //   elem.click();
-    // }
+    // if the user is in the group room which he is re-joining, the chatHistory
+    // won't be updated if I don't force this user "click" on this group
+    let elem = document.getElementById(`${chatType.group}_${newGroupId}`);
+    if (elem) {
+      console.log("enter room ", newGroupId);
+      elem.click();
+    }
   });
 }

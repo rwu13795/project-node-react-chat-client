@@ -2,6 +2,7 @@ import { ChangeEvent, memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
+  removeGroupPosition,
   selectTargetChatRoom,
   setTargetChatRoom,
 } from "../../redux/message/messageSlice";
@@ -30,6 +31,7 @@ function RemoveGroup(): JSX.Element {
 
     dispatch(setTargetChatRoom({ id: "", name: "", type: "", date_limit: "" }));
     dispatch(removeGroup({ group_id }));
+    dispatch(removeGroupPosition({ group_id }));
   }
 
   return (

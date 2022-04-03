@@ -15,6 +15,7 @@ import {
 import {
   addNewMessageToHistory_memory_reducer,
   loadMoreOldChatHistory_database_reducer,
+  removeGroupPosition_reducer,
   resetAfterSignOut_msg_reducer,
   resetVisitedRoom_reducer,
   setCurrentUserId_msg_reducer,
@@ -120,6 +121,8 @@ const messageSlice = createSlice({
     updateGroupNote_afterJoining: updateGroupNote_afterJoining_reducer,
 
     resetAfterSignOut_msg: resetAfterSignOut_msg_reducer,
+
+    removeGroupPosition: removeGroupPosition_reducer,
   },
 
   extraReducers: (builder) => {
@@ -148,6 +151,7 @@ export const {
   setLoadingStatus_msg,
   updateGroupNote_afterJoining,
   resetAfterSignOut_msg,
+  removeGroupPosition,
 } = messageSlice.actions;
 
 export default messageSlice.reducer;

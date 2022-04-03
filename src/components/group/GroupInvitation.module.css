@@ -33,13 +33,13 @@
   padding: 4px;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
   gap: 10px;
 }
 
 .invitation {
-  width: 100%;
+  width: 88%;
   height: auto;
   display: flex;
   flex-flow: row nowrap;
@@ -48,7 +48,7 @@
   gap: 8px;
 }
 
-.username {
+.user_wrapper {
   max-width: 46%;
   font-size: 20px;
   display: flex;
@@ -56,11 +56,13 @@
   justify-content: center;
   align-items: center;
   gap: 6px;
-  overflow-wrap: break-word;
-  text-align: left;
 }
 .avatar_wrapper {
   width: 64px;
+}
+.username {
+  max-width: calc(100% - 70px);
+  overflow-wrap: break-word;
 }
 
 .inv_text {
@@ -84,6 +86,7 @@
 }
 
 .buttons_wrapper {
+  width: 11%;
   display: flex;
   flex-flow: column nowrap;
   gap: 10px;

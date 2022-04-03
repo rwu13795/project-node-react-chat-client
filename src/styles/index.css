@@ -15,6 +15,17 @@
   --contrast-color-2: #0050858f;
   --contrast-color-3: rgb(0, 102, 0);
 
+  --nav-bgc-color-1: linear-gradient(
+    to right,
+    var(--navbar-color) 0%,
+    rgb(255, 255, 255) 90%
+  );
+  --nav-bgc-color-2: linear-gradient(
+    to left,
+    var(--navbar-color) 0%,
+    rgb(255, 255, 255) 90%
+  );
+
   --button-bgc-1: linear-gradient(90deg, transparent, var(--main-color-2));
   --button-bgc-2: linear-gradient(270deg, transparent, var(--main-color-2));
   --button-bgc-3: linear-gradient(180deg, transparent, var(--main-color-2));

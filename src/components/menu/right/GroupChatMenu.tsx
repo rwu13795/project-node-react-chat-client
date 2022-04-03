@@ -13,6 +13,9 @@ import MembersList from "../../group/MembersList";
 import RemoveGroup from "../../group/RemoveGroup";
 import SelectFriendForGroup from "../../group/SelectFriendForGroup";
 
+// UI //
+import styles from "./GroupChatMenu.module.css";
+
 interface Props {
   target_id: string;
   socket: Socket | undefined;
@@ -53,17 +56,18 @@ function GroupChatMenu({
   }
 
   return (
-    <main>
-      <div>
-        Chatting with {targetChatRoom.name}-{targetChatRoom.id}
+    <main className={styles.main}>
+      <div>back icon here</div>
+      <div className={styles.center}>
+        <div className={styles.center_upper}>{targetChatRoom.name}</div>
+        {user_left_at && (
+          <div className={styles.center_lower}>
+            You {was_kicked ? "were kicked out from" : "have left"} this group
+            on {user_left_at}
+          </div>
+        )}
       </div>
-      {user_left_at && (
-        <div>
-          You {was_kicked ? "were kicked out from" : "have left"} this group on{" "}
-          {user_left_at}
-        </div>
-      )}
-      <div>
+      <div className={styles.right}>
         {user_left ? (
           <RemoveGroup />
         ) : (

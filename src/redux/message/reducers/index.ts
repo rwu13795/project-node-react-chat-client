@@ -7,3 +7,4 @@ export * from "./resetVisitedRoom";
 export * from "./updateGroupNote_afterJoining";
 export * from "./resetAfterSignOut_msg";
 export * from "./setLoadingStatus_msg";
+export * from "./removeGroupPosition";

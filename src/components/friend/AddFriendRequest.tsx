@@ -134,15 +134,23 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
                   <div key={index} className={styles.requests_wrapper}>
                     <div className={styles.border}></div>
                     <div className={styles.avatar_wrapper}>
-                      <UserAvatar
-                        username={sender_username}
-                        avatar_url={sender_avatar}
-                        socket={undefined}
-                        option={AvatarOptions.topAvatar}
-                      />
+                      <div className={styles.avatar}>
+                        <UserAvatar
+                          username={sender_username}
+                          avatar_url={sender_avatar}
+                          socket={undefined}
+                          option={AvatarOptions.topAvatar}
+                        />
+                      </div>
                       <div className={styles.user_info}>
-                        <div>Username: {sender_username}</div>
-                        <div>Email: {sender_email}</div>
+                        <div className={styles.user_info_sub}>
+                          <div>Username:</div>
+                          <div>{sender_username}</div>
+                        </div>
+                        <div className={styles.user_info_sub}>
+                          <div>Email:</div>
+                          <div>{sender_email}</div>
+                        </div>
                       </div>
                     </div>
                     <div className={styles.message_box_wrapper}>

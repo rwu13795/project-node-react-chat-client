@@ -1,21 +1,28 @@
-import { Popover } from "@mui/material";
+import { Avatar, Popover } from "@mui/material";
 import { ChangeEvent, memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
   selectFriendsList,
+  selectResult_groupInvitation,
   selectUserId,
   selectUsername,
   setResult_groupInvitation,
 } from "../../redux/user/userSlice";
 import { groupInvitationRequest_emitter } from "../../socket-io/emitters";
 
+// UI //
+import styles from "./MembersList.module.css";
+import styles_2 from "../group/CreateGroup.module.css";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+
 interface Props {
   socket: Socket | undefined;
   group_id: string;
   group_name: string;
   admin_user_id: string;
+  setOpenFriendForGroup: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function InviteFriendToGroup({
@@ -23,21 +30,15 @@ function InviteFriendToGroup({
   group_id,
   group_name,
   admin_user_id,
+  setOpenFriendForGroup,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
 
-  const currentUserId = useSelector(selectUserId);
-  const currentUsername = useSelector(selectUsername);
   const friendsList = useSelector(selectFriendsList);
+  const result_invitation = useSelector(selectResult_groupInvitation);
 
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-  const open = Boolean(anchorEl);
-
-  function openListHandler(event: React.MouseEvent<HTMLButtonElement>) {
-    setAnchorEl(event.currentTarget);
-  }
   function handleClose() {
-    setAnchorEl(null);
+    setOpenFriendForGroup(false);
   }
 
   function invitationHandler(friend_id: string) {
@@ -49,43 +50,53 @@ function InviteFriendToGroup({
         admin_user_id,
       });
     }
-    handleClose();
     setTimeout(() => {
       dispatch(setResult_groupInvitation(""));
     }, 20000);
   }
 
   return (
-    <main>
-      <div>
-        <button onClick={openListHandler}>Invite Friends</button>
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleClose}
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "right",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "left",
-          }}
-        >
-          {Object.values(friendsList).map((friend) => {
-            return (
-              <div key={friend.friend_id}>
-                <div>
-                  <button onClick={() => invitationHandler(friend.friend_id)}>
-                    {friend.friend_username} - {friend.friend_email}
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </Popover>
+    <>
+      <div className={styles.close_icon_wrapper}>
+        <CancelPresentationIcon
+          className={styles.close_icon}
+          onClick={handleClose}
+        />
       </div>
-    </main>
+      <main className={styles.main}>
+        <div className={styles.group_name_wrapper}>
+          <div id="main_title_2">Invite Friends to the Group</div>
+          <div className={styles_2.border}></div>
+        </div>
+
+        <div className={styles.list}>
+          <div className={styles.sub_title}>Friends</div>
+          <div className={styles.short_border}></div>
+          <div className={styles.list_body}>
+            {Object.values(friendsList).map((friend) => {
+              const { friend_id, avatar_url, friend_username } = friend;
+
+              return (
+                <div
+                  key={friend_id}
+                  className={styles.member_wrapper}
+                  onClick={() => invitationHandler(friend.friend_id)}
+                >
+                  <Avatar
+                    src={avatar_url ? avatar_url : friend_username[0]}
+                    alt={friend_username[0]}
+                    className={styles.avatar}
+                  />
+                  <div className={styles.username}>{friend_username}</div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className={styles.inv_result}>{result_invitation}</div>
+      </main>{" "}
+    </>
   );
 }
 

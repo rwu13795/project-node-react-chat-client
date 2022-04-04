@@ -37,7 +37,6 @@ import {
   Tooltip,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import ListOptions from "./ListOptions";
 import FilterGroups from "../../group/FilterGroups";
@@ -87,7 +86,7 @@ function GroupsList({
   }
 
   return (
-    <main>
+    <main className={styles.main}>
       <div className={styles.drawer}>
         <div className={styles.drawer_item_upper}>
           <ListItemButton

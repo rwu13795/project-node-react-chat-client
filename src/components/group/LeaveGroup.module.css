@@ -21,3 +21,10 @@
 .button {
   width: 120px;
 }
+.button_wrapper {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}

@@ -38,86 +38,92 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
   }
 
   return (
-    <main className={styles.main}>
+    <>
+      {/* the close icon is stick to the "slide", not the "memberList" */}
       <div className={styles.close_icon_wrapper}>
         <CancelPresentationIcon
           className={styles.close_icon}
           onClick={handleCloseMemberList}
         />
       </div>
-
-      {targetGroup && group_members && (
-        <>
-          <div className={styles.group_name_wrapper}>
-            <ChangeGroupName
-              isAdmin={currentUser.user_id === admin_user_id}
-              group_id={group_id}
-              group_name={group_name}
-            />
-            <div className={styles_2.border}></div>
-          </div>
-
-          <div className={styles.list}>
-            <div className={styles.sub_title}>Friends</div>
-            <div className={styles.short_border}></div>
-            <div className={styles.list_body}>
-              {group_members.map((member, index) => {
-                const { user_id, avatar_url, username } = member;
-                const isFriend = friendsList[user_id] !== undefined;
-                return (
-                  <div
-                    key={index}
-                    className={isFriend ? styles.member_wrapper : ""}
-                  >
-                    {isFriend && (
-                      <>
-                        <Avatar
-                          src={avatar_url ? avatar_url : username[0]}
-                          alt={username[0]}
-                          className={styles.avatar}
-                        />
-                        <div className={styles.username}>{username}</div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
+      <main className={styles.main}>
+        {targetGroup && group_members && (
+          <>
+            <div className={styles.group_name_wrapper}>
+              <ChangeGroupName
+                isAdmin={currentUser.user_id === admin_user_id}
+                group_id={group_id}
+                group_name={group_name}
+              />
+              <div className={styles_2.border}></div>
             </div>
-          </div>
 
-          <div className={styles.list}>
-            <div className={styles.sub_title}>Other Members</div>
-            <div className={styles.short_border}></div>
-            <div className={styles.list_body}>
-              {group_members.map((member, index) => {
-                const { user_id, avatar_url, username } = member;
-                const notFriend =
-                  friendsList[user_id] === undefined &&
-                  user_id !== currentUser.user_id;
-                return (
-                  <div
-                    key={index}
-                    className={notFriend ? styles.member_wrapper : ""}
-                  >
-                    {notFriend && (
-                      <>
-                        <Avatar
-                          src={avatar_url ? avatar_url : username[0]}
-                          alt={username[0]}
-                          className={styles.avatar}
-                        />
-                        <div className={styles.username}>{username}</div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {admin_user_id === currentUser.user_id && (
             <div className={styles.list}>
-              <div className={styles.sub_title}>Administrator</div>
+              <div className={styles.sub_title}>Friends</div>
+              <div className={styles.short_border}></div>
+              <div className={styles.list_body}>
+                {group_members.map((member, index) => {
+                  const { user_id, avatar_url, username } = member;
+                  const isFriend = friendsList[user_id] !== undefined;
+                  return (
+                    <div
+                      key={index}
+                      className={isFriend ? styles.member_wrapper : ""}
+                    >
+                      {isFriend && (
+                        <>
+                          <Avatar
+                            src={avatar_url ? avatar_url : username[0]}
+                            alt={username[0]}
+                            className={styles.avatar}
+                          />
+                          <div className={styles.username}>{username}</div>
+                          {user_id === admin_user_id && (
+                            <div className={styles.admin_tag}>Admin</div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className={styles.list}>
+              <div className={styles.sub_title}>Other Members</div>
+              <div className={styles.short_border}></div>
+              <div className={styles.list_body}>
+                {group_members.map((member, index) => {
+                  const { user_id, avatar_url, username } = member;
+                  const notFriend =
+                    friendsList[user_id] === undefined &&
+                    user_id !== currentUser.user_id;
+                  return (
+                    <div
+                      key={index}
+                      className={notFriend ? styles.member_wrapper : ""}
+                    >
+                      {notFriend && (
+                        <>
+                          <Avatar
+                            src={avatar_url ? avatar_url : username[0]}
+                            alt={username[0]}
+                            className={styles.avatar}
+                          />
+                          <div className={styles.username}>{username}</div>
+                          {user_id === admin_user_id && (
+                            <div className={styles.admin_tag}>Admin</div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className={styles.list}>
+              <div className={styles.sub_title}>You</div>
               <div className={styles.short_border}></div>
               <div className={styles.list_body}>
                 <div className={styles.member_wrapper}>
@@ -131,24 +137,17 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
                     className={styles.avatar}
                   />
                   <div className={styles.username}>{currentUser.username}</div>
+                  {currentUser.user_id === admin_user_id && (
+                    <div className={styles.admin_tag}>Admin</div>
+                  )}
                 </div>
               </div>
             </div>
-          )}
-        </>
-      )}
-    </main>
+          </>
+        )}
+      </main>
+    </>
   );
 }
 
 export default memo(MembersList);
-
-/*{currentUser.user_id === admin_user_id && (
-                    <KickMember
-                      socket={socket}
-                      group_id={targetGroup.group_id}
-                      member_user_id={member.user_id}
-                      member_username={member.username}
-                      currentUserId={currentUser.user_id}
-                    />
-                  )} */

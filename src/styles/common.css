@@ -9,6 +9,10 @@
   font-weight: bold;
   color: var(--main-color-4);
 }
+#main_title_2 {
+  font-size: 34px;
+  font-weight: bold;
+}
 
 #input_fields {
   display: flex;
@@ -48,6 +52,24 @@
   border-radius: 10px;
 }
 #custom_scroll_2:hover::-webkit-scrollbar-thumb {
+  background-color: #00a7d1;
+  border-radius: 10px;
+}
+
+#custom_scroll_3::-webkit-scrollbar {
+  width: 10px !important;
+}
+#custom_scroll_3::-webkit-scrollbar-track {
+  border-radius: 10px;
+}
+#custom_scroll_3::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+}
+#custom_scroll_3:hover::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px #008ab46b;
+  border-radius: 10px;
+}
+#custom_scroll_3:hover::-webkit-scrollbar-thumb {
   background-color: #00a7d1;
   border-radius: 10px;
 }

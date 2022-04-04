@@ -61,6 +61,7 @@ function ChatBoard({
       {targetChatRoom.type === chatType.group && (
         <>
           <Slide
+            id="custom_scroll_3"
             direction="left"
             in={openMemberList}
             container={containerRef.current}
@@ -73,6 +74,7 @@ function ChatBoard({
             </div>
           </Slide>
           <Slide
+            id="custom_scroll_3"
             direction="left"
             in={openFriendForGroup}
             container={containerRef.current}
@@ -83,6 +85,7 @@ function ChatBoard({
                 group_id={targetGroup.group_id}
                 group_name={targetGroup.group_name}
                 admin_user_id={targetGroup.admin_user_id}
+                setOpenFriendForGroup={setOpenFriendForGroup}
               />
             </div>
           </Slide>
@@ -91,6 +94,7 @@ function ChatBoard({
 
       {targetChatRoom.type === chatType.private && (
         <Slide
+          id="custom_scroll_3"
           direction="left"
           in={openGroupForFriend}
           container={containerRef.current}

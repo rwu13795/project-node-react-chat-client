@@ -19,6 +19,7 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { Tooltip, useMediaQuery } from "@mui/material";
 import MembersListAvatars from "../../group/MembersListAvatars";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import OptionsGroupChatMenu from "./OptionsGroupChatMenu";
 
 interface Props {
   target_id: string;
@@ -34,6 +35,7 @@ function GroupChatMenu({
   setOpenFriendForGroup,
 }: Props): JSX.Element {
   const isSmall = useMediaQuery("(max-width:765px)");
+  const max_900px = useMediaQuery("(max-width:900px)");
 
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const {
@@ -45,7 +47,6 @@ function GroupChatMenu({
     user_left,
     group_members,
   } = useSelector(selectTargetGroup(target_id));
-  const result_invitation = useSelector(selectResult_groupInvitation);
 
   useEffect(() => {
     setOpenFriendForGroup(false);
@@ -58,6 +59,7 @@ function GroupChatMenu({
   }
 
   function openFriendForGroupHandler() {
+    console.log("openFriendForGroupHandler");
     setOpenFriendForGroup((prev) => !prev);
     setOpenMemberList(false);
   }
@@ -78,7 +80,18 @@ function GroupChatMenu({
         )}
       </div>
       <div className={styles.right}>
-        {user_left ? (
+        {max_900px ? (
+          <div>
+            <OptionsGroupChatMenu
+              socket={socket}
+              group_id={group_id}
+              group_name={group_name}
+              admin_user_id={admin_user_id}
+              openMembersListHandler={openMembersListHandler}
+              openFriendForGroupHandler={openFriendForGroupHandler}
+            />
+          </div>
+        ) : user_left ? (
           <RemoveGroup />
         ) : (
           <>
@@ -94,7 +107,7 @@ function GroupChatMenu({
               </div>
             </Tooltip>
 
-            <Tooltip title="Invite Friend">
+            <Tooltip title="Invite Friends">
               <div
                 className={styles.icon_wrapper}
                 onClick={openFriendForGroupHandler}
@@ -115,7 +128,6 @@ function GroupChatMenu({
           </>
         )}
       </div>
-      {result_invitation}
     </main>
   );
 }

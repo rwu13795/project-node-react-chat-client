@@ -1,3 +1,7 @@
+.main {
+  min-width: 130px;
+}
+
 .drawer {
   margin-top: 10px;
   display: flex;

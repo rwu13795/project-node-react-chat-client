@@ -75,9 +75,9 @@ export function resizeMenu() {
       // to make the background of right menu to overlap the "resize_handle_wrapper"
       // take a look at the HomePage CSS for more detail
       righMenu.style.width = "calc(100vw - 650px)";
-    } else if (width < 295) {
-      leftMenu.style.width = 294 + "px";
-      righMenu.style.width = "calc(100vw - 269px)";
+    } else if (width < 101) {
+      leftMenu.style.width = 100 + "px";
+      righMenu.style.width = "calc(100vw - 75px)";
     } else {
       leftMenu.style.width = width + "px";
       righMenu.style.width = righMenu.scrollWidth + dragDistance + "px";

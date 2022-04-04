@@ -25,9 +25,17 @@ interface Props {
   group_id: string;
   group_name: string;
   admin_user_id: string;
+  isSmall?: boolean;
+  closePopover?: () => void;
 }
 
-function LeaveGroup({ socket, group_id, admin_user_id }: Props): JSX.Element {
+function LeaveGroup({
+  socket,
+  group_id,
+  admin_user_id,
+  isSmall,
+  closePopover,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const currentUserId = useSelector(selectUserId);
@@ -41,6 +49,7 @@ function LeaveGroup({ socket, group_id, admin_user_id }: Props): JSX.Element {
   }
   function handleCloseModal() {
     setOpenModal(false);
+    if (closePopover) closePopover();
   }
 
   function leaveGroupHandler() {
@@ -72,14 +81,22 @@ function LeaveGroup({ socket, group_id, admin_user_id }: Props): JSX.Element {
         room_type: targetChatRoom.type,
       })
     );
+
+    if (closePopover) closePopover();
   }
 
   return (
     <>
-      <PersonRemoveIcon
-        onClick={handleOpenModal}
-        sx={{ width: "32px", height: "32px" }}
-      />
+      {isSmall ? (
+        <div onClick={handleOpenModal} className={styles.button_wrapper}>
+          <PersonRemoveIcon /> Leave Group
+        </div>
+      ) : (
+        <PersonRemoveIcon
+          onClick={handleOpenModal}
+          sx={{ width: "32px", height: "32px" }}
+        />
+      )}
 
       <Modal
         disableScrollLock={true}

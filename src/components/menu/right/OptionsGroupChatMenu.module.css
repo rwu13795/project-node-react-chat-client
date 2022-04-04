@@ -1,0 +1,11 @@
+.main {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  border-radius: 20px;
+}
+.main:hover {
+  background-color: var(--contrast-color-4);
+  transition: all 0.4s;
+  box-shadow: 0 0 20px var(--main-color-4);
+}

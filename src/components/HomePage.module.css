@@ -7,7 +7,7 @@
 .left_grid {
   float: left;
   position: absolute;
-  min-width: 294px;
+  min-width: 100px;
   width: 294px;
   height: 100%;
   max-height: calc(100vh - 105px);

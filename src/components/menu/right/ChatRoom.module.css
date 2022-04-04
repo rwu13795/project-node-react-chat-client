@@ -1,5 +1,6 @@
 .main {
   width: 94%;
+  min-width: 600px;
   min-height: calc(100vh - 110px);
   display: flex;
   flex-flow: column nowrap;

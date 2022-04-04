@@ -6,7 +6,7 @@ import { loadingStatusEnum } from "../../../utils";
 import { client, serverUrl } from "../../utils";
 import { UserState } from "../userSlice";
 
-interface Res_body {
+interface Req_body {
   new_group_name: string;
   group_id: string;
 }
@@ -18,7 +18,7 @@ interface Payload {
 
 export const changeGroupName = createAsyncThunk<
   Payload,
-  Res_body,
+  Req_body,
   { state: RootState }
 >("user/changeGroupName", async (body, thunkAPI) => {
   try {

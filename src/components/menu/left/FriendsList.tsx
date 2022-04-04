@@ -61,7 +61,7 @@ function FriendsList({
   }
 
   return (
-    <main>
+    <main className={styles.main}>
       <div className={styles.drawer}>
         <div className={styles.drawer_item_upper}>
           <ListItemButton

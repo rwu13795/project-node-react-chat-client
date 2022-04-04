@@ -47,13 +47,24 @@
   align-items: center;
   gap: 16px;
 }
+.avatar {
+  width: 70px;
+}
 .user_info {
+  max-width: 65%;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
   gap: 8px;
   font-size: 18px;
+}
+.user_info_sub {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .message_box_wrapper {
@@ -101,10 +112,10 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 500px;
+  width: 600px;
   max-height: 800px;
   background-color: white;
-  background-image: var(--modal-bgc);
+  background-image: var(--modal-bgc-1);
   border: 2px solid #000;
   padding: 20px;
   box-shadow: 3px 6px 8px;

@@ -7,7 +7,6 @@
   align-items: center;
   overflow: hidden;
   background-color: rgba(255, 255, 255, 0.6);
-  border: green solid 2px;
 }
 
 .chat_logs {
@@ -24,11 +23,12 @@
 
 .slide_1st {
   background-color: rgba(255, 255, 255);
+  background-image: var(--modal-bgc-1);
   z-index: 9;
   position: relative;
   width: 100%;
-  min-height: 100%;
-  padding: 12px;
+  min-height: 99%;
+  padding: 12px 0 20px 0;
   bottom: 100%;
   overflow-y: visible;
   overflow-x: hidden;
@@ -36,12 +36,13 @@
 
 .slide_2nd {
   background-color: white;
+  background-image: var(--modal-bgc-1);
   z-index: 9;
   position: relative;
   width: 100%;
-  min-height: 100%;
-  padding: 12px;
-  bottom: 201%;
+  min-height: 99%;
+  padding: 12px 0 20px 0;
+  bottom: 203%;
   overflow-y: visible;
   overflow-x: hidden;
 }

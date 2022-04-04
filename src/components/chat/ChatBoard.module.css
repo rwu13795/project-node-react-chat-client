@@ -6,7 +6,7 @@
   justify-content: flex-start;
   align-items: center;
   overflow: hidden;
-  background-color: var(--navbar-color);
+  background-color: rgba(255, 255, 255, 0.6);
   border: green solid 2px;
 }
 
@@ -19,4 +19,25 @@
   min-height: 30%;
   max-height: 30%;
   min-width: 100%;
+  background-color: var(--navbar-color);
+}
+
+.slide_1st {
+  background-color: rgba(255, 255, 255);
+  z-index: 9;
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  padding: 12px;
+  bottom: 100%;
+}
+
+.slide_2nd {
+  background-color: white;
+  z-index: 9;
+  position: relative;
+  width: 100%;
+  min-height: 100%;
+  padding: 12px;
+  bottom: 201%;
 }

@@ -6,6 +6,8 @@ import { selectTotalFriendNoteCount } from "../../../redux/message/messageSlice"
 import { selectAddFriendRequests } from "../../../redux/user/userSlice";
 import SearchUser from "../../friend/SearchUser";
 import OnlineOfflineList from "./OnlineOfflineList";
+import AddFriendRequest from "../../friend/AddFriendRequest";
+import FilterFriends from "../../friend/FilterFriends";
 
 // UI //
 import styles from "./GroupsList.module.css";
@@ -22,9 +24,9 @@ import {
   Box,
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
-import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import AddFriendRequest from "../../friend/AddFriendRequest";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import ListOptions from "./ListOptions";
 
 interface Props {
   socket: Socket | undefined;
@@ -39,16 +41,23 @@ function FriendsList({
   const addFriendRequests = useSelector(selectAddFriendRequests);
 
   const [expand, setExpand] = useState<boolean>(true);
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [searchUser, setSearchUser] = useState<boolean>(false);
+  const [filterFriend, setFilterFriend] = useState<boolean>(false);
 
   function toggleExpand() {
     setExpand(!expand);
   }
-  function handleOpenModal() {
-    setOpenModal(true);
+  function openSearchUser() {
+    setSearchUser(true);
   }
-  function handleCloseModal() {
-    setOpenModal(false);
+  function closeSearchUser() {
+    setSearchUser(false);
+  }
+  function openFilterFriend() {
+    setFilterFriend(true);
+  }
+  function closeFilterFriend() {
+    setFilterFriend(false);
   }
 
   return (
@@ -79,12 +88,12 @@ function FriendsList({
               }
             />
           </ListItemButton>
-          <Tooltip title="Add friend">
-            <AddCircleOutlineIcon
-              className={styles.plus_button}
-              onClick={handleOpenModal}
-            />
-          </Tooltip>
+
+          <ListOptions
+            openModal_1={openSearchUser}
+            openModal_2={openFilterFriend}
+            forFriendsList={true}
+          />
         </div>
         {!expand && <div className={styles.list_item_border_hover}></div>}
         <div className={expand ? styles.list_item_border : ""}></div>
@@ -108,23 +117,56 @@ function FriendsList({
 
       <Modal
         disableScrollLock={true}
-        open={openModal}
-        onClose={handleCloseModal}
+        open={searchUser}
+        onClose={closeSearchUser}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
         }}
       >
-        <Fade in={openModal}>
+        <Fade in={searchUser}>
           <Box className={styles.modal}>
             <div className={styles.close_icon_wrapper}>
               <CancelPresentationIcon
                 className={styles.close_icon}
-                onClick={handleCloseModal}
+                onClick={closeSearchUser}
               />
             </div>
-            <SearchUser socket={socket} />
+            <SearchUser
+              socket={socket}
+              selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+              handleCloseModal={closeSearchUser}
+              setExpand={setExpand}
+            />
+          </Box>
+        </Fade>
+      </Modal>
+
+      <Modal
+        disableScrollLock={true}
+        open={filterFriend}
+        onClose={closeFilterFriend}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={filterFriend}>
+          <Box className={styles.modal}>
+            <div className={styles.close_icon_wrapper}>
+              <CancelPresentationIcon
+                className={styles.close_icon}
+                onClick={closeFilterFriend}
+              />
+            </div>
+            <FilterFriends
+              selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+              closeFilterFriend={closeFilterFriend}
+              socket={socket}
+              setExpandList={setExpand}
+            />
           </Box>
         </Fade>
       </Modal>

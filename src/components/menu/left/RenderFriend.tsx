@@ -27,6 +27,7 @@ interface Props {
     type: string,
     date_limit?: string | null
   ) => void;
+  showStatus?: boolean;
 }
 
 function RenderFriend({
@@ -34,6 +35,7 @@ function RenderFriend({
   notificationCount,
   socket,
   selectTargetChatRoomHandler,
+  showStatus = true,
 }: Props): JSX.Element {
   const { type, id: target_id } = useSelector(selectTargetChatRoom);
 
@@ -62,10 +64,12 @@ function RenderFriend({
               socket={socket}
               option={AvatarOptions.listAvatar}
             />
-            <StatusDot
-              onlineStatus={onlineStatus}
-              option={AvatarOptions.listAvatar}
-            />
+            {showStatus && (
+              <StatusDot
+                onlineStatus={onlineStatus}
+                option={AvatarOptions.listAvatar}
+              />
+            )}
           </div>
           <div className={styles.button_text}>{friend_username}</div>{" "}
           <Badge

@@ -1,41 +1,35 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { memo, useRef } from "react";
+import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
-  MessageObject,
   selectTargetChatRoom,
-  selectTargetChatRoom_history,
-  loadMoreOldChatHistory_database,
   chatType,
-  selectInfiniteScrollStats,
-  setInfiniteScrollStats,
-  selectLoadingStatus_msg,
 } from "../../redux/message/messageSlice";
 import {
   selectTargetFriend,
   selectTargetGroup,
-  selectUserId,
-  selectUsername,
 } from "../../redux/user/userSlice";
 
-import InfiniteScroll from "react-infinite-scroll-component";
 import MessageInput from "./MessageInput";
 import ImageInput from "./ImageInput";
-import { client } from "../../redux/utils";
-import { loadingStatusEnum } from "../../utils";
+import SelectFriendForGroup from "../group/SelectFriendForGroup";
+import SelectGroupForFriend from "../group/SelectGroupForFriend";
 
 // UI //
 import styles from "./ChatBoard.module.css";
-import background from "../../images/background.jpg";
-import { Drawer, Slide } from "@mui/material";
+import { Slide } from "@mui/material";
 import ChatLogs from "./ChatLogs";
+import MembersList from "../group/MembersList";
 
 interface Props {
   socket: Socket | undefined;
   openMemberList: boolean;
   openFriendForGroup: boolean;
   openGroupForFriend: boolean;
+  setOpenMemberList: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenFriendForGroup: React.Dispatch<React.SetStateAction<boolean>>;
+  setOpenGroupForFriend: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function ChatBoard({
@@ -43,17 +37,13 @@ function ChatBoard({
   openMemberList,
   openFriendForGroup,
   openGroupForFriend,
+  setOpenMemberList,
+  setOpenFriendForGroup,
+  setOpenGroupForFriend,
 }: Props): JSX.Element {
-  const dispatch = useDispatch();
-
-  const chatHistory = useSelector(selectTargetChatRoom_history);
-  const currentUserId = useSelector(selectUserId);
-  const currentUsername = useSelector(selectUsername);
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
-  const infiniteScrollStats = useSelector(selectInfiniteScrollStats);
-  const loadingStatus = useSelector(selectLoadingStatus_msg);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -69,62 +59,47 @@ function ChatBoard({
       </div>
 
       {targetChatRoom.type === chatType.group && (
-        <Slide
-          direction="left"
-          in={openMemberList}
-          container={containerRef.current}
-          style={{
-            backgroundColor: "white",
-            zIndex: 9,
-            position: "relative",
-            width: "100%",
-            minHeight: "100%",
-            border: "solid red 2px",
-            bottom: "100%",
-          }}
-        >
-          <div>Member list</div>
-        </Slide>
-      )}
-      {targetChatRoom.type === chatType.group && (
-        <Slide
-          direction="left"
-          in={openFriendForGroup}
-          container={containerRef.current}
-        >
-          <div
-            style={{
-              backgroundColor: "white",
-              zIndex: 9,
-              position: "relative",
-              width: "100%",
-              minHeight: "100%",
-              border: "solid red 2px",
-              bottom: "201%",
-            }}
+        <>
+          <Slide
+            direction="left"
+            in={openMemberList}
+            container={containerRef.current}
           >
-            open Friends For Group
-          </div>
-        </Slide>
+            <div className={styles.slide_1st}>
+              <MembersList
+                socket={socket}
+                setOpenMemberList={setOpenMemberList}
+              />
+            </div>
+          </Slide>
+          <Slide
+            direction="left"
+            in={openFriendForGroup}
+            container={containerRef.current}
+          >
+            <div className={styles.slide_2nd}>
+              <SelectFriendForGroup
+                socket={socket}
+                group_id={targetGroup.group_id}
+                group_name={targetGroup.group_name}
+                admin_user_id={targetGroup.admin_user_id}
+              />
+            </div>
+          </Slide>
+        </>
       )}
+
       {targetChatRoom.type === chatType.private && (
         <Slide
           direction="left"
           in={openGroupForFriend}
           container={containerRef.current}
         >
-          <div
-            style={{
-              backgroundColor: "white",
-              zIndex: 9,
-              position: "relative",
-              width: "100%",
-              minHeight: "100%",
-              border: "solid red 2px",
-              bottom: "100%",
-            }}
-          >
-            open Groups For Friend
+          <div className={styles.slide_1st}>
+            <SelectGroupForFriend
+              socket={socket}
+              friend_id={targetFriend.friend_id}
+            />
           </div>
         </Slide>
       )}

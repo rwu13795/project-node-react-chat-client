@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
+  Friend,
   selectCurrentUser,
   selectFriendsList,
   selectResult_addFriendRequest,
@@ -25,17 +26,32 @@ import {
   onSubmitCheck,
 } from "../../utils";
 import InputField, { InputFields } from "../input-field/InputField";
+import SearchFound from "./SearchFound";
+import RenderFriend from "../menu/left/RenderFriend";
 
 // UI //
 import styles from "./SearchUser.module.css";
 import { Button, FormControlLabel, Radio, RadioGroup } from "@mui/material";
-import SearchFound from "./SearchFound";
+
+interface FoundUser {
+  user_id: string;
+  username: string;
+  avatar_url: string;
+}
 
 interface Props {
   socket: Socket | undefined;
+  selectTargetChatRoomHandler: (id: string, name: string, type: string) => void;
+  handleCloseModal: () => void;
+  setExpand: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function SearchUser({ socket }: Props): JSX.Element {
+function SearchUser({
+  socket,
+  selectTargetChatRoomHandler,
+  handleCloseModal,
+  setExpand,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const friendsList = useSelector(selectFriendsList);
@@ -55,22 +71,23 @@ function SearchUser({ socket }: Props): JSX.Element {
     [inputNames.email]: "",
   });
 
-  const [foundUser, setFoundUser] = useState<{
-    user_id: string;
-    username: string;
-    avatar_url: string;
-  }>({ user_id: "", username: "", avatar_url: "" });
-  const [isFound, setIsFound] = useState<boolean>(false);
+  const [foundUser, setFoundUser] = useState<FoundUser | null>(null);
   const [findById, setFindById] = useState<boolean>(true);
   const [errorMsg, setErrorMsg] = useState<string>("");
+
+  useEffect(() => {
+    return () => {
+      dispatch(setResult_addFriendRequest(""));
+    };
+  }, []);
 
   async function submitSearchHandler(
     e: FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>
   ) {
     e.preventDefault();
     setErrorMsg("");
-    setIsFound(false);
-    setFoundUser({ user_id: "", username: "", avatar_url: "" });
+    setFoundUser(null);
+
     dispatch(setResult_addFriendRequest(""));
 
     let hasError = false;
@@ -92,19 +109,19 @@ function SearchUser({ socket }: Props): JSX.Element {
     if (hasError) return;
 
     try {
-      const { data } = await client.post<
-        { user_id: string; username: string; avatar_url: string }[]
-      >(serverUrl + `/user/search-user`, {
-        user_id: idInput[inputNames.user_ID],
-        user_email: emailInput[inputNames.email],
-      });
+      const { data } = await client.post<FoundUser[]>(
+        serverUrl + `/user/search-user`,
+        {
+          user_id: idInput[inputNames.user_ID],
+          user_email: emailInput[inputNames.email],
+        }
+      );
 
       if (data.length === 0) {
         setErrorMsg("This user does not exist in our record.");
-        setIsFound(false);
       } else {
         setFoundUser({ ...data[0] });
-        setIsFound(true);
+
         if (friendsList[data[0].user_id] !== undefined) {
           setErrorMsg("This user is your friend already.");
         }
@@ -123,7 +140,7 @@ function SearchUser({ socket }: Props): JSX.Element {
 
   function addFriendRequestHandler(message: string) {
     const { user_id, username, email, avatar_url } = currentUser;
-    if (socket) {
+    if (socket && foundUser) {
       dispatch(
         setLoadingStatus_user(loadingStatusEnum.addFriendRequest_loading)
       );
@@ -138,11 +155,10 @@ function SearchUser({ socket }: Props): JSX.Element {
     }
   }
 
-  useEffect(() => {
-    return () => {
-      dispatch(setResult_addFriendRequest(""));
-    };
-  }, []);
+  function clickFoundFriendHandler() {
+    setExpand(true);
+    handleCloseModal();
+  }
 
   return (
     <main className={styles.main}>
@@ -200,7 +216,7 @@ function SearchUser({ socket }: Props): JSX.Element {
         </Button>
       </form>
 
-      {isFound && friendsList[foundUser.user_id] === undefined && (
+      {foundUser && friendsList[foundUser.user_id] === undefined && (
         <SearchFound
           username={foundUser.username}
           avatar_url={foundUser.avatar_url}
@@ -208,6 +224,27 @@ function SearchUser({ socket }: Props): JSX.Element {
         />
       )}
       <div className={styles.error_text}>{errorMsg}</div>
+      {foundUser && friendsList[foundUser.user_id] !== undefined && (
+        <div onClick={clickFoundFriendHandler} className={styles.found_friend}>
+          <RenderFriend
+            friend={{
+              friend_id: foundUser.user_id,
+              friend_username: foundUser.username,
+              friend_email: "",
+              avatar_url: foundUser.avatar_url,
+              user_blocked_friend: false,
+              user_blocked_friend_at: "",
+              friend_blocked_user: false,
+              friend_blocked_user_at: "",
+              onlineStatus: "",
+            }}
+            socket={socket}
+            selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+            showStatus={false}
+            notificationCount={0}
+          />
+        </div>
+      )}
       <div className={styles.error_text}>{result_addFriendRequest}</div>
     </main>
   );

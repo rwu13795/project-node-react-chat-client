@@ -9,12 +9,13 @@ import AvatarGroup from "@mui/material/AvatarGroup";
 
 interface Props {
   group_members: GroupMember[] | undefined;
+  user_left: boolean;
 }
 
-function MembersListAvatars({ group_members }: Props): JSX.Element {
+function MembersListAvatars({ group_members, user_left }: Props): JSX.Element {
   return (
     <>
-      {group_members && (
+      {group_members && !user_left && (
         <AvatarGroup max={4}>
           {group_members.map((member) => {
             const { avatar_url, username, user_id } = member;

@@ -1,0 +1,19 @@
+.main {
+  width: 24px;
+  height: 30px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.option_button {
+  width: 24px;
+  height: 24px;
+  border-radius: 10rem;
+  transition: all 0.5s;
+  cursor: pointer;
+}
+.option_button:hover {
+  background-color: rgba(109, 109, 109, 0.205);
+  transform: scale(1.2);
+  transition: all 0.5s;
+}

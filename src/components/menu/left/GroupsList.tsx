@@ -39,6 +39,8 @@ import {
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import ListOptions from "./ListOptions";
+import FilterGroups from "../../group/FilterGroups";
 
 interface Props {
   socket: Socket | undefined;
@@ -64,17 +66,24 @@ function GroupsList({
   const groupInvitations = useSelector(selectGroupInvitations);
 
   const [expand, setExpand] = useState<boolean>(false);
-  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [createGroup, setCreateGroup] = useState<boolean>(false);
+  const [filterGroup, setFilterGroup] = useState<boolean>(false);
 
   function toggleExpand() {
     setExpand(!expand);
   }
-  function handleOpenModal() {
-    setOpenModal(true);
+  function openCreateGroup() {
+    setCreateGroup(true);
   }
-  function handleCloseModal() {
+  function closeCreateGroup() {
     dispatch(clearRequestError("all"));
-    setOpenModal(false);
+    setCreateGroup(false);
+  }
+  function openFilterGroup() {
+    setFilterGroup(true);
+  }
+  function closeFilterGroup() {
+    setFilterGroup(false);
   }
 
   return (
@@ -105,12 +114,12 @@ function GroupsList({
               }
             />
           </ListItemButton>
-          <Tooltip title="Create new group">
-            <AddCircleOutlineIcon
-              className={styles.plus_button}
-              onClick={handleOpenModal}
-            />
-          </Tooltip>
+
+          <ListOptions
+            openModal_1={openCreateGroup}
+            openModal_2={openFilterGroup}
+            forFriendsList={false}
+          />
         </div>
         {!expand && <div className={styles.list_item_border_hover}></div>}
         <div className={expand ? styles.list_item_border : ""}></div>
@@ -148,7 +157,7 @@ function GroupsList({
             <div>You are not in any group</div>
             <Button
               variant="outlined"
-              onClick={handleOpenModal}
+              onClick={openCreateGroup}
               className={styles.create_button}
             >
               Create a new group
@@ -157,28 +166,59 @@ function GroupsList({
         )}
       </Collapse>
 
+      {/* Create Group Modal */}
       <Modal
         disableScrollLock={true}
-        open={openModal}
-        onClose={handleCloseModal}
+        open={createGroup}
+        onClose={closeCreateGroup}
         closeAfterTransition
         BackdropComponent={Backdrop}
         BackdropProps={{
           timeout: 500,
         }}
       >
-        <Fade in={openModal}>
+        <Fade in={createGroup}>
           <Box className={styles.modal}>
             <div className={styles.close_icon_wrapper}>
               <CancelPresentationIcon
                 className={styles.close_icon}
-                onClick={handleCloseModal}
+                onClick={closeCreateGroup}
               />
             </div>
             <CreateGroup
               socket={socket}
               selectTargetChatRoomHandler={selectTargetChatRoomHandler}
-              handleCloseModal={handleCloseModal}
+              handleCloseModal={closeCreateGroup}
+            />
+          </Box>
+        </Fade>
+      </Modal>
+
+      {/* Filter Groups Modal */}
+      <Modal
+        disableScrollLock={true}
+        open={filterGroup}
+        onClose={closeFilterGroup}
+        closeAfterTransition
+        BackdropComponent={Backdrop}
+        BackdropProps={{
+          timeout: 500,
+        }}
+      >
+        <Fade in={filterGroup}>
+          <Box className={styles.modal}>
+            <div className={styles.close_icon_wrapper}>
+              <CancelPresentationIcon
+                className={styles.close_icon}
+                onClick={closeFilterGroup}
+              />
+            </div>
+            <FilterGroups
+              socket={socket}
+              selectTargetChatRoomHandler={selectTargetChatRoomHandler}
+              closeFilterGroup={closeFilterGroup}
+              target_room={`${type}_${target_id}`}
+              setExpandList={setExpand}
             />
           </Box>
         </Fade>

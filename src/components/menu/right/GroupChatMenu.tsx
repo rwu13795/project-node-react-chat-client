@@ -87,7 +87,10 @@ function GroupChatMenu({
                 className={styles.group_info}
                 onClick={openMembersListHandler}
               >
-                <MembersListAvatars group_members={group_members} />
+                <MembersListAvatars
+                  group_members={group_members}
+                  user_left={user_left}
+                />
               </div>
             </Tooltip>
 

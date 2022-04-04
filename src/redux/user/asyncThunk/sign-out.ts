@@ -21,6 +21,8 @@ export function signOut_fulfilled(state: WritableDraft<UserState>) {
   state.groupsToJoin = initialState_user.groupsToJoin;
   state.newGroupToJoin = initialState_user.newGroupToJoin;
   state.requestErrors = initialState_user.requestErrors;
+  state.friendsArray = [];
+  state.groupsArray = [];
   // signal the messageSlice to reset
   state.loadingStatus = loadingStatusEnum.signOut_succeeded;
 }

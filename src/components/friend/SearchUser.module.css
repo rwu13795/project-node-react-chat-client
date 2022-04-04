@@ -58,3 +58,10 @@
   min-width: 110%;
   background-image: var(--border-color-1);
 }
+
+.found_friend {
+  width: 68%;
+  border-bottom: 4px solid var(--main-color-2);
+  padding-left: 8px;
+  padding-bottom: 4px;
+}

@@ -46,6 +46,8 @@ export function getUserAuth_fulfilled(
     friendsList,
   } = action.payload;
 
+  state.friendsArray = friendsList;
+  state.groupsArray = groupsList;
   state.currentUser = currentUser;
   state.addFriendRequests = addFriendRequests;
   state.groupInvitations = groupInvitations;

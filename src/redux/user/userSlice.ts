@@ -106,7 +106,6 @@ export interface GroupMember {
   email: string;
   avatar_url?: string;
 }
-
 export interface Group {
   group_id: string;
   group_name: string;
@@ -118,16 +117,23 @@ export interface Group {
   group_members?: GroupMember[];
   wasMembersListLoaded: boolean;
 }
+export interface FriendsList {
+  [friend_id: string]: Friend;
+}
+export interface GroupsList {
+  [group_id: string]: Group;
+}
 
 export interface UserState {
   currentUser: CurrentUser;
   // friends
-  friendsList: { [friend_id: string]: Friend };
-  // friendsOnlineStatus: { [friend_id: string]: boolean };
+  friendsList: FriendsList;
+  friendsArray: Friend[];
   addFriendRequests: AddFriendRequest[];
   result_addFriendRequest: string;
   // groups
-  groupsList: { [group_id: string]: Group };
+  groupsList: GroupsList;
+  groupsArray: Group[];
   groupsToJoin: string[];
   newGroupToJoin: string;
   groupInvitations: GroupInvitation[];
@@ -146,11 +152,13 @@ export const initialState_user: UserState = {
     onlineStatus: onlineStatus_enum.offline,
   },
   friendsList: {},
+  friendsArray: [],
   addFriendRequests: [],
   result_addFriendRequest: "",
   groupInvitations: [],
   result_groupInvitation: "",
   groupsList: {},
+  groupsArray: [],
   groupsToJoin: [],
   newGroupToJoin: "",
   loadingStatus: loadingStatusEnum.idle,
@@ -353,4 +361,12 @@ export const selectNewGroupToJoin = createSelector(
 export const selectLoadingStatus_user = createSelector(
   [selectUser],
   (userState) => userState.loadingStatus
+);
+export const selectFriendsArray = createSelector(
+  [selectUser],
+  (userState) => userState.friendsArray
+);
+export const selectGroupsArray = createSelector(
+  [selectUser],
+  (userState) => userState.groupsArray
 );

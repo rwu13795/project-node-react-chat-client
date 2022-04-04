@@ -1,0 +1,52 @@
+.main {
+  margin-top: 10px;
+  margin-bottom: 16px;
+  display: flex;
+  width: 100%;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  overflow: hidden;
+}
+
+.title {
+  font-size: 40px;
+  font-weight: bold;
+}
+.border {
+  margin-top: 10px;
+  height: 5px;
+  min-width: 110%;
+  background-image: var(--border-color-1);
+}
+
+.filter {
+  width: 70%;
+  display: flex;
+  justify-content: center;
+}
+.filter_text_field {
+  width: 100%;
+}
+
+.filter_text_field input {
+  font-size: 22px;
+  padding: 10px;
+}
+.filter_text_field label {
+  font-size: 16px;
+}
+
+.list {
+  height: 500px;
+  max-height: 500px;
+  width: 70%;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 8px;
+  overflow-y: visible;
+  overflow-x: hidden;
+  text-align: center;
+  font-size: 30px;
+}

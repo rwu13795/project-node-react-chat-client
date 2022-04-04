@@ -33,6 +33,9 @@ function ChatRoom({ socket }: Props): JSX.Element {
         openMemberList={openMemberList}
         openFriendForGroup={openFriendForGroup}
         openGroupForFriend={openGroupForFriend}
+        setOpenMemberList={setOpenMemberList}
+        setOpenFriendForGroup={setOpenFriendForGroup}
+        setOpenGroupForFriend={setGroupForFriend}
       />
     </main>
   ) : (

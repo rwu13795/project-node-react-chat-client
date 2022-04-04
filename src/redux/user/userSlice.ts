@@ -3,6 +3,10 @@ import { createSelector, createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../index";
 import { loadingStatusEnum, onlineStatus_enum } from "../../utils";
 import {
+  changeGroupName,
+  changeGroupName_fulfilled,
+  changeGroupName_pending,
+  changeGroupName_rejected,
   changePassword,
   changePassword_fulfilled,
   changePassword_pending,
@@ -258,7 +262,12 @@ const userSlice = createSlice({
       /***************  GOOGLE SIGN IN  ***************/
       .addCase(signInWithGoogle.fulfilled, signInWithGoogle_fulfilled)
       .addCase(signInWithGoogle.pending, signInWithGoogle_pending)
-      .addCase(signInWithGoogle.rejected, signInWithGoogle_rejected);
+      .addCase(signInWithGoogle.rejected, signInWithGoogle_rejected)
+
+      /***************  CHANGE GROUP NAME  ***************/
+      .addCase(changeGroupName.fulfilled, changeGroupName_fulfilled)
+      .addCase(changeGroupName.pending, changeGroupName_pending)
+      .addCase(changeGroupName.rejected, changeGroupName_rejected);
   },
 });
 

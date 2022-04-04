@@ -127,6 +127,7 @@ function InputField({
   }
 
   let content: JSX.Element = <></>;
+  let changeName_styles = styles.input_field_change_user_name;
   switch (customStyle) {
     default:
     case inputFieldStyles.default:
@@ -155,6 +156,9 @@ function InputField({
 
     case inputFieldStyles.change_user_name:
     case inputFieldStyles.change_group_name:
+      if (customStyle === inputFieldStyles.change_group_name) {
+        changeName_styles = styles.input_field_change_group_name;
+      }
       error_text =
         styles.error_text_lg + " " + styles.error_text_change_user_name;
       content = (
@@ -171,7 +175,7 @@ function InputField({
             onChange={onChangeHandler}
             disabled={isDisabled}
             error={showError}
-            className={styles.input_field_change_user_name}
+            className={changeName_styles}
           />
         </>
       );

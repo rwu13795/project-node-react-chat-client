@@ -1,0 +1,17 @@
+.main {
+  width: 100%;
+}
+
+.text_button_wrapper {
+  width: 100%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.title {
+  font-size: 34px;
+  font-weight: bold;
+}

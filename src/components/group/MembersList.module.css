@@ -34,16 +34,6 @@
   align-items: center;
 }
 
-.title {
-  font-size: 40px;
-  font-weight: bold;
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: center;
-  align-items: baseline;
-  gap: 8px;
-}
-
 .list {
   width: 92%;
   display: flex;
@@ -52,13 +42,57 @@
   align-items: center;
   margin-bottom: 30px;
 }
+.list_body {
+  margin-top: 14px;
+  max-width: 86%;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 6px;
+}
+
 .sub_title {
   font-size: 26px;
 }
 .short_border {
-  width: 50%;
+  height: 5px;
+  min-width: 50%;
+  background-image: var(--border-color-1);
 }
 .admin_tag {
   position: relative;
   width: 30px;
+}
+
+.member_wrapper {
+  width: 100px;
+  max-width: 150px;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+.avatar {
+  width: 60px;
+  height: 60px;
+  border: solid 4px #00a7d1;
+  cursor: pointer;
+  font-size: 46px;
+  background-color: var(--main-color-1);
+  transition: all 0.3s;
+}
+.avatar:hover {
+  transition: all 0.3s;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.815);
+}
+.username {
+  max-width: 140px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
 }

@@ -4,35 +4,38 @@ import { Socket } from "socket.io-client";
 
 import {
   selectGroupsList,
+  selectResult_groupInvitation,
   selectUsername,
   setResult_groupInvitation,
 } from "../../redux/user/userSlice";
+import { groupInvitationRequest_emitter } from "../../socket-io/emitters";
 
 // UI //
 import styles from "./SelectGroupForFriend.module.css";
-import { Popover, Tooltip } from "@mui/material";
-import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import { groupInvitationRequest_emitter } from "../../socket-io/emitters";
+import styles_2 from "../group/CreateGroup.module.css";
+import styles_3 from "./MembersList.module.css";
+import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import GroupIcon from "@mui/icons-material/Group";
+import { Button } from "@mui/material";
 
 interface Props {
   socket: Socket | undefined;
   friend_id: string;
+  setOpenGroupForFriend: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-function SelectGroupForFriend({ socket, friend_id }: Props): JSX.Element {
+function SelectGroupForFriend({
+  socket,
+  friend_id,
+  setOpenGroupForFriend,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
-  const currentUsername = useSelector(selectUsername);
+  const result_invitation = useSelector(selectResult_groupInvitation);
   const groupsList = useSelector(selectGroupsList);
 
-  const [anchorEl, setAnchorEl] = useState<SVGSVGElement | null>(null);
-  const open = Boolean(anchorEl);
-
-  function openListHandler(event: React.MouseEvent<SVGSVGElement>) {
-    setAnchorEl(event.currentTarget);
-  }
   function handleClose() {
-    setAnchorEl(null);
+    setOpenGroupForFriend(false);
   }
 
   function invitationHandler(
@@ -49,61 +52,51 @@ function SelectGroupForFriend({ socket, friend_id }: Props): JSX.Element {
       });
     }
 
-    handleClose();
-    // remove the Result_groupInvitation message after 10 second with a collapse transition
     setTimeout(() => {
-      let elem = document.getElementById("invitation-result");
-      if (elem) elem.style.maxHeight = "0px";
-    }, 15000);
-    setTimeout(() => {
-      // have to collapse the <div> before clear the result_groupInvitation
-      // otherwise, the transition will be abrupt due to the removal of the text
       dispatch(setResult_groupInvitation(""));
-    }, 16000);
+    }, 10000);
   }
 
   return (
-    <main>
-      <Tooltip title="Invite friend to a group">
-        <GroupAddIcon
-          onClick={openListHandler}
-          className={styles.invite_button}
+    <>
+      <div className={styles_3.close_icon_wrapper}>
+        <CancelPresentationIcon
+          className={styles_3.close_icon}
+          onClick={handleClose}
         />
-      </Tooltip>
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleClose}
-        anchorOrigin={{
-          vertical: "bottom",
-          horizontal: "right",
-        }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "left",
-        }}
-      >
-        {Object.values(groupsList).map((group) => {
-          return (
-            <div key={group.group_id}>
-              <div>
-                <button
+      </div>
+      <main className={styles_3.main}>
+        <div className={styles_3.group_name_wrapper}>
+          <div id="main_title_2">Invite Friend to a Group</div>
+          <div className={styles_2.border}></div>
+        </div>
+
+        <div className={styles_3.list}>
+          <div className={styles_3.sub_title}>Friends</div>
+          <div className={styles_3.short_border}></div>
+          <div className={styles_3.list_body}>
+            {Object.values(groupsList).map((group) => {
+              const { group_id, group_name, admin_user_id } = group;
+              return (
+                <Button
+                  variant="outlined"
+                  key={group_id}
+                  className={styles.group_wrapper}
                   onClick={() =>
-                    invitationHandler(
-                      group.group_id,
-                      group.group_name,
-                      group.admin_user_id
-                    )
+                    invitationHandler(group_id, group_name, admin_user_id)
                   }
                 >
-                  {group.group_name} @ ID{group.group_id}
-                </button>
-              </div>
-            </div>
-          );
-        })}
-      </Popover>
-    </main>
+                  <GroupIcon />
+                  <div className={styles.group_name}>{group_name}</div>
+                </Button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className={styles_3.inv_result}>{result_invitation}</div>
+      </main>
+    </>
   );
 }
 

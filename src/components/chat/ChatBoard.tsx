@@ -103,6 +103,7 @@ function ChatBoard({
             <SelectGroupForFriend
               socket={socket}
               friend_id={targetFriend.friend_id}
+              setOpenGroupForFriend={setOpenGroupForFriend}
             />
           </div>
         </Slide>

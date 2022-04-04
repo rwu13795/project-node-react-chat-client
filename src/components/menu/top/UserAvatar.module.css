@@ -36,15 +36,15 @@
 }
 
 .popover_box {
-  border: solid var(--main-color-2) 3px;
   border-radius: 4px;
-  background: var(--modal-bgc-2);
+  background-image: var(--modal-bgc-2);
   display: flex;
   flex-flow: column nowrap;
   justify-content: space-around;
   align-items: center;
-  min-width: 180px;
+  width: 180px;
   min-height: 100px;
+  padding: 6px;
 }
 .button {
   text-transform: none;

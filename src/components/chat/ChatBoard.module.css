@@ -27,8 +27,8 @@
   z-index: 9;
   position: relative;
   width: 100%;
-  min-height: 99%;
-  padding: 12px 0 20px 0;
+  min-height: 94%;
+  padding: 12px 0 40px 0;
   bottom: 100%;
   overflow-y: visible;
   overflow-x: hidden;
@@ -40,8 +40,8 @@
   z-index: 9;
   position: relative;
   width: 100%;
-  min-height: 99%;
-  padding: 12px 0 20px 0;
+  min-height: 94%;
+  padding: 12px 0 40px 0;
   bottom: 203%;
   overflow-y: visible;
   overflow-x: hidden;

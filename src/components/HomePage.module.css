@@ -19,10 +19,10 @@
   align-items: center;
 }
 
-.left_grid:active .resize_handle_wrapper {
+.left_grid:hover .resize_handle_wrapper {
   visibility: visible;
 }
-.left_grid:hover .resize_handle_wrapper {
+.left_grid:active .resize_handle_wrapper {
   visibility: visible;
 }
 
@@ -51,6 +51,7 @@
   display: flex;
   justify-content: center;
   overflow: hidden;
+  padding-left: 4px;
 }
 
 /* the handle itself does not change position while being dragged

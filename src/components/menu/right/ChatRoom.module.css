@@ -1,12 +1,11 @@
 .main {
   width: 94%;
-  min-width: 600px;
+  /* min-width: 600px; */
   min-height: calc(100vh - 110px);
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: flex-start;
-  border: solid red 4px;
   border-radius: 10px;
   overflow: hidden;
 }

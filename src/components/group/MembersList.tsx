@@ -1,9 +1,10 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import { selectTargetChatRoom } from "../../redux/message/messageSlice";
 import {
+  GroupMember,
   selectCurrentUser,
   selectFriendsList,
   selectTargetGroup,
@@ -19,6 +20,7 @@ import { Avatar, Button } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import EditIcon from "@mui/icons-material/Edit";
 import ChangeGroupName from "./ChangeGroupName";
+import ViewUserProfile from "../user/profile/ViewUserProfile";
 
 interface Props {
   socket: Socket | undefined;
@@ -32,9 +34,27 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
   const friendsList = useSelector(selectFriendsList);
 
   const { group_id, group_name, group_members, admin_user_id } = targetGroup;
+  const [openProfile, setOpenProfile] = useState<boolean>(false);
+  const [targetUser, setTargetUser] = useState<GroupMember>({
+    user_id: "",
+    username: "",
+    email: "",
+  });
+  const [kicking, setKicking] = useState<boolean>(false);
+
+  function openProfileHandler() {
+    setOpenProfile(true);
+  }
+  function closeProfileHandler() {
+    setOpenProfile(false);
+  }
 
   function handleCloseMemberList() {
     setOpenMemberList(false);
+  }
+  function viewUserProfileHandler(member: GroupMember) {
+    setTargetUser(member);
+    openProfileHandler();
   }
 
   return (
@@ -46,6 +66,15 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
           onClick={handleCloseMemberList}
         />
       </div>
+      <ViewUserProfile
+        openModal={openProfile}
+        user_id={targetUser.user_id}
+        username={targetUser.username}
+        email={targetUser.email}
+        avatar_url={targetUser.avatar_url}
+        closeModalHandler={closeProfileHandler}
+      />
+
       <main className={styles.main}>
         {targetGroup && group_members && (
           <>
@@ -55,6 +84,7 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
                 group_id={group_id}
                 group_name={group_name}
               />
+
               <div className={styles_2.border}></div>
             </div>
 
@@ -76,11 +106,13 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
                             src={avatar_url ? avatar_url : username[0]}
                             alt={username[0]}
                             className={styles.avatar}
+                            onClick={() => viewUserProfileHandler(member)}
                           />
                           <div className={styles.username}>{username}</div>
                           {user_id === admin_user_id && (
                             <div className={styles.admin_tag}>Admin</div>
                           )}
+                          {kicking && <Button>Kick</Button>}
                         </>
                       )}
                     </div>
@@ -109,11 +141,13 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
                             src={avatar_url ? avatar_url : username[0]}
                             alt={username[0]}
                             className={styles.avatar}
+                            onClick={() => viewUserProfileHandler(member)}
                           />
                           <div className={styles.username}>{username}</div>
                           {user_id === admin_user_id && (
                             <div className={styles.admin_tag}>Admin</div>
                           )}
+                          {kicking && <Button>Kick</Button>}
                         </>
                       )}
                     </div>
@@ -143,6 +177,17 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
                 </div>
               </div>
             </div>
+
+            {group_members.length > 1 && (
+              <Button
+                variant="contained"
+                color="error"
+                className={styles.kick_button}
+                onClick={() => setKicking(!kicking)}
+              >
+                {kicking ? "Cancel" : "Kick member"}
+              </Button>
+            )}
           </>
         )}
       </main>

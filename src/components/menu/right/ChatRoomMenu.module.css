@@ -1,6 +1,6 @@
 .chat_menu {
   width: 100%;
-  min-height: 90px;
-  max-height: 90px;
+  min-height: 86px;
+  max-height: 86px;
   background: var(--navbar-color);
 }

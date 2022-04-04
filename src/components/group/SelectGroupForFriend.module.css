@@ -1,13 +1,20 @@
-/* @import "../../index.css"; */
-/* I don't need to import the CSS if the variables are inside the root:{}  */
-
-.invite_button {
-  cursor: pointer;
-  width: var(--button-width);
-  height: var(--button-height);
-  transition: all 0.5s;
+.group_wrapper {
+  margin: 8px;
+  width: 45%;
+  max-width: 45%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  text-transform: none;
 }
-.invite_button:hover {
-  color: rgb(16, 13, 218);
-  transition: all 0.5s;
+
+.group_name {
+  max-width: 90%;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

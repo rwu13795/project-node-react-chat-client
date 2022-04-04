@@ -28,9 +28,6 @@ export function resizeMenu() {
   function dragOnTouchStart(e: TouchEvent) {
     e.preventDefault();
 
-    // set the "handle" background-color on touch-drag
-    if (handle) handle.style.backgroundColor = "#00ccff";
-
     startClientX = e.touches[0].clientX;
 
     document.ontouchend = clearListeners;
@@ -80,7 +77,9 @@ export function resizeMenu() {
       righMenu.style.width = "calc(100vw - 75px)";
     } else {
       leftMenu.style.width = width + "px";
-      righMenu.style.width = righMenu.scrollWidth + dragDistance + "px";
+      righMenu.style.width =
+        window.innerWidth - (leftMenu.scrollWidth - 25) + dragDistance + "px";
+      // 100vw - (current leftMenu width - 25 difference) + distance
     }
   }
 
@@ -89,7 +88,6 @@ export function resizeMenu() {
       leftMenu.style.cursor = "auto";
       righMenu.style.cursor = "auto";
     }
-    if (handle) handle.style.backgroundColor = "#ffffff00";
     document.onmouseup = null;
     document.onmousemove = null;
     document.ontouchstart = null;

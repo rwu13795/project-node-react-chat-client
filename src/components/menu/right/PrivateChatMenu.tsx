@@ -1,21 +1,19 @@
-import { memo, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { memo, useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 import { Socket } from "socket.io-client";
-import {
-  selectResult_groupInvitation,
-  selectTargetFriend,
-  setBlockFriend,
-} from "../../../redux/user/userSlice";
-import { selectTargetChatRoom } from "../../../redux/message/messageSlice";
-import BlockFriend from "../../friend/BlockFriend";
-import DeleteFriend from "../../friend/DeleteFriend";
-import UnblockFriend from "../../friend/UnblockFriend";
-import SelectGroupForFriend from "../../group/SelectGroupForFriend";
+import { selectTargetFriend } from "../../../redux/user/userSlice";
+
+import BlockUnblockFriend from "../../friend/BlockUnblockFriend";
 
 // UI //
-import styles from "./ChatRoomMenu.module.css";
+import styles from "./GroupChatMenu.module.css";
+import styles_2 from "./PrivateChatMenu.module.css";
+import { Avatar, Tooltip, useMediaQuery } from "@mui/material";
+import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import ViewUserProfile from "../../user/profile/ViewUserProfile";
+import OptionsPrivateChatMenu from "./OptionsPrivateChatMenu";
 
 interface Props {
   friend_id: string;
@@ -28,55 +26,105 @@ function PrivateChatMenu({
   socket,
   setOpenGroupForFriend,
 }: Props): JSX.Element {
-  const targetChatRoom = useSelector(selectTargetChatRoom);
-  const targetFriend = useSelector(selectTargetFriend(friend_id));
-  const result_invitation = useSelector(selectResult_groupInvitation);
+  const isSmall = useMediaQuery("(max-width:765px)");
+  const max_900px = useMediaQuery("(max-width:900px)");
 
-  useEffect(() => {
-    setOpenGroupForFriend(false);
-  }, [targetChatRoom]);
+  const {
+    friend_blocked_user,
+    friend_blocked_user_at,
+    user_blocked_friend,
+    user_blocked_friend_at,
+    friend_username,
+    friend_email,
+    avatar_url,
+  } = useSelector(selectTargetFriend(friend_id));
+
+  const [openProfile, setOpenProfile] = useState<boolean>(false);
+
+  function openProfileHandler() {
+    setOpenProfile(true);
+  }
+  function closeProfileHandler() {
+    setOpenProfile(false);
+  }
 
   function openGroupForFriendHandler() {
     setOpenGroupForFriend((prev) => !prev);
   }
 
+  useEffect(() => {
+    setOpenGroupForFriend(false);
+  }, []);
+
   return (
-    <main className={styles.chat_menu}>
-      <div className={styles.chat_menu_grid}>
-        <div className={styles.chat_menu_grid_left}>
-          Chatting with {targetChatRoom.name}-{targetChatRoom.id}
+    <>
+      <main className={styles.main}>
+        <div className={styles.left}>
+          {isSmall && <ArrowBackIosIcon className={styles.back_arrow} />}
         </div>
-        <div className={styles.chat_menu_grid_right}>
-          {/* <SelectGroupForFriend socket={socket} friend_id={friend_id} />
-          
-          */}
-          <button onClick={openGroupForFriendHandler}>
-            invite friend to groups
-          </button>
-          {targetFriend.user_blocked_friend ? (
-            <UnblockFriend friend_id={friend_id} socket={socket} />
-          ) : (
-            <BlockFriend friend_id={friend_id} socket={socket} />
+        <div className={styles.center}>
+          <div className={styles_2.avatar_wrapper}>
+            <Avatar
+              src={avatar_url ? avatar_url : friend_username[0]}
+              alt={friend_username[0]}
+              className={styles_2.avatar}
+              onClick={openProfileHandler}
+            />
+            <div className={styles_2.username}>{friend_username}</div>
+          </div>
+
+          {friend_blocked_user && (
+            <div className={styles.center_lower}>
+              You were blocked by this friend on{" "}
+              {new Date(friend_blocked_user_at).toLocaleDateString()}
+            </div>
+          )}
+          {user_blocked_friend && (
+            <div className={styles.center_lower}>
+              You blocked this friend on{" "}
+              {new Date(user_blocked_friend_at).toLocaleDateString()}
+            </div>
           )}
         </div>
-      </div>
+        <div className={styles.right}>
+          {max_900px ? (
+            <OptionsPrivateChatMenu
+              socket={socket}
+              friend_id={friend_id}
+              user_blocked_friend={user_blocked_friend}
+              openGroupForFriendHandler={openGroupForFriendHandler}
+            />
+          ) : (
+            <>
+              <Tooltip title="Invite Friend to Group">
+                <div
+                  className={styles.icon_wrapper}
+                  onClick={openGroupForFriendHandler}
+                >
+                  <GroupAddIcon className={styles.invite_friends} />
+                </div>
+              </Tooltip>
 
-      {targetFriend.friend_blocked_user && (
-        <div style={{ color: "red", textAlign: "center" }}>
-          You were block by this friend, you cannot send him/her any message
-          untill you are unblocked!
+              <div className={styles.icon_wrapper}>
+                <BlockUnblockFriend
+                  friend_id={friend_id}
+                  socket={socket}
+                  user_blocked_friend={user_blocked_friend}
+                />
+              </div>
+            </>
+          )}
         </div>
-      )}
-      {targetFriend.user_blocked_friend && (
-        <div className={styles.notification_div} id="block-friend">
-          This friend was blocked on {targetFriend.user_blocked_friend_at}
-          <DeleteFriend friend_id={friend_id} />
-        </div>
-      )}
-      <div className={styles.notification_div} id={"invitation-result"}>
-        {result_invitation}
-      </div>
-    </main>
+      </main>
+      <ViewUserProfile
+        openModal={openProfile}
+        user_id={friend_id}
+        username={friend_username}
+        email={friend_email}
+        avatar_url={avatar_url}
+        closeModalHandler={closeProfileHandler}
+      />
+    </>
   );
 }
 

@@ -1,17 +1,12 @@
-import { memo, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { memo, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { selectTargetChatRoom } from "../../../redux/message/messageSlice";
-import {
-  selectResult_groupInvitation,
-  selectTargetGroup,
-} from "../../../redux/user/userSlice";
+import { selectTargetGroup } from "../../../redux/user/userSlice";
 import LeaveGroup from "../../group/LeaveGroup";
 
-import MembersList from "../../group/MembersList";
 import RemoveGroup from "../../group/RemoveGroup";
-import SelectFriendForGroup from "../../group/SelectFriendForGroup";
+import OptionsGroupChatMenu from "./OptionsGroupChatMenu";
 
 // UI //
 import styles from "./GroupChatMenu.module.css";
@@ -19,7 +14,6 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { Tooltip, useMediaQuery } from "@mui/material";
 import MembersListAvatars from "../../group/MembersListAvatars";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import OptionsGroupChatMenu from "./OptionsGroupChatMenu";
 
 interface Props {
   target_id: string;
@@ -37,7 +31,6 @@ function GroupChatMenu({
   const isSmall = useMediaQuery("(max-width:765px)");
   const max_900px = useMediaQuery("(max-width:900px)");
 
-  const targetChatRoom = useSelector(selectTargetChatRoom);
   const {
     group_id,
     group_name,
@@ -51,7 +44,7 @@ function GroupChatMenu({
   useEffect(() => {
     setOpenFriendForGroup(false);
     setOpenMemberList(false);
-  }, [targetChatRoom]);
+  }, []);
 
   function openMembersListHandler() {
     setOpenMemberList((prev) => !prev);
@@ -70,7 +63,7 @@ function GroupChatMenu({
         {isSmall && <ArrowBackIosIcon className={styles.back_arrow} />}
       </div>
       <div className={styles.center}>
-        <div className={styles.center_upper}>{targetChatRoom.name}</div>
+        <div className={styles.center_upper}>{group_name}</div>
         <div className={styles.center_boreder}></div>
         {user_left_at && (
           <div className={styles.center_lower}>
@@ -81,16 +74,14 @@ function GroupChatMenu({
       </div>
       <div className={styles.right}>
         {max_900px ? (
-          <div>
-            <OptionsGroupChatMenu
-              socket={socket}
-              group_id={group_id}
-              group_name={group_name}
-              admin_user_id={admin_user_id}
-              openMembersListHandler={openMembersListHandler}
-              openFriendForGroupHandler={openFriendForGroupHandler}
-            />
-          </div>
+          <OptionsGroupChatMenu
+            socket={socket}
+            group_id={group_id}
+            group_name={group_name}
+            admin_user_id={admin_user_id}
+            openMembersListHandler={openMembersListHandler}
+            openFriendForGroupHandler={openFriendForGroupHandler}
+          />
         ) : user_left ? (
           <RemoveGroup />
         ) : (

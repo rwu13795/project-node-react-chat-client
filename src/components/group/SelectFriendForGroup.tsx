@@ -52,7 +52,7 @@ function InviteFriendToGroup({
     }
     setTimeout(() => {
       dispatch(setResult_groupInvitation(""));
-    }, 20000);
+    }, 10000);
   }
 
   return (
@@ -95,7 +95,7 @@ function InviteFriendToGroup({
         </div>
 
         <div className={styles.inv_result}>{result_invitation}</div>
-      </main>{" "}
+      </main>
     </>
   );
 }

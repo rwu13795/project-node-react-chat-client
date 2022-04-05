@@ -52,12 +52,16 @@ function GroupInvitation({ groupInvitations, socket }: Props): JSX.Element {
         setLoadingStatus_user(loadingStatusEnum.joiningNewGroup_loading)
       );
     } else {
-      dispatch(deleteGroupInvitation(group_id));
+      dispatch(deleteGroupInvitation({ group_id }));
     }
     if (socket) {
       // update the groups and users_in_groups according to the response
       groupInvitationResponse_emitter(socket, { group_id, accept });
     }
+  }
+
+  function deleteDisbandedInvitation(group_id: string) {
+    dispatch(deleteGroupInvitation({ group_id }));
   }
 
   useEffect(() => {
@@ -101,53 +105,67 @@ function GroupInvitation({ groupInvitations, socket }: Props): JSX.Element {
             <div className={styles.title}>Group Invitaions</div>
             <div className={styles.border}></div>
             {groupInvitations.map((inv, index) => {
-              const { group_id, group_name, inviter_id } = inv;
+              const { group_id, group_name, inviter_id, discarded } = inv;
               const { friend_username, avatar_url } = friendsList[inviter_id];
               return (
                 <div key={group_id} className={styles.invitation_wrapper}>
-                  <div className={styles.invitation}>
-                    <div className={styles.user_wrapper}>
-                      <div className={styles.avatar_wrapper}>
-                        <UserAvatar
-                          socket={undefined}
-                          username={friend_username}
-                          avatar_url={avatar_url}
-                          option={AvatarOptions.topAvatar}
-                        />
+                  {discarded ? (
+                    <div
+                      className={styles.disband_text}
+                      onClick={() => deleteDisbandedInvitation(group_id)}
+                    >
+                      <div>This group was disbanded</div>
+                      <CancelPresentationIcon />
+                    </div>
+                  ) : (
+                    <>
+                      <div className={styles.invitation}>
+                        <div className={styles.user_wrapper}>
+                          <div className={styles.avatar_wrapper}>
+                            <UserAvatar
+                              socket={undefined}
+                              username={friend_username}
+                              avatar_url={avatar_url}
+                              option={AvatarOptions.topAvatar}
+                            />
+                          </div>
+                          <div className={styles.username}>
+                            {friend_username}
+                          </div>
+                        </div>
+                        <div className={styles.inv_text}>invites you to</div>
+                        <div className={styles.group_name}>
+                          <GroupIcon />
+                          {group_name}
+                        </div>
                       </div>
-                      <div className={styles.username}>{friend_username}</div>
-                    </div>
-                    <div className={styles.inv_text}>invites you to</div>
-                    <div className={styles.group_name}>
-                      <GroupIcon />
-                      {group_name}
-                    </div>
-                  </div>
-                  <div className={styles.buttons_wrapper}>
-                    <Button
-                      variant="outlined"
-                      onClick={() => responseHandler(group_id, true)}
-                      className={styles.button}
-                      disabled={
-                        loadingStatus ===
-                        loadingStatusEnum.joiningNewGroup_loading
-                      }
-                    >
-                      accpet
-                    </Button>
-                    <Button
-                      variant="outlined"
-                      color="error"
-                      onClick={() => responseHandler(group_id, false)}
-                      className={styles.button}
-                      disabled={
-                        loadingStatus ===
-                        loadingStatusEnum.joiningNewGroup_loading
-                      }
-                    >
-                      reject
-                    </Button>
-                  </div>
+                      <div className={styles.buttons_wrapper}>
+                        <Button
+                          variant="outlined"
+                          onClick={() => responseHandler(group_id, true)}
+                          className={styles.button}
+                          disabled={
+                            loadingStatus ===
+                            loadingStatusEnum.joiningNewGroup_loading
+                          }
+                        >
+                          accpet
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          color="error"
+                          onClick={() => responseHandler(group_id, false)}
+                          className={styles.button}
+                          disabled={
+                            loadingStatus ===
+                            loadingStatusEnum.joiningNewGroup_loading
+                          }
+                        >
+                          reject
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </div>
               );
             })}

@@ -148,6 +148,16 @@
   cursor: pointer;
 }
 
+.disband_text {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  font-size: 26px;
+  cursor: pointer;
+}
+
 @media screen and (max-width: 765px) {
   .modal {
     width: calc(100vw - 20px);

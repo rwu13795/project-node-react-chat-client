@@ -91,6 +91,7 @@ export interface GroupInvitation {
   group_name: string;
   inviter_id: string;
   was_responded: boolean;
+  discarded?: boolean;
 }
 
 export interface Friend {

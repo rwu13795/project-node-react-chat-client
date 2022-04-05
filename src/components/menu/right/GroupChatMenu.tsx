@@ -68,12 +68,16 @@ function GroupChatMenu({
         {user_left_at && (
           <div className={styles.center_lower}>
             You {was_kicked ? "were kicked out from" : "have left"} this group
-            on {user_left_at}
+            on {new Date(user_left_at).toLocaleDateString()}
           </div>
         )}
       </div>
       <div className={styles.right}>
-        {max_900px ? (
+        {user_left ? (
+          <div className={styles.icon_wrapper}>
+            <RemoveGroup />
+          </div>
+        ) : max_900px ? (
           <OptionsGroupChatMenu
             socket={socket}
             group_id={group_id}
@@ -82,8 +86,6 @@ function GroupChatMenu({
             openMembersListHandler={openMembersListHandler}
             openFriendForGroupHandler={openFriendForGroupHandler}
           />
-        ) : user_left ? (
-          <RemoveGroup />
         ) : (
           <>
             <Tooltip title="Group Info">

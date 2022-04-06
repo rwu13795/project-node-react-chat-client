@@ -11,7 +11,7 @@ import {
   selectTargetGroup,
   selectUserId,
 } from "../../redux/user/userSlice";
-import { client } from "../../redux/utils";
+// import { client } from "../../redux/utils";
 
 // UI //
 import styles from "./LeaveGroup.module.css";
@@ -19,9 +19,11 @@ import styles_2 from "../menu/left/GroupsList.module.css";
 import { Backdrop, Box, Button, Fade, Modal, Tooltip } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
+import { axios_client } from "../../utils";
 
 function RemoveGroup(): JSX.Element {
   const dispatch = useDispatch();
+  const client = axios_client();
 
   const currentUserId = useSelector(selectUserId);
   const targetChatRoom = useSelector(selectTargetChatRoom);

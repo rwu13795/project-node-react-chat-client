@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
-import { client, serverUrl } from "../../redux/utils";
+import { axios_client } from "..";
+import { serverUrl } from "../../redux/utils";
 
 interface Res_props {
   isValid: boolean;
@@ -7,6 +8,8 @@ interface Res_props {
 }
 
 export function useCheckToken(token: string | null, user_id: string | null) {
+  const client = axios_client();
+
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isValid, setIsValid] = useState<boolean>(false);
   const [expirationInMS, setExpirationInMS] = useState<number>(0);

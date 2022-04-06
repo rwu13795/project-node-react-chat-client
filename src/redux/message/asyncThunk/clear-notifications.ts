@@ -2,7 +2,8 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
-import { client, serverUrl } from "../../utils";
+import { axios_client } from "../../../utils";
+import { serverUrl } from "../../utils";
 import { chatType, MessageState } from "../messageSlice";
 
 interface Res_body {
@@ -26,6 +27,8 @@ export const clearNotifications = createAsyncThunk<
     { previousRoom_id, previousRoom_type, nextRoom_id, nextRoom_type },
     thunkAPI
   ) => {
+    const client = axios_client();
+
     if (previousRoom_id !== "" && previousRoom_type !== "") {
       const user_id = thunkAPI.getState().user.currentUser.user_id;
       await client.post(serverUrl + `/chat/clear-notifications`, {

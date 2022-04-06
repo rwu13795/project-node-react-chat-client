@@ -1,9 +1,9 @@
 import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 import { RootState } from "../..";
-import { loadingStatusEnum } from "../../../utils";
+import { axios_client, loadingStatusEnum } from "../../../utils";
 
-import { client, serverUrl } from "../../utils";
+import { serverUrl } from "../../utils";
 import { UserState } from "../userSlice";
 
 interface Res_body {
@@ -18,6 +18,8 @@ export const forgotPasswordReset = createAsyncThunk<
   Res_body,
   { state: RootState }
 >("user/forgotPasswordReset", async (body, thunkAPI) => {
+  const client = axios_client();
+
   try {
     await client.post(serverUrl + `/auth/reset-pw`, body);
     return;

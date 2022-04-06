@@ -1,8 +1,8 @@
 import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
-import { onlineStatus_enum } from "../../../utils";
+import { axios_client, onlineStatus_enum } from "../../../utils";
 
-import { client, serverUrl } from "../../utils";
+import { serverUrl } from "../../utils";
 import {
   AddFriendRequest,
   CurrentUser,
@@ -23,6 +23,8 @@ interface Payload {
 export const getUserAuth = createAsyncThunk<Payload>(
   "user/getUserAuth",
   async () => {
+    const client = axios_client();
+
     const response = await client.get<Payload>(
       serverUrl + `/auth/user-auth-status`
     );

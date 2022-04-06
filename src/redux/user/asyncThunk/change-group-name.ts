@@ -1,9 +1,9 @@
 import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 import { RootState } from "../..";
-import { loadingStatusEnum } from "../../../utils";
+import { axios_client, loadingStatusEnum } from "../../../utils";
 
-import { client, serverUrl } from "../../utils";
+import { serverUrl } from "../../utils";
 import { UserState } from "../userSlice";
 
 interface Req_body {
@@ -21,6 +21,8 @@ export const changeGroupName = createAsyncThunk<
   Req_body,
   { state: RootState }
 >("user/changeGroupName", async (body, thunkAPI) => {
+  const client = axios_client();
+
   try {
     const { data } = await client.post<Payload>(
       serverUrl + `/user/change-group-name`,

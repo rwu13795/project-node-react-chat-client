@@ -2,8 +2,12 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
-import { loadingStatusEnum, onlineStatus_enum } from "../../../utils";
-import { client, serverUrl } from "../../utils";
+import {
+  axios_client,
+  loadingStatusEnum,
+  onlineStatus_enum,
+} from "../../../utils";
+import { serverUrl } from "../../utils";
 import {
   AddFriendRequest,
   CurrentUser,
@@ -47,6 +51,8 @@ export const signIn = createAsyncThunk<
     // thunkAPI.rejectWithValue to the reducer
     thunkAPI
   ) => {
+    const client = axios_client();
+
     try {
       const response = await client.post<Payload>(serverUrl + "/auth/sign-in", {
         req_email: body.email,

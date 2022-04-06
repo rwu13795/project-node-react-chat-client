@@ -15,13 +15,14 @@ import MessageInput from "./MessageInput";
 import ImageInput from "./ImageInput";
 import SelectFriendForGroup from "../group/SelectFriendForGroup";
 import SelectGroupForFriend from "../group/SelectGroupForFriend";
+import ChatLogs from "./ChatLogs";
+import MembersList from "../group/MembersList";
+import FileInput from "./FileInput";
+import { resizeChatBoard } from "../../utils";
 
 // UI //
 import styles from "./ChatBoard.module.css";
 import { Slide } from "@mui/material";
-import ChatLogs from "./ChatLogs";
-import MembersList from "../group/MembersList";
-import FileInput from "./FileInput";
 
 interface Props {
   socket: Socket | undefined;
@@ -60,21 +61,12 @@ function ChatBoard({
   }, [targetChatRoom]);
 
   useEffect(() => {
-    setTimeout(() => {
-      console.log("in chatBoard, resize the input-container");
-      inputRef.current!.style.height = "auto";
-
-      const diff =
-        chatBoardRef.current!.offsetHeight - inputRef.current!.scrollHeight;
-      logsRef.current!.style.height = diff + "px";
-      // (1) //
-      buttonsRef.current!.style.minHeight =
-        inputRef.current!.scrollHeight + "px";
-      buttonsRef.current!.style.bottom =
-        inputRef.current!.scrollHeight - 40 + "px";
-
-      console.log(buttonsRef.current!.scrollHeight);
+    const timeout = setTimeout(() => {
+      resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
     }, 100);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [imageFile]);
 
   function clearImageHandler() {
@@ -102,6 +94,7 @@ function ChatBoard({
             chatBoardRef={chatBoardRef}
             logsRef={logsRef}
             inputRef={inputRef}
+            buttonsRef={buttonsRef}
           />
           {imageFile && (
             <div className={styles.preview_image_wrapper}>
@@ -186,12 +179,3 @@ function ChatBoard({
 }
 
 export default memo(ChatBoard);
-
-// NOTE //
-/*
-  (1)
-  also resize the buttons-container's height to cover the input-container's
-  background (If I did not use the transparent background in the chat-logs
-  I DO NOT have to resize the buttons-containe, because the background
-  nconsistence won't be noticeable)
-*/

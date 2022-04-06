@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { WritableDraft } from "immer/dist/internal";
+import { axios_client } from "../../../utils";
 
-import { client, serverUrl } from "../../utils";
+import { serverUrl } from "../../utils";
 
 interface Res_body {
   status: string;
@@ -10,6 +10,8 @@ interface Res_body {
 export const changeOnlineStatus_session = createAsyncThunk<void, Res_body>(
   "user/changePassword",
   async (body) => {
+    const client = axios_client();
+
     await client.post(serverUrl + `/auth/change-status`, body);
   }
 );

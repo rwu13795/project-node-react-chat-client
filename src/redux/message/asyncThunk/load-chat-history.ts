@@ -2,8 +2,8 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
-import { loadingStatusEnum } from "../../../utils";
-import { client, serverUrl } from "../../utils";
+import { axios_client, loadingStatusEnum } from "../../../utils";
+import { serverUrl } from "../../utils";
 import { MessageState } from "../messageSlice";
 
 interface MessageObject_res {
@@ -43,6 +43,8 @@ export const loadChatHistory_database = createAsyncThunk<
     { targetRoom_type, targetRoom_id, currentUserId, date_limit },
     thunkAPI
   ) => {
+    const client = axios_client();
+
     // id can be user's, group's or public-channel's id
     const room_id = `${targetRoom_type}_${targetRoom_id}`;
     // if the room is visited, that means chat history has been loaded, then don't make request again

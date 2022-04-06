@@ -13,8 +13,8 @@ import {
   setInfiniteScrollStats,
 } from "../../redux/message/messageSlice";
 import { selectUserId, selectUsername } from "../../redux/user/userSlice";
-import { client } from "../../redux/utils";
-import { loadingStatusEnum } from "../../utils";
+
+import { axios_client, loadingStatusEnum } from "../../utils";
 
 // UI //
 import styles from "./ChatLogs.module.css";
@@ -22,6 +22,7 @@ import { CircularProgress } from "@mui/material";
 
 function ChatLogs(): JSX.Element {
   const dispatch = useDispatch();
+  const client = axios_client();
 
   const chatHistory = useSelector(selectTargetChatRoom_history);
   const currentUserId = useSelector(selectUserId);

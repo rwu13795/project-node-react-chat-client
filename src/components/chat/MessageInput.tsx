@@ -7,7 +7,6 @@ import {
   memo,
   MutableRefObject,
   useEffect,
-  useRef,
   useState,
 } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +33,7 @@ import {
   onBlurCheck,
   onChangeCheck,
   onFocusCheck,
+  resizeChatBoard,
 } from "../../utils";
 import InputField, { InputFields } from "../input-field/InputField";
 
@@ -42,9 +42,10 @@ import styles from "./MessageInput.module.css";
 
 interface Props {
   socket: Socket | undefined;
-  chatBoardRef: React.MutableRefObject<HTMLDivElement | null>;
-  logsRef: React.MutableRefObject<HTMLDivElement | null>;
-  inputRef: React.MutableRefObject<HTMLDivElement | null>;
+  chatBoardRef: MutableRefObject<HTMLDivElement | null>;
+  logsRef: MutableRefObject<HTMLDivElement | null>;
+  inputRef: MutableRefObject<HTMLDivElement | null>;
+  buttonsRef: MutableRefObject<HTMLDivElement | null>;
 }
 
 function MessageInput({
@@ -52,6 +53,7 @@ function MessageInput({
   chatBoardRef,
   logsRef,
   inputRef,
+  buttonsRef,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
 
@@ -109,20 +111,12 @@ function MessageInput({
     }
 
     setTimeout(() => {
-      // input.style.height = "auto";
       setPrevHeight(inputRef.current!.scrollHeight);
       if (
         prevHeight !== inputRef.current!.scrollHeight &&
         Math.abs(prevHeight - inputRef.current!.scrollHeight) > 1
       ) {
-        console.log("board.offsetHeight", chatBoardRef.current!.offsetHeight);
-        console.log("input.scrollHeight", inputRef.current!.scrollHeight);
-        console.log("log.style.height", logsRef.current!.style.height);
-        logsRef.current!.style.height =
-          chatBoardRef.current!.offsetHeight -
-          inputRef.current!.scrollHeight +
-          "px";
-        console.log("log.style.height", logsRef.current!.style.height);
+        resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
       }
     }, 100);
   }

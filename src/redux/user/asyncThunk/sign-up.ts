@@ -2,8 +2,12 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
-import { loadingStatusEnum, onlineStatus_enum } from "../../../utils";
-import { client, serverUrl } from "../../utils";
+import {
+  axios_client,
+  loadingStatusEnum,
+  onlineStatus_enum,
+} from "../../../utils";
+import { serverUrl } from "../../utils";
 import { CurrentUser, Friend, UserState } from "../userSlice";
 
 interface Res_body {
@@ -21,6 +25,8 @@ interface Payload {
 export const signUp = createAsyncThunk<Payload, Res_body, { state: RootState }>(
   "user/signUp",
   async (signUpBody, thunkAPI) => {
+    const client = axios_client();
+
     try {
       const response = await client.post<Payload>(
         serverUrl + "/auth/sign-up",

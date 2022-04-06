@@ -89,16 +89,10 @@ function FileInput(): JSX.Element {
 
   return (
     <main>
-      <h4>I am the Document Input</h4>
       <form onSubmit={sendImageHandler}>
         <input onChange={onFileChangeHandler} type="file" accept="*" />
         <input type="submit" />
       </form>
-      <div style={{ maxWidth: "200px", maxHeight: "400px" }}>
-        Preview: {sizeExceeded && "Size excceeds max size (5MB)"}
-        {notSupported && "only png, jpeg, jpg, gif is supported"}
-        {file && <img src={URL.createObjectURL(file)} alt="preview" />}
-      </div>
     </main>
   );
 }

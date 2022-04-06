@@ -1,0 +1,28 @@
+.input_field_wrapper {
+  width: 90%;
+  max-width: 90%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 0 10px;
+}
+
+.input_field_wrapper div {
+  width: 100%;
+}
+
+.input_field {
+  width: 100%;
+  max-width: 100%;
+}
+
+.input_field div {
+  height: auto;
+  font-size: 18px;
+  padding: 6px 10px;
+}
+.error {
+  font-size: 16px;
+  color: red;
+}

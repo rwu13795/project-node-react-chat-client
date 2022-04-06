@@ -13,8 +13,8 @@
 }
 
 .body {
-  /* 188 = 86(chatMenu) + 102(navBar) */
-  min-height: calc(100vh - 188px);
+  /* 238 = 86(chatMenu) + 102(navBar) + 50(buttons-container)*/
+  min-height: calc(100vh - 238px);
   width: 100%;
   display: flex;
   flex-flow: column nowrap;
@@ -25,31 +25,67 @@
 }
 
 .chat_logs {
-  height: auto;
+  height: 95%;
   min-height: 20%;
-  max-height: 90%;
+  max-height: 95%;
   min-width: 100%;
   border: 1px solid blue;
   transition: all 0.5s;
 }
 .input_container {
   height: auto;
-  min-height: 10%;
+  min-height: 5%;
   max-height: 80%;
   min-width: 100%;
   background-color: var(--navbar-color);
   display: flex;
-  flex-flow: row wrap;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: flex-start;
   overflow: hidden;
   z-index: 2;
+  padding: 10px 0;
 }
-.bottom_bg {
+.preview_image_wrapper {
   position: relative;
-  bottom: 50px;
+  max-height: 150px;
+  max-width: 300px;
+  animation: append-animate 1s linear;
+}
+@keyframes append-animate {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.preview_image {
+  max-height: 150px;
+  max-width: 200px;
+}
+
+/* the visible height of the container is 50px + 20px padding 
+  the rest of the height is under the input-container, to cover the background
+  inconsistence while the input-container is being resized
+*/
+.buttons_container {
+  position: relative;
+  bottom: 60px;
   min-height: 100px;
   min-width: 100%;
   background-color: var(--navbar-color);
   z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding-bottom: 10px;
+  transition: all 0.5s;
+}
+
+.slide_anchor {
+  min-width: 100%;
 }
 
 .slide_1st {
@@ -60,7 +96,7 @@
   width: 100%;
   min-height: 94%;
   padding: 12px 0 40px 0;
-  bottom: 100%;
+  bottom: calc(100vh - 159px);
   overflow-y: visible;
   overflow-x: hidden;
 }
@@ -73,7 +109,10 @@
   width: 100%;
   min-height: 94%;
   padding: 12px 0 40px 0;
-  bottom: 200.5%;
+  /* 94% is the height of the slide_1st, since slide_2nd is under slide_1st,
+    the bottom needs to include the height of the slide_1st
+  */
+  bottom: calc(100vh - 107px + 94%);
   overflow-y: visible;
   overflow-x: hidden;
 }

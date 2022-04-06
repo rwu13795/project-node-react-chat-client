@@ -1,8 +1,9 @@
-import { TextField } from "@mui/material";
+import { FormControl, FormHelperText, TextField } from "@mui/material";
 import { Dispatch } from "@reduxjs/toolkit";
 import {
   ChangeEvent,
   FormEvent,
+  FocusEvent,
   memo,
   MutableRefObject,
   useEffect,
@@ -28,6 +29,16 @@ import {
   selectUsername,
 } from "../../redux/user/userSlice";
 import { message_emitter } from "../../socket-io/emitters";
+import {
+  inputNames,
+  onBlurCheck,
+  onChangeCheck,
+  onFocusCheck,
+} from "../../utils";
+import InputField, { InputFields } from "../input-field/InputField";
+
+// UI //
+import styles from "./MessageInput.module.css";
 
 interface Props {
   socket: Socket | undefined;
@@ -50,121 +61,126 @@ function MessageInput({
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
 
-  const [msg, setMsg] = useState<string>("");
-  const inputFieldRef = useRef<HTMLDivElement | null>(null);
+  const [messageValue, setMessageValue] = useState<InputFields>({
+    [inputNames.message]: "",
+  });
+  const [messageError, setMessageError] = useState<InputFields>({
+    [inputNames.message]: "",
+  });
 
-  const [height, setHeight] = useState<number>(0);
+  const [prevHeight, setPrevHeight] = useState<number>(0);
+  const [touched, setTouched] = useState<boolean>(false);
+  const [showError, setShowError] = useState<boolean>(false);
 
   useEffect(() => {
-    setMsg("");
+    if (messageError[inputNames.message] !== "") {
+      setShowError(true);
+    } else {
+      setShowError(false);
+    }
+  }, [messageError]);
+
+  useEffect(() => {
+    setMessageValue({ [inputNames.message]: "" });
   }, []);
 
+  function onFocusHandler() {
+    onFocusCheck(setTouched);
+  }
+
+  function onBlurHandler(e: FocusEvent<HTMLInputElement>) {
+    const { name, value } = e.currentTarget;
+    onBlurCheck(name, value, touched, setMessageError);
+  }
+
+  // since the resizing has to be in the onChangeHandler, I cannot use <InputField />
   function onChangeHandler(e: ChangeEvent<HTMLInputElement>) {
-    setMsg(e.target.value);
+    const { name, value } = e.target;
+    const hasError = onChangeCheck(name, value, setMessageError);
+    if (hasError) return;
 
-    // const log = document.getElementById("chat-logs-container");
-    // const input = document.getElementById("input-container");
-    // const board = document.getElementById("chat-board-container");
+    setMessageValue({
+      [inputNames.message]: value,
+    });
 
-    // if (log && input && board) {
-    //   setTimeout(() => {
-    //     console.log("board.offsetHeight", board.offsetHeight);
-    //     console.log("input.scrollHeight", input.scrollHeight);
-    //     console.log("log.style.height", log.style.height);
-    //     log.style.height = board.offsetHeight - input.scrollHeight + "px";
-    //     console.log("log.style.height", log.style.height);
-    //     // input.style.height = "auto";
-    //   }, 100);
-    // }
+    if (prevHeight === 0) {
+      setPrevHeight(inputRef.current!.scrollHeight);
+      return;
+    }
 
     setTimeout(() => {
-      console.log("board.offsetHeight", chatBoardRef.current!.offsetHeight);
-      console.log("input.scrollHeight", inputRef.current!.scrollHeight);
-      console.log("log.style.height", logsRef.current!.style.height);
-      logsRef.current!.style.height =
-        chatBoardRef.current!.offsetHeight -
-        inputRef.current!.scrollHeight +
-        "px";
-      console.log("log.style.height", logsRef.current!.style.height);
       // input.style.height = "auto";
+      setPrevHeight(inputRef.current!.scrollHeight);
+      if (
+        prevHeight !== inputRef.current!.scrollHeight &&
+        Math.abs(prevHeight - inputRef.current!.scrollHeight) > 1
+      ) {
+        console.log("board.offsetHeight", chatBoardRef.current!.offsetHeight);
+        console.log("input.scrollHeight", inputRef.current!.scrollHeight);
+        console.log("log.style.height", logsRef.current!.style.height);
+        logsRef.current!.style.height =
+          chatBoardRef.current!.offsetHeight -
+          inputRef.current!.scrollHeight +
+          "px";
+        console.log("log.style.height", logsRef.current!.style.height);
+      }
     }, 100);
   }
 
   function sendMessageHandler(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
-    const messageObject: MessageObject = {
-      sender_id: currentUserId,
-      sender_name: currentUsername,
-      recipient_id: targetChatRoom.id,
-      recipient_name: targetChatRoom.name,
-      msg_body: msg,
-      msg_type: msgType.text,
-      created_at: new Date().toString(),
-    };
+    //   const messageObject: MessageObject = {
+    //     sender_id: currentUserId,
+    //     sender_name: currentUsername,
+    //     recipient_id: targetChatRoom.id,
+    //     recipient_name: targetChatRoom.name,
+    //     msg_body: msg,
+    //     msg_type: msgType.text,
+    //     created_at: new Date().toString(),
+    //   };
 
-    // (1) //
+    //   // (1) //
+    //   const warning = inputWarningHandler(
+    //     targetGroup,
+    //     targetFriend,
+    //     targetChatRoom.type,
+    //     messageObject,
+    //     dispatch
+    //   );
+    //   if (warning) return;
 
-    // check if the user was kicked out of the group or blocked by a friend
-    // if (targetChatRoom.type === chatType.group) {
-    //   if (targetGroup && targetGroup.user_left) return;
-    // } else {
-    //   if (
-    //     targetFriend &&
-    //     (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend)
-    //   ) {
-    //     messageObject.msg_body = `You ${
-    //       targetFriend.user_blocked_friend ? "blocked" : "were blocked by"
-    //     }
-    //             this friend, you cannot send any message to him/her!`;
-    //     dispatch(
-    //       addNewMessageToHistory_memory({
-    //         ...messageObject,
-    //         targetChatRoom_type: targetChatRoom.type,
-    //       })
-    //     );
-    //     return;
+    //   setMessageValue({ [inputNames.message]: "" });
+    //   dispatch(
+    //     addNewMessageToHistory_memory({
+    //       messageObject,
+    //       room_type: targetChatRoom.type,
+    //     })
+    //   );
+    //   if (socket) {
+    //     message_emitter(socket, {
+    //       messageObject,
+    //       room_type: targetChatRoom.type,
+    //     });
     //   }
-    // }
-    const warning = inputWarningHandler(
-      targetGroup,
-      targetFriend,
-      targetChatRoom.type,
-      messageObject,
-      dispatch
-    );
-    if (warning) return;
-
-    setMsg("");
-    dispatch(
-      addNewMessageToHistory_memory({
-        messageObject,
-        room_type: targetChatRoom.type,
-      })
-    );
-    if (socket) {
-      message_emitter(socket, {
-        messageObject,
-        room_type: targetChatRoom.type,
-      });
-    }
   }
 
   return (
-    <main>
-      <h4>I am the Message Input</h4>
-      <form onSubmit={sendMessageHandler}>
-        {/* <input type="text" onChange={onChangeHandler} value={msg} /> */}
-        <input type="submit" />
-      </form>
-      <TextField
-        multiline={true}
-        maxRows={4}
-        onChange={onChangeHandler}
-        value={msg}
-        ref={inputFieldRef}
-      />
-    </main>
+    <form onSubmit={sendMessageHandler} className={styles.input_field_wrapper}>
+      <FormControl error={showError}>
+        <TextField
+          onChange={onChangeHandler}
+          multiline={true}
+          maxRows={3}
+          placeholder="Send a message"
+          className={styles.input_field}
+          error={showError}
+        />
+      </FormControl>
+      <FormHelperText className={styles.error}>
+        {messageError[inputNames.message]}
+      </FormHelperText>
+    </form>
   );
 }
 

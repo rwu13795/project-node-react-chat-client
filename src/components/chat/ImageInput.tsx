@@ -1,3 +1,4 @@
+import { Slide } from "@mui/material";
 import { ChangeEvent, FormEvent, memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
@@ -16,9 +17,13 @@ import {
 } from "../../redux/user/userSlice";
 import { message_emitter } from "../../socket-io/emitters";
 
+// UI //
+import styles from "./ImageInput.module.css";
+
 interface Props {
   socket: Socket | undefined;
   setImageFile: React.Dispatch<React.SetStateAction<File | undefined>>;
+  slideAnchorRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 export const imageTypes = [
@@ -29,7 +34,11 @@ export const imageTypes = [
   "image/png",
 ];
 
-function ImageInput({ socket }: Props): JSX.Element {
+function ImageInput({
+  socket,
+  slideAnchorRef,
+  setImageFile,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const currentUserId = useSelector(selectUserId);
@@ -38,29 +47,9 @@ function ImageInput({ socket }: Props): JSX.Element {
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
 
-  const [imageFile, setImageFile] = useState<File | undefined>();
+  // const [imageFile, setImageFile] = useState<File | undefined>();
   const [sizeExceeded, setSizeExceeded] = useState<boolean>(false);
   const [notSupported, setNotSupported] = useState<boolean>(false);
-
-  useEffect(() => {
-    //////////////
-    const log = document.getElementById("chat-logs-container");
-    const input = document.getElementById("input-container");
-    const board = document.getElementById("chat-board-container");
-
-    if (log && input && board) {
-      setTimeout(() => {
-        console.log("board.offsetHeight", board.offsetHeight);
-        console.log("input.scrollHeight", input.scrollHeight);
-        console.log("log.style.height", log.style.height);
-        log.style.height = board.offsetHeight - input.scrollHeight + "px";
-        console.log("log.style.height", log.style.height);
-        // input.style.height = "auto";
-      }, 100);
-    }
-
-    ///////////////
-  });
 
   function sendImageHandler(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -122,7 +111,6 @@ function ImageInput({ socket }: Props): JSX.Element {
 
   return (
     <main>
-      <h4>I am the Image Input</h4>
       <form onSubmit={sendImageHandler}>
         <input
           onChange={onImageChangeHandler}
@@ -131,24 +119,6 @@ function ImageInput({ socket }: Props): JSX.Element {
         />
         <input type="submit" />
       </form>
-      {/* <div style={{ maxWidth: "200px", maxHeight: "400px" }}>
-        Preview: {sizeExceeded && "Size excceeds max size (5MB)"}
-        {notSupported && "only png, jpeg, jpg, gif is supported"}
-        {imageFile && (
-          <img
-            style={{ maxWidth: "200px", maxHeight: "400px" }}
-            src={URL.createObjectURL(imageFile)}
-            alt="preview"
-          />
-        )}
-      </div> */}
-      {imageFile && (
-        <img
-          src={URL.createObjectURL(imageFile)}
-          alt="preview"
-          style={{ maxWidth: "300px", maxHeight: "300px" }}
-        />
-      )}
     </main>
   );
 }

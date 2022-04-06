@@ -47,22 +47,42 @@ function ChatBoard({
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
 
   const [imageFile, setImageFile] = useState<File | undefined>();
+  const [textFile, setTextFile] = useState<File | undefined>();
 
   const slideAnchorRef = useRef<HTMLDivElement | null>(null);
   const chatBoardRef = useRef<HTMLDivElement | null>(null);
   const logsRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLDivElement | null>(null);
+  const buttonsRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setImageFile(undefined);
   }, [targetChatRoom]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      console.log("in chatBoard, resize the input-container");
+      inputRef.current!.style.height = "auto";
+
+      const diff =
+        chatBoardRef.current!.offsetHeight - inputRef.current!.scrollHeight;
+      logsRef.current!.style.height = diff + "px";
+      // (1) //
+      buttonsRef.current!.style.minHeight =
+        inputRef.current!.scrollHeight + "px";
+      buttonsRef.current!.style.bottom =
+        inputRef.current!.scrollHeight - 40 + "px";
+
+      console.log(buttonsRef.current!.scrollHeight);
+    }, 100);
+  }, [imageFile]);
+
+  function clearImageHandler() {
+    setImageFile(undefined);
+  }
+
   return (
     <main className={styles.main}>
-      {/* have to let the <Slide/> anchor in the empty div, so that they won't
-      break the positions of other elements */}
-      <div ref={slideAnchorRef}></div>
-
       <div className={styles.body} id="chat-board-container" ref={chatBoardRef}>
         <div
           className={styles.chat_logs}
@@ -77,21 +97,40 @@ function ChatBoard({
           id="input-container"
           ref={inputRef}
         >
-          <ImageInput socket={socket} setImageFile={setImageFile} />
-          <FileInput />
           <MessageInput
             socket={socket}
             chatBoardRef={chatBoardRef}
             logsRef={logsRef}
             inputRef={inputRef}
           />
+          {imageFile && (
+            <div className={styles.preview_image_wrapper}>
+              <img
+                src={URL.createObjectURL(imageFile)}
+                alt="preview"
+                className={styles.preview_image}
+              />
+              <button onClick={clearImageHandler}>clear</button>
+            </div>
+          )}
+          <div></div>
         </div>
       </div>
 
       {/* when the "input-container" shrinks, the background will be inconsistent.
       use this div to cover the that area, to make the transition look better*/}
-      <div className={styles.bottom_bg}></div>
+      <div className={styles.buttons_container} ref={buttonsRef}>
+        <ImageInput
+          socket={socket}
+          setImageFile={setImageFile}
+          slideAnchorRef={slideAnchorRef}
+        />
+        <FileInput />
+      </div>
 
+      {/* have to let the <Slide/> anchor on the empty div, so that they won't
+      break the position of other elements */}
+      <div ref={slideAnchorRef} className={styles.slide_anchor}></div>
       {targetChatRoom.type === chatType.group && (
         <>
           <Slide
@@ -147,3 +186,12 @@ function ChatBoard({
 }
 
 export default memo(ChatBoard);
+
+// NOTE //
+/*
+  (1)
+  also resize the buttons-container's height to cover the input-container's
+  background (If I did not use the transparent background in the chat-logs
+  I DO NOT have to resize the buttons-containe, because the background
+  nconsistence won't be noticeable)
+*/

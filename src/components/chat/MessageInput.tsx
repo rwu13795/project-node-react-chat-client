@@ -1,5 +1,14 @@
+import { TextField } from "@mui/material";
 import { Dispatch } from "@reduxjs/toolkit";
-import { ChangeEvent, FormEvent, memo, useState } from "react";
+import {
+  ChangeEvent,
+  FormEvent,
+  memo,
+  MutableRefObject,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
@@ -22,9 +31,17 @@ import { message_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
+  chatBoardRef: React.MutableRefObject<HTMLDivElement | null>;
+  logsRef: React.MutableRefObject<HTMLDivElement | null>;
+  inputRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
-function MessageInput({ socket }: Props): JSX.Element {
+function MessageInput({
+  socket,
+  chatBoardRef,
+  logsRef,
+  inputRef,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const currentUserId = useSelector(selectUserId);
@@ -34,9 +51,43 @@ function MessageInput({ socket }: Props): JSX.Element {
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
 
   const [msg, setMsg] = useState<string>("");
+  const inputFieldRef = useRef<HTMLDivElement | null>(null);
+
+  const [height, setHeight] = useState<number>(0);
+
+  useEffect(() => {
+    setMsg("");
+  }, []);
 
   function onChangeHandler(e: ChangeEvent<HTMLInputElement>) {
     setMsg(e.target.value);
+
+    // const log = document.getElementById("chat-logs-container");
+    // const input = document.getElementById("input-container");
+    // const board = document.getElementById("chat-board-container");
+
+    // if (log && input && board) {
+    //   setTimeout(() => {
+    //     console.log("board.offsetHeight", board.offsetHeight);
+    //     console.log("input.scrollHeight", input.scrollHeight);
+    //     console.log("log.style.height", log.style.height);
+    //     log.style.height = board.offsetHeight - input.scrollHeight + "px";
+    //     console.log("log.style.height", log.style.height);
+    //     // input.style.height = "auto";
+    //   }, 100);
+    // }
+
+    setTimeout(() => {
+      console.log("board.offsetHeight", chatBoardRef.current!.offsetHeight);
+      console.log("input.scrollHeight", inputRef.current!.scrollHeight);
+      console.log("log.style.height", logsRef.current!.style.height);
+      logsRef.current!.style.height =
+        chatBoardRef.current!.offsetHeight -
+        inputRef.current!.scrollHeight +
+        "px";
+      console.log("log.style.height", logsRef.current!.style.height);
+      // input.style.height = "auto";
+    }, 100);
   }
 
   function sendMessageHandler(e: FormEvent<HTMLFormElement>) {
@@ -84,6 +135,7 @@ function MessageInput({ socket }: Props): JSX.Element {
     );
     if (warning) return;
 
+    setMsg("");
     dispatch(
       addNewMessageToHistory_memory({
         messageObject,
@@ -102,9 +154,16 @@ function MessageInput({ socket }: Props): JSX.Element {
     <main>
       <h4>I am the Message Input</h4>
       <form onSubmit={sendMessageHandler}>
-        <input type="text" onChange={onChangeHandler} />
+        {/* <input type="text" onChange={onChangeHandler} value={msg} /> */}
         <input type="submit" />
       </form>
+      <TextField
+        multiline={true}
+        maxRows={4}
+        onChange={onChangeHandler}
+        value={msg}
+        ref={inputFieldRef}
+      />
     </main>
   );
 }

@@ -18,19 +18,12 @@ import { changeAvatar } from "../../../redux/user/userSlice";
 import ImageIcon from "@mui/icons-material/Image";
 import SaveIcon from "@mui/icons-material/Save";
 import { changeAvatar_emitter } from "../../../socket-io/emitters";
+import { imageTypes } from "../../chat/ImageInput";
 
 interface Props {
   socket: Socket | undefined;
   handleCloseModal: () => void;
 }
-
-const imageTypes = [
-  "image/apng",
-  "image/gif",
-  "image/jpeg",
-  "image/pjpeg",
-  "image/png",
-];
 
 function AddAvatar({ socket, handleCloseModal }: Props): JSX.Element {
   const dispatch = useDispatch();
@@ -187,10 +180,9 @@ export default memo(AddAvatar);
 
 // NOTE //
 /*
-(1) I was try to use HTTP request to post the avatar image and parse it using 
+(1) I tried to use HTTP request to post the avatar image and parse it using 
     Multer. But DONT FUKKING know why, any file larger than 10KB?-15KB?, the post request
     stuck in pending. And sometimes, an Error - "blocked by CORS policy: No 'Access-Control-Allow-Origin' 
     header is present on the requested resource." occcured after multiple uploads
     So I have to use the socket to send the image file
-
 */

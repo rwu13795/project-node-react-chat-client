@@ -1,4 +1,4 @@
-import { memo, useRef } from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
@@ -21,6 +21,7 @@ import styles from "./ChatBoard.module.css";
 import { Slide } from "@mui/material";
 import ChatLogs from "./ChatLogs";
 import MembersList from "../group/MembersList";
+import FileInput from "./FileInput";
 
 interface Props {
   socket: Socket | undefined;
@@ -45,18 +46,51 @@ function ChatBoard({
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [imageFile, setImageFile] = useState<File | undefined>();
+
+  const slideAnchorRef = useRef<HTMLDivElement | null>(null);
+  const chatBoardRef = useRef<HTMLDivElement | null>(null);
+  const logsRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    setImageFile(undefined);
+  }, [targetChatRoom]);
 
   return (
-    <main className={styles.main} id="drawer-container" ref={containerRef}>
-      <div className={styles.chat_logs}>
-        <ChatLogs />
+    <main className={styles.main}>
+      {/* have to let the <Slide/> anchor in the empty div, so that they won't
+      break the positions of other elements */}
+      <div ref={slideAnchorRef}></div>
+
+      <div className={styles.body} id="chat-board-container" ref={chatBoardRef}>
+        <div
+          className={styles.chat_logs}
+          id="chat-logs-container"
+          ref={logsRef}
+        >
+          <ChatLogs />
+        </div>
+
+        <div
+          className={styles.input_container}
+          id="input-container"
+          ref={inputRef}
+        >
+          <ImageInput socket={socket} setImageFile={setImageFile} />
+          <FileInput />
+          <MessageInput
+            socket={socket}
+            chatBoardRef={chatBoardRef}
+            logsRef={logsRef}
+            inputRef={inputRef}
+          />
+        </div>
       </div>
 
-      <div className={styles.input_container}>
-        <MessageInput socket={socket} />
-        <ImageInput socket={socket} />
-      </div>
+      {/* when the "input-container" shrinks, the background will be inconsistent.
+      use this div to cover the that area, to make the transition look better*/}
+      <div className={styles.bottom_bg}></div>
 
       {targetChatRoom.type === chatType.group && (
         <>
@@ -64,7 +98,7 @@ function ChatBoard({
             id="custom_scroll_3"
             direction="left"
             in={openMemberList}
-            container={containerRef.current}
+            container={slideAnchorRef.current}
           >
             <div className={styles.slide_1st}>
               <MembersList
@@ -77,7 +111,7 @@ function ChatBoard({
             id="custom_scroll_3"
             direction="left"
             in={openFriendForGroup}
-            container={containerRef.current}
+            container={slideAnchorRef.current}
           >
             <div className={styles.slide_2nd}>
               <SelectFriendForGroup
@@ -97,7 +131,7 @@ function ChatBoard({
           id="custom_scroll_3"
           direction="left"
           in={openGroupForFriend}
-          container={containerRef.current}
+          container={slideAnchorRef.current}
         >
           <div className={styles.slide_1st}>
             <SelectGroupForFriend
@@ -113,16 +147,3 @@ function ChatBoard({
 }
 
 export default memo(ChatBoard);
-
-/**<Drawer
-              anchor="right"
-              variant="persistent"
-              open={true}
-              // onClose={toggleDrawer(anchor, false)}
-              ModalProps={{
-    container: document.getElementById('drawer-container'),
-    style: { position: 'absolute' }
-  }}
-            >
-              <div style={{ width: "200px" }}>the drawer</div>
-            </Drawer> */

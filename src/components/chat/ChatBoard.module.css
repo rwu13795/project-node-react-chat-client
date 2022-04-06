@@ -1,5 +1,7 @@
 .main {
-  min-height: calc(100% - 90px);
+  /* 188 = 86(chatMenu) + 102(navBar) */
+  height: calc(100vh - 188px);
+  min-height: calc(100vh - 188px);
   width: 100%;
   display: flex;
   flex-flow: column nowrap;
@@ -7,18 +9,47 @@
   align-items: center;
   overflow: hidden;
   background-color: rgba(255, 255, 255, 0.6);
+  border: 1px solid red;
+}
+
+.body {
+  /* 188 = 86(chatMenu) + 102(navBar) */
+  min-height: calc(100vh - 188px);
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  overflow: hidden;
+  border: 1px solid red;
 }
 
 .chat_logs {
-  min-height: 70%;
-  max-height: 70%;
+  height: auto;
+  min-height: 20%;
+  max-height: 90%;
   min-width: 100%;
+  border: 1px solid blue;
+  transition: all 0.5s;
 }
 .input_container {
-  min-height: 30%;
-  max-height: 30%;
+  height: auto;
+  min-height: 10%;
+  max-height: 80%;
   min-width: 100%;
   background-color: var(--navbar-color);
+  display: flex;
+  flex-flow: row wrap;
+  overflow: hidden;
+  z-index: 2;
+}
+.bottom_bg {
+  position: relative;
+  bottom: 50px;
+  min-height: 100px;
+  min-width: 100%;
+  background-color: var(--navbar-color);
+  z-index: 1;
 }
 
 .slide_1st {

@@ -18,6 +18,7 @@ import {
   MessageObject,
   msgType,
   selectTargetChatRoom,
+  TargetChatRoom,
 } from "../../redux/message/messageSlice";
 import {
   Friend,
@@ -41,7 +42,11 @@ import InputField, { InputFields } from "../input-field/InputField";
 import styles from "./MessageInput.module.css";
 
 interface Props {
-  socket: Socket | undefined;
+  messageError: InputFields;
+  messageValue: InputFields;
+  setMessageError: React.Dispatch<React.SetStateAction<InputFields>>;
+  setMessageValue: React.Dispatch<React.SetStateAction<InputFields>>;
+  sendMessageHandler: () => void;
   chatBoardRef: MutableRefObject<HTMLDivElement | null>;
   logsRef: MutableRefObject<HTMLDivElement | null>;
   inputRef: MutableRefObject<HTMLDivElement | null>;
@@ -49,27 +54,16 @@ interface Props {
 }
 
 function MessageInput({
-  socket,
+  messageError,
+  messageValue,
+  setMessageError,
+  setMessageValue,
+  sendMessageHandler,
   chatBoardRef,
   logsRef,
   inputRef,
   buttonsRef,
 }: Props): JSX.Element {
-  const dispatch = useDispatch();
-
-  const currentUserId = useSelector(selectUserId);
-  const currentUsername = useSelector(selectUsername);
-  const targetChatRoom = useSelector(selectTargetChatRoom);
-  const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
-  const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
-
-  const [messageValue, setMessageValue] = useState<InputFields>({
-    [inputNames.message]: "",
-  });
-  const [messageError, setMessageError] = useState<InputFields>({
-    [inputNames.message]: "",
-  });
-
   const [prevHeight, setPrevHeight] = useState<number>(0);
   const [touched, setTouched] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);
@@ -121,49 +115,23 @@ function MessageInput({
     }, 100);
   }
 
-  function sendMessageHandler(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    //   const messageObject: MessageObject = {
-    //     sender_id: currentUserId,
-    //     sender_name: currentUsername,
-    //     recipient_id: targetChatRoom.id,
-    //     recipient_name: targetChatRoom.name,
-    //     msg_body: msg,
-    //     msg_type: msgType.text,
-    //     created_at: new Date().toString(),
-    //   };
-
-    //   // (1) //
-    //   const warning = inputWarningHandler(
-    //     targetGroup,
-    //     targetFriend,
-    //     targetChatRoom.type,
-    //     messageObject,
-    //     dispatch
-    //   );
-    //   if (warning) return;
-
-    //   setMessageValue({ [inputNames.message]: "" });
-    //   dispatch(
-    //     addNewMessageToHistory_memory({
-    //       messageObject,
-    //       room_type: targetChatRoom.type,
-    //     })
-    //   );
-    //   if (socket) {
-    //     message_emitter(socket, {
-    //       messageObject,
-    //       room_type: targetChatRoom.type,
-    //     });
-    //   }
+  function onSubmitUsingEnter(e: React.KeyboardEvent<HTMLDivElement>) {
+    if (e.code === "Enter") {
+      console.log("enter hit");
+      e.preventDefault();
+      sendMessageHandler();
+    }
   }
 
   return (
-    <form onSubmit={sendMessageHandler} className={styles.input_field_wrapper}>
+    <main className={styles.input_field_wrapper}>
       <FormControl error={showError}>
         <TextField
+          value={messageValue[inputNames.message]}
           onChange={onChangeHandler}
+          onBlur={onBlurHandler}
+          onFocus={onFocusHandler}
+          onKeyDown={onSubmitUsingEnter}
           multiline={true}
           maxRows={3}
           placeholder="Send a message"
@@ -174,65 +142,8 @@ function MessageInput({
       <FormHelperText className={styles.error}>
         {messageError[inputNames.message]}
       </FormHelperText>
-    </form>
+    </main>
   );
 }
 
 export default memo(MessageInput);
-
-// NOTES //
-/*
-(1)
-  the server will only send the private messages to the friend's private room,
-  so I need to update the local chat of the current user to display what he
-  just sent out. Moreover, I don't need to update the group chat here,
-  since the message is sent to the group room, and everyone inside the group
-  room can listen to that message using the "messageToClients" event listener,
-  that is where I add the new message in group chat
-*/
-
-function inputWarningHandler(
-  targetGroup: Group,
-  targetFriend: Friend,
-  room_type: string,
-  messageObject: MessageObject,
-  dispatch: Dispatch
-): boolean {
-  if (room_type === chatType.group) {
-    if (targetGroup && targetGroup.user_left) {
-      messageObject.msg_body = `You cannot send any message to this group since you have left.`;
-      messageObject.warning = true;
-      messageObject.created_at = "";
-      dispatch(
-        addNewMessageToHistory_memory({
-          messageObject,
-          room_type,
-        })
-      );
-      return true;
-    } else {
-      return false;
-    }
-  } else {
-    if (
-      targetFriend &&
-      (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend)
-    ) {
-      messageObject.msg_body = `You ${
-        targetFriend.user_blocked_friend ? "blocked" : "were blocked by"
-      } this friend, you cannot send any message to him/her!`;
-      messageObject.warning = true;
-      messageObject.created_at = "";
-      console.log("messageObject", messageObject);
-      dispatch(
-        addNewMessageToHistory_memory({
-          messageObject,
-          room_type,
-        })
-      );
-      return true;
-    } else {
-      return false;
-    }
-  }
-}

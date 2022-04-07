@@ -1,29 +1,12 @@
-import { Slide } from "@mui/material";
-import { ChangeEvent, FormEvent, memo, useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Socket } from "socket.io-client";
-
-import {
-  addNewMessageToHistory_memory,
-  chatType,
-  MessageObject,
-  selectTargetChatRoom,
-} from "../../redux/message/messageSlice";
-import {
-  selectTargetFriend,
-  selectTargetGroup,
-  selectUserId,
-  selectUsername,
-} from "../../redux/user/userSlice";
-import { message_emitter } from "../../socket-io/emitters";
+import { ChangeEvent, memo, useEffect, useState } from "react";
 
 // UI //
 import styles from "./ImageInput.module.css";
 
 interface Props {
-  socket: Socket | undefined;
   setImageFile: React.Dispatch<React.SetStateAction<File | undefined>>;
-  slideAnchorRef: React.MutableRefObject<HTMLDivElement | null>;
+  setSizeExceeded: React.Dispatch<React.SetStateAction<string>>;
+  setNotSupported: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const imageTypes = [
@@ -35,74 +18,26 @@ export const imageTypes = [
 ];
 
 function ImageInput({
-  socket,
-  slideAnchorRef,
   setImageFile,
+  setSizeExceeded,
+  setNotSupported,
 }: Props): JSX.Element {
-  const dispatch = useDispatch();
-
-  const currentUserId = useSelector(selectUserId);
-  const currentUsername = useSelector(selectUsername);
-  const targetChatRoom = useSelector(selectTargetChatRoom);
-  const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
-  const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
-
-  // const [imageFile, setImageFile] = useState<File | undefined>();
-  const [sizeExceeded, setSizeExceeded] = useState<boolean>(false);
-  const [notSupported, setNotSupported] = useState<boolean>(false);
-
-  function sendImageHandler(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-
-    // const messageObject: MessageObject = {
-    //   sender_id: currentUserId,
-    //   sender_name: currentUsername,
-    //   recipient_id: targetChatRoom.id,
-    //   recipient_name: targetChatRoom.name,
-    //   msg_body: "",
-    //   msg_type: "image",
-    //   file_localUrl: imageFile ? URL.createObjectURL(imageFile) : "",
-    //   file_name: imageFile ? imageFile.name : "",
-    //   file_type: imageFile ? imageFile.type : "",
-    //   created_at: new Date().toString(),
-    // };
-
-    // // check if the user was kicked out of the group or blocked by a friend
-    // if (targetChatRoom.type === chatType.group) {
-    //   if (targetGroup && targetGroup.user_left) return;
-    // } else {
-    //   if (
-    //     targetFriend &&
-    //     (targetFriend.friend_blocked_user || targetFriend.user_blocked_friend)
-    //   )
-    //     return;
-    // }
-
-    // dispatch(
-    //   addNewMessageToHistory_memory({
-    //     messageObject,
-    //     room_type: targetChatRoom.type,
-    //   })
-    // );
-    // if (socket) {
-    //   message_emitter(socket, {
-    //     messageObject: { ...messageObject, file_body: imageFile },
-    //     room_type: targetChatRoom.type,
-    //   });
-    // }
-  }
-
   const onImageChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
+    setSizeExceeded("");
+    setNotSupported("");
+
+    if (e.target.files && e.target.files.length > 0) {
       const newImage = e.target.files[0] as File;
 
       // 5 MB max size
       if (newImage.size > 5000000) {
-        setSizeExceeded(true);
+        setSizeExceeded("The image exceeds the maximum allowed size (5 MB)");
         return;
       }
+      // the type of image is consistent "image/..."
+      // I can just check the "type" for supported image type
       if (!imageTypes.includes(newImage.type)) {
-        setNotSupported(true);
+        setNotSupported("Only PNG, JPG, JPEG or GIF image is supported");
         return;
       }
       setImageFile(newImage);
@@ -111,14 +46,11 @@ function ImageInput({
 
   return (
     <main>
-      <form onSubmit={sendImageHandler}>
-        <input
-          onChange={onImageChangeHandler}
-          type="file"
-          accept="image/png, image/jpeg, image/jpg, image/gif"
-        />
-        <input type="submit" />
-      </form>
+      <input
+        onChange={onImageChangeHandler}
+        type="file"
+        accept="image/png, image/jpeg, image/jpg, image/gif"
+      />
     </main>
   );
 }

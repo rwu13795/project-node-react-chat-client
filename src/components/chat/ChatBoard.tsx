@@ -1,14 +1,26 @@
-import { memo, useEffect, useRef, useState } from "react";
-import { useSelector } from "react-redux";
+import {
+  FormEvent,
+  MouseEvent,
+  memo,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
   selectTargetChatRoom,
   chatType,
+  addNewMessageToHistory_memory,
+  msgType,
+  MessageObject,
 } from "../../redux/message/messageSlice";
 import {
   selectTargetFriend,
   selectTargetGroup,
+  selectUserId,
+  selectUsername,
 } from "../../redux/user/userSlice";
 
 import MessageInput from "./MessageInput";
@@ -18,11 +30,14 @@ import SelectGroupForFriend from "../group/SelectGroupForFriend";
 import ChatLogs from "./ChatLogs";
 import MembersList from "../group/MembersList";
 import FileInput from "./FileInput";
-import { resizeChatBoard } from "../../utils";
+import { inputNames, resizeChatBoard, warningMessage } from "../../utils";
 
 // UI //
 import styles from "./ChatBoard.module.css";
 import { Slide } from "@mui/material";
+import { InputFields } from "../input-field/InputField";
+import ChatBoardSlides from "./ChatBoardSlides";
+import { message_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -43,12 +58,24 @@ function ChatBoard({
   setOpenFriendForGroup,
   setOpenGroupForFriend,
 }: Props): JSX.Element {
+  const dispatch = useDispatch();
+
+  const currentUserId = useSelector(selectUserId);
+  const currentUsername = useSelector(selectUsername);
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
 
+  const [messageValue, setMessageValue] = useState<InputFields>({
+    [inputNames.message]: "",
+  });
+  const [messageError, setMessageError] = useState<InputFields>({
+    [inputNames.message]: "",
+  });
   const [imageFile, setImageFile] = useState<File | undefined>();
   const [textFile, setTextFile] = useState<File | undefined>();
+  const [sizeExceeded, setSizeExceeded] = useState<string>("");
+  const [notSupported, setNotSupported] = useState<string>("");
 
   const slideAnchorRef = useRef<HTMLDivElement | null>(null);
   const chatBoardRef = useRef<HTMLDivElement | null>(null);
@@ -73,6 +100,65 @@ function ChatBoard({
     setImageFile(undefined);
   }
 
+  function sendMessageHandler() {
+    console.log(messageValue);
+    console.log(imageFile);
+    setMessageValue({ [inputNames.message]: "" });
+
+    let msg_type = msgType.text;
+    let file_name: string = "";
+    let file_body: File | undefined = undefined;
+    if (imageFile) {
+      msg_type = msgType.image;
+      file_name = imageFile.name;
+      file_body = imageFile;
+    }
+    if (textFile) {
+      msg_type = msgType.file;
+      file_name = textFile.name;
+      file_body = textFile;
+    }
+
+    const messageObject: MessageObject = {
+      sender_id: currentUserId,
+      sender_name: currentUsername,
+      recipient_id: targetChatRoom.id,
+      recipient_name: targetChatRoom.name,
+      msg_body: messageValue[inputNames.message],
+      msg_type,
+      file_localUrl: imageFile ? URL.createObjectURL(imageFile) : "",
+      file_name,
+      created_at: new Date().toString(),
+    };
+    // check if the user was kicked out of the group or blocked by a friend
+    const warning = warningMessage(
+      targetGroup,
+      targetFriend,
+      targetChatRoom.type,
+      messageObject,
+      dispatch
+    );
+    if (warning) return;
+
+    setMessageValue({ [inputNames.message]: "" });
+    dispatch(
+      addNewMessageToHistory_memory({
+        messageObject,
+        room_type: targetChatRoom.type,
+      })
+    );
+    if (socket) {
+      message_emitter(socket, {
+        messageObject: { ...messageObject, file_body: file_body },
+        room_type: targetChatRoom.type,
+      });
+    }
+
+    setTimeout(() => {
+      resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
+    }, 100);
+  }
+
   return (
     <main className={styles.main}>
       <div className={styles.body} id="chat-board-container" ref={chatBoardRef}>
@@ -88,9 +174,14 @@ function ChatBoard({
           className={styles.input_container}
           id="input-container"
           ref={inputRef}
+          onSubmit={sendMessageHandler}
         >
           <MessageInput
-            socket={socket}
+            messageError={messageError}
+            messageValue={messageValue}
+            setMessageError={setMessageError}
+            setMessageValue={setMessageValue}
+            sendMessageHandler={sendMessageHandler}
             chatBoardRef={chatBoardRef}
             logsRef={logsRef}
             inputRef={inputRef}
@@ -106,74 +197,44 @@ function ChatBoard({
               <button onClick={clearImageHandler}>clear</button>
             </div>
           )}
-          <div></div>
+          <div className={styles.file_warning}>{notSupported}</div>
+          <div className={styles.file_warning}>{sizeExceeded}</div>
         </div>
       </div>
 
-      {/* when the "input-container" shrinks, the background will be inconsistent.
-      use this div to cover the that area, to make the transition look better*/}
+      {/* when the "input-container" shrinks or expands, there will be a gap
+      between itself and the "button_container", the background will look inconsistent.
+      So I need to shrink or expand the "button_container" at the same time to make
+      the transition look better */}
       <div className={styles.buttons_container} ref={buttonsRef}>
         <ImageInput
-          socket={socket}
           setImageFile={setImageFile}
-          slideAnchorRef={slideAnchorRef}
+          setSizeExceeded={setSizeExceeded}
+          setNotSupported={setNotSupported}
         />
-        <FileInput />
+        <FileInput
+          setTextFile={setTextFile}
+          setSizeExceeded={setSizeExceeded}
+          setNotSupported={setNotSupported}
+        />
       </div>
 
       {/* have to let the <Slide/> anchor on the empty div, so that they won't
       break the position of other elements */}
       <div ref={slideAnchorRef} className={styles.slide_anchor}></div>
-      {targetChatRoom.type === chatType.group && (
-        <>
-          <Slide
-            id="custom_scroll_3"
-            direction="left"
-            in={openMemberList}
-            container={slideAnchorRef.current}
-          >
-            <div className={styles.slide_1st}>
-              <MembersList
-                socket={socket}
-                setOpenMemberList={setOpenMemberList}
-              />
-            </div>
-          </Slide>
-          <Slide
-            id="custom_scroll_3"
-            direction="left"
-            in={openFriendForGroup}
-            container={slideAnchorRef.current}
-          >
-            <div className={styles.slide_2nd}>
-              <SelectFriendForGroup
-                socket={socket}
-                group_id={targetGroup.group_id}
-                group_name={targetGroup.group_name}
-                admin_user_id={targetGroup.admin_user_id}
-                setOpenFriendForGroup={setOpenFriendForGroup}
-              />
-            </div>
-          </Slide>
-        </>
-      )}
-
-      {targetChatRoom.type === chatType.private && (
-        <Slide
-          id="custom_scroll_3"
-          direction="left"
-          in={openGroupForFriend}
-          container={slideAnchorRef.current}
-        >
-          <div className={styles.slide_1st}>
-            <SelectGroupForFriend
-              socket={socket}
-              friend_id={targetFriend.friend_id}
-              setOpenGroupForFriend={setOpenGroupForFriend}
-            />
-          </div>
-        </Slide>
-      )}
+      <ChatBoardSlides
+        socket={socket}
+        targetGroup={targetGroup}
+        targetFriend={targetFriend}
+        targetChatRoom={targetChatRoom}
+        slideAnchorRef={slideAnchorRef}
+        openMemberList={openMemberList}
+        openFriendForGroup={openFriendForGroup}
+        openGroupForFriend={openGroupForFriend}
+        setOpenMemberList={setOpenMemberList}
+        setOpenFriendForGroup={setOpenFriendForGroup}
+        setOpenGroupForFriend={setOpenGroupForFriend}
+      />
     </main>
   );
 }

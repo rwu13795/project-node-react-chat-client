@@ -39,9 +39,9 @@
   min-width: 100%;
   background-color: var(--navbar-color);
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: column nowrap;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   overflow: hidden;
   z-index: 2;
   padding: 10px 0;
@@ -88,31 +88,7 @@
   min-width: 100%;
 }
 
-.slide_1st {
-  background-color: rgba(255, 255, 255);
-  background-image: var(--modal-bgc-1);
-  z-index: 9;
-  position: relative;
-  width: 100%;
-  min-height: 94%;
-  padding: 12px 0 40px 0;
-  bottom: calc(100vh - 159px);
-  overflow-y: visible;
-  overflow-x: hidden;
-}
-
-.slide_2nd {
-  background-color: white;
-  background-image: var(--modal-bgc-1);
-  z-index: 9;
-  position: relative;
-  width: 100%;
-  min-height: 94%;
-  padding: 12px 0 40px 0;
-  /* 94% is the height of the slide_1st, since slide_2nd is under slide_1st,
-    the bottom needs to include the height of the slide_1st
-  */
-  bottom: calc(100vh - 107px + 94%);
-  overflow-y: visible;
-  overflow-x: hidden;
+.file_warning {
+  font-size: 16px;
+  color: red;
 }

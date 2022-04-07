@@ -127,11 +127,20 @@ function ChatLogs(): JSX.Element {
 
             return (
               <div key={index}>
-                {msg.msg_type === "image" ? (
+                <div>
+                  <div>
+                    User {msg.sender_id} sent to User {msg.recipient_id}
+                  </div>
+                  <div style={{ color: msg.warning ? "red" : "black" }}>
+                    {msg.msg_body} @ {msg.created_at}
+                  </div>
+                </div>
+                {(msg.msg_type === "image" || msg.msg_type === "file") && (
                   <div>
                     <div>
                       User {msg.sender_id} sent to User {msg.recipient_id}
                     </div>
+
                     <img
                       alt="tesing"
                       src={
@@ -140,15 +149,6 @@ function ChatLogs(): JSX.Element {
                           : `https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${msg.file_url}`
                       }
                     />
-                  </div>
-                ) : (
-                  <div>
-                    <div>
-                      User {msg.sender_id} sent to User {msg.recipient_id}
-                    </div>
-                    <div style={{ color: msg.warning ? "red" : "black" }}>
-                      {msg.msg_body} @ {msg.created_at}
-                    </div>
                   </div>
                 )}
               </div>

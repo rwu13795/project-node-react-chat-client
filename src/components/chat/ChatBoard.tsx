@@ -41,6 +41,7 @@ import styles_2 from "./ImageInput.module.css";
 import InsertEmoticonRoundedIcon from "@mui/icons-material/InsertEmoticonRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import { Button, useMediaQuery } from "@mui/material";
+import EmojiPicker from "./EmojiPicker";
 
 interface Props {
   socket: Socket | undefined;
@@ -70,16 +71,13 @@ function ChatBoard({
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
   const isSmall = useMediaQuery("(max-width: 765px)");
 
-  const [messageValue, setMessageValue] = useState<InputFields>({
-    [inputNames.message]: "",
-  });
-  const [messageError, setMessageError] = useState<InputFields>({
-    [inputNames.message]: "",
-  });
+  const [messageValue, setMessageValue] = useState<string>("");
+  const [messageError, setMessageError] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | undefined>();
   const [textFile, setTextFile] = useState<File | undefined>();
   const [sizeExceeded, setSizeExceeded] = useState<string>("");
   const [notSupported, setNotSupported] = useState<string>("");
+  const [openEmojiPicker, setOpenEmojiPicker] = useState<boolean>(false);
 
   const slideAnchorRef = useRef<HTMLDivElement | null>(null);
   const chatBoardRef = useRef<HTMLDivElement | null>(null);
@@ -88,6 +86,7 @@ function ChatBoard({
   const buttonsRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const emojiPickerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setImageFile(undefined);
@@ -109,7 +108,7 @@ function ChatBoard({
   useEffect(() => {
     const timeout = setTimeout(() => {
       resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
-    }, 100);
+    }, 50);
     return () => {
       clearTimeout(timeout);
     };
@@ -127,11 +126,30 @@ function ChatBoard({
       fileInputRef.current.value = "";
     }
   }
+  function toggleEmojiPicker() {
+    setOpenEmojiPicker((prev) => !prev);
+    // since the "openEmojiPicker" has to be passed to the EmojiPicker, and the re-rendering
+    // cause the delay to styles transition, I have to change CSS here when the toggleEmojiPicker
+    // is triggered and before the "openEmojiPicker" is updated.
+    // I think this method could also apply to the FilePreview so that I don't need to use the
+    // resize function. But the compennet has to be mounted all the  time in
+    // order to trigger the styles transition
+    if (openEmojiPicker) {
+      emojiPickerRef.current!.style.height = "0";
+      emojiPickerRef.current!.style.padding = "0";
+      emojiPickerRef.current!.style.marginTop = "0";
+    } else {
+      emojiPickerRef.current!.style.display = "flex";
+      emojiPickerRef.current!.style.padding = "4px";
+      emojiPickerRef.current!.style.marginTop = "6px";
+      emojiPickerRef.current!.style.height = "200px";
+    }
+  }
 
   function sendMessageHandler() {
     console.log(messageValue);
     console.log(imageFile);
-    setMessageValue({ [inputNames.message]: "" });
+    setMessageValue("");
 
     let msg_type = msgType.text;
     let file_name: string = "";
@@ -152,7 +170,7 @@ function ChatBoard({
       sender_name: currentUsername,
       recipient_id: targetChatRoom.id,
       recipient_name: targetChatRoom.name,
-      msg_body: messageValue[inputNames.message],
+      msg_body: messageValue,
       msg_type,
       file_localUrl: imageFile ? URL.createObjectURL(imageFile) : "",
       file_name,
@@ -168,7 +186,7 @@ function ChatBoard({
     );
     if (warning) return;
 
-    setMessageValue({ [inputNames.message]: "" });
+    setMessageValue("");
     dispatch(
       addNewMessageToHistory_memory({
         messageObject,
@@ -184,9 +202,9 @@ function ChatBoard({
     clearImageHandler();
     clearFileHandler();
 
-    setTimeout(() => {
-      resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
-    }, 200);
+    // setTimeout(() => {
+    //   resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
+    // }, 200);
   }
 
   return (
@@ -223,6 +241,10 @@ function ChatBoard({
             clearHandler={clearImageHandler}
             isImage={true}
           />
+          <EmojiPicker
+            emojiPickerRef={emojiPickerRef}
+            setMessageValue={setMessageValue}
+          />
 
           <div className={styles.file_warning}>{notSupported}</div>
           <div className={styles.file_warning}>{sizeExceeded}</div>
@@ -237,7 +259,10 @@ function ChatBoard({
         <div className={styles.buttons_wrapper}>
           <div className={styles.buttons_wrapper_left}>
             <div className={styles_2.icon_wrapper}>
-              <InsertEmoticonRoundedIcon className={styles_2.input_icon} />
+              <InsertEmoticonRoundedIcon
+                className={styles_2.input_icon}
+                onClick={toggleEmojiPicker}
+              />
             </div>
             <ImageInput
               imageInputRef={imageInputRef}

@@ -42,10 +42,10 @@ import InputField, { InputFields } from "../input-field/InputField";
 import styles from "./MessageInput.module.css";
 
 interface Props {
-  messageError: InputFields;
-  messageValue: InputFields;
-  setMessageError: React.Dispatch<React.SetStateAction<InputFields>>;
-  setMessageValue: React.Dispatch<React.SetStateAction<InputFields>>;
+  messageError: string;
+  messageValue: string;
+  setMessageError: React.Dispatch<React.SetStateAction<string>>;
+  setMessageValue: React.Dispatch<React.SetStateAction<string>>;
   sendMessageHandler: () => void;
   chatBoardRef: MutableRefObject<HTMLDivElement | null>;
   logsRef: MutableRefObject<HTMLDivElement | null>;
@@ -65,54 +65,36 @@ function MessageInput({
   buttonsRef,
 }: Props): JSX.Element {
   const [prevHeight, setPrevHeight] = useState<number>(0);
-  const [touched, setTouched] = useState<boolean>(false);
-  const [showError, setShowError] = useState<boolean>(false);
 
   useEffect(() => {
-    if (messageError[inputNames.message] !== "") {
-      setShowError(true);
-    } else {
-      setShowError(false);
-    }
-  }, [messageError]);
-
-  useEffect(() => {
-    setMessageValue({ [inputNames.message]: "" });
+    setMessageValue("");
   }, []);
-
-  function onFocusHandler() {
-    onFocusCheck(setTouched);
-  }
-
-  function onBlurHandler(e: FocusEvent<HTMLInputElement>) {
-    const { name, value } = e.currentTarget;
-    onBlurCheck(name, value, touched, setMessageError);
-  }
 
   // since the resizing has to be in the onChangeHandler, I cannot use <InputField />
   function onChangeHandler(e: ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-    const hasError = onChangeCheck(name, value, setMessageError);
-    if (hasError) return;
+    setMessageError("");
 
-    setMessageValue({
-      [inputNames.message]: value,
-    });
-
-    if (prevHeight === 0) {
-      setPrevHeight(inputRef.current!.scrollHeight);
+    const value = e.target.value;
+    if (value.length > 250) {
+      setMessageError("The message exceeds 250-charater limit");
       return;
     }
+    setMessageValue(value);
 
-    setTimeout(() => {
-      setPrevHeight(inputRef.current!.scrollHeight);
-      if (
-        prevHeight !== inputRef.current!.scrollHeight &&
-        Math.abs(prevHeight - inputRef.current!.scrollHeight) > 1
-      ) {
-        resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
-      }
-    }, 100);
+    // if (prevHeight === 0) {
+    //   setPrevHeight(inputRef.current!.scrollHeight);
+    //   return;
+    // }
+
+    // setTimeout(() => {
+    //   setPrevHeight(inputRef.current!.scrollHeight);
+    //   if (
+    //     prevHeight !== inputRef.current!.scrollHeight &&
+    //     Math.abs(prevHeight - inputRef.current!.scrollHeight) > 1
+    //   ) {
+    //     resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
+    //   }
+    // }, 100);
   }
 
   function onSubmitUsingEnter(e: React.KeyboardEvent<HTMLDivElement>) {
@@ -125,23 +107,19 @@ function MessageInput({
 
   return (
     <main className={styles.input_field_wrapper}>
-      <FormControl error={showError}>
+      <FormControl error={messageError !== ""}>
         <TextField
-          value={messageValue[inputNames.message]}
+          value={messageValue}
           onChange={onChangeHandler}
-          onBlur={onBlurHandler}
-          onFocus={onFocusHandler}
           onKeyDown={onSubmitUsingEnter}
           multiline={true}
           maxRows={3}
           placeholder="Send a message"
           className={styles.input_field}
-          error={showError}
+          error={messageError !== ""}
         />
       </FormControl>
-      <FormHelperText className={styles.error}>
-        {messageError[inputNames.message]}
-      </FormHelperText>
+      <FormHelperText className={styles.error}>{messageError}</FormHelperText>
     </main>
   );
 }

@@ -46,6 +46,7 @@
   overflow: hidden;
   z-index: 2;
   padding-top: 10px;
+  transition: all 0.5s;
 }
 
 /* the visible height of the container is 50px + 20px padding 

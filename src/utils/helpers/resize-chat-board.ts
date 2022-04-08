@@ -25,4 +25,6 @@ export function resizeChatBoard(
   background (If I did not use the transparent background in the chat-logs
   I DO NOT have to resize the buttons-containe, because the background
   nconsistence won't be noticeable)
+
+  If 
 */

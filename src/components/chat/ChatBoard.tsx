@@ -22,7 +22,7 @@ import {
   selectUserId,
   selectUsername,
 } from "../../redux/user/userSlice";
-
+import { message_emitter } from "../../socket-io/emitters";
 import MessageInput from "./MessageInput";
 import ImageInput from "./ImageInput";
 import SelectFriendForGroup from "../group/SelectFriendForGroup";
@@ -31,13 +31,16 @@ import ChatLogs from "./ChatLogs";
 import MembersList from "../group/MembersList";
 import FileInput from "./FileInput";
 import { inputNames, resizeChatBoard, warningMessage } from "../../utils";
+import { InputFields } from "../input-field/InputField";
+import ChatBoardSlides from "./ChatBoardSlides";
+import FilePreview from "./FilePreview";
 
 // UI //
 import styles from "./ChatBoard.module.css";
-import { Slide } from "@mui/material";
-import { InputFields } from "../input-field/InputField";
-import ChatBoardSlides from "./ChatBoardSlides";
-import { message_emitter } from "../../socket-io/emitters";
+import styles_2 from "./ImageInput.module.css";
+import InsertEmoticonRoundedIcon from "@mui/icons-material/InsertEmoticonRounded";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import { Button, useMediaQuery } from "@mui/material";
 
 interface Props {
   socket: Socket | undefined;
@@ -65,6 +68,7 @@ function ChatBoard({
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
+  const isSmall = useMediaQuery("(max-width: 765px)");
 
   const [messageValue, setMessageValue] = useState<InputFields>({
     [inputNames.message]: "",
@@ -82,9 +86,24 @@ function ChatBoard({
   const logsRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLDivElement | null>(null);
   const buttonsRef = useRef<HTMLDivElement | null>(null);
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     setImageFile(undefined);
+    setTextFile(undefined);
+    if (imageInputRef && imageInputRef.current) {
+      imageInputRef.current.value = "";
+    }
+    if (fileInputRef && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    const timeout = setTimeout(() => {
+      resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
+    }, 100);
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [targetChatRoom]);
 
   useEffect(() => {
@@ -94,10 +113,19 @@ function ChatBoard({
     return () => {
       clearTimeout(timeout);
     };
-  }, [imageFile]);
+  }, [imageFile, textFile]);
 
   function clearImageHandler() {
     setImageFile(undefined);
+    if (imageInputRef && imageInputRef.current) {
+      imageInputRef.current.value = "";
+    }
+  }
+  function clearFileHandler() {
+    setTextFile(undefined);
+    if (fileInputRef && fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   }
 
   function sendMessageHandler() {
@@ -153,10 +181,12 @@ function ChatBoard({
         room_type: targetChatRoom.type,
       });
     }
+    clearImageHandler();
+    clearFileHandler();
 
     setTimeout(() => {
       resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
-    }, 100);
+    }, 200);
   }
 
   return (
@@ -187,16 +217,13 @@ function ChatBoard({
             inputRef={inputRef}
             buttonsRef={buttonsRef}
           />
-          {imageFile && (
-            <div className={styles.preview_image_wrapper}>
-              <img
-                src={URL.createObjectURL(imageFile)}
-                alt="preview"
-                className={styles.preview_image}
-              />
-              <button onClick={clearImageHandler}>clear</button>
-            </div>
-          )}
+          <FilePreview
+            imageFile={imageFile}
+            textFile={undefined}
+            clearHandler={clearImageHandler}
+            isImage={true}
+          />
+
           <div className={styles.file_warning}>{notSupported}</div>
           <div className={styles.file_warning}>{sizeExceeded}</div>
         </div>
@@ -207,16 +234,38 @@ function ChatBoard({
       So I need to shrink or expand the "button_container" at the same time to make
       the transition look better */}
       <div className={styles.buttons_container} ref={buttonsRef}>
-        <ImageInput
-          setImageFile={setImageFile}
-          setSizeExceeded={setSizeExceeded}
-          setNotSupported={setNotSupported}
-        />
-        <FileInput
-          setTextFile={setTextFile}
-          setSizeExceeded={setSizeExceeded}
-          setNotSupported={setNotSupported}
-        />
+        <div className={styles.buttons_wrapper}>
+          <div className={styles.buttons_wrapper_left}>
+            <div className={styles_2.icon_wrapper}>
+              <InsertEmoticonRoundedIcon className={styles_2.input_icon} />
+            </div>
+            <ImageInput
+              imageInputRef={imageInputRef}
+              clearFileHandler={clearFileHandler}
+              setImageFile={setImageFile}
+              setSizeExceeded={setSizeExceeded}
+              setNotSupported={setNotSupported}
+            />
+            <FileInput
+              fileInputRef={fileInputRef}
+              clearImageHandler={clearImageHandler}
+              setTextFile={setTextFile}
+              setSizeExceeded={setSizeExceeded}
+              setNotSupported={setNotSupported}
+            />
+            <FilePreview
+              imageFile={undefined}
+              textFile={textFile}
+              clearHandler={clearFileHandler}
+              isImage={false}
+            />
+          </div>
+
+          <Button>
+            {!isSmall && <SendRoundedIcon />}
+            Send
+          </Button>
+        </div>
       </div>
 
       {/* have to let the <Slide/> anchor on the empty div, so that they won't

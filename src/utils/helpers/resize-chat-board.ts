@@ -13,10 +13,9 @@ export function resizeChatBoard(
     chatBoardRef.current!.offsetHeight - inputRef.current!.scrollHeight;
   logsRef.current!.style.height = diff + "px";
   // (1) //
-  buttonsRef.current!.style.minHeight = inputRef.current!.scrollHeight + "px";
-  buttonsRef.current!.style.bottom = inputRef.current!.scrollHeight - 40 + "px";
-
-  console.log(buttonsRef.current!.scrollHeight);
+  buttonsRef.current!.style.minHeight =
+    inputRef.current!.scrollHeight + 10 + "px";
+  buttonsRef.current!.style.bottom = inputRef.current!.scrollHeight - 30 + "px";
 }
 
 // NOTE //

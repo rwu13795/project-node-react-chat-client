@@ -126,16 +126,23 @@ function ChatLogs(): JSX.Element {
             }
 
             return (
-              <div key={index}>
-                <div>
-                  <div>
+              <div key={index} style={{ maxWidth: "100%" }}>
+                <div style={{ maxWidth: "100%" }}>
+                  <div style={{ maxWidth: "100%" }}>
                     User {msg.sender_id} sent to User {msg.recipient_id}
                   </div>
-                  <div style={{ color: msg.warning ? "red" : "black" }}>
+                  <div
+                    style={{
+                      color: msg.warning ? "red" : "black",
+                      overflowWrap: "break-word",
+                      maxWidth: "100%",
+                      width: "100%",
+                    }}
+                  >
                     {msg.msg_body} @ {msg.created_at}
                   </div>
                 </div>
-                {(msg.msg_type === "image" || msg.msg_type === "file") && (
+                {msg.msg_type === "image" && (
                   <div>
                     <div>
                       User {msg.sender_id} sent to User {msg.recipient_id}
@@ -149,6 +156,15 @@ function ChatLogs(): JSX.Element {
                           : `https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${msg.file_url}`
                       }
                     />
+                  </div>
+                )}
+                {msg.msg_type === "file" && (
+                  <div>
+                    <a
+                      href={`https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${msg.file_url}`}
+                    >
+                      Link to file
+                    </a>
                   </div>
                 )}
               </div>

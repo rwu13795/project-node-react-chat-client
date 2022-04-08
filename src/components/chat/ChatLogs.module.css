@@ -1,5 +1,6 @@
 .main {
   width: 100%;
+  max-width: 100%;
   height: 100%;
   overflow-y: visible;
   overflow-x: hidden;
@@ -14,6 +15,7 @@
   flex-direction: column-reverse;
   height: 100%;
   width: 98%;
+  max-width: 98%;
   overflow-wrap: break-word;
 }
 

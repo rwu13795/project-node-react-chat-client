@@ -16,7 +16,14 @@ import {
 } from "../../redux/user/userSlice";
 import { message_emitter } from "../../socket-io/emitters";
 
+// UI //
+import styles from "./ImageInput.module.css";
+import { InputLabel } from "@mui/material";
+import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
+
 interface Props {
+  fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
+  clearImageHandler: () => void;
   setTextFile: React.Dispatch<React.SetStateAction<File | undefined>>;
   setSizeExceeded: React.Dispatch<React.SetStateAction<string>>;
   setNotSupported: React.Dispatch<React.SetStateAction<string>>;
@@ -35,11 +42,14 @@ const fileExtensions = [
 ];
 
 function FileInput({
+  fileInputRef,
+  clearImageHandler,
   setTextFile,
   setSizeExceeded,
   setNotSupported,
 }: Props): JSX.Element {
   const onFileChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
+    clearImageHandler();
     setSizeExceeded("");
     setNotSupported("");
 
@@ -54,7 +64,7 @@ function FileInput({
       // the type of file is not consistent, For txt file, the type is 'text/plain',
       // for "msWord", it is "application/many-different-extensions"
       // I should just check the extension of the file by splitting the file name
-      const ext = newFile.name.split(".")[1];
+      const ext = newFile.name.split(".")[1].toLowerCase();
       if (!fileExtensions.includes(ext)) {
         setNotSupported("The file you selected is not supported");
         return;
@@ -64,13 +74,18 @@ function FileInput({
   };
 
   return (
-    <main>
+    <main className={styles.icon_wrapper}>
+      <InputLabel htmlFor="add-file">
+        <UploadFileRoundedIcon className={styles.input_icon} />
+      </InputLabel>
       <input
         onChange={onFileChangeHandler}
         type="file"
         accept=".pdf, .txt, .doc, .docx, .docm, .xls, .xlsx, .ppt, .pptx"
+        ref={fileInputRef}
+        id="add-file"
+        className={styles.input_field}
       />
-      <input type="submit" />
     </main>
   );
 }

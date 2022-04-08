@@ -26,5 +26,8 @@ export function resizeChatBoard(
   I DO NOT have to resize the buttons-containe, because the background
   nconsistence won't be noticeable)
 
-  If 
+
+  Updated Note
+  a new method is found to solve the expansion issue of the input-container
+  No need to use the resize function, read the detail in the "FilePreview"
 */

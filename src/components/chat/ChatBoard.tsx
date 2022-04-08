@@ -1,17 +1,9 @@
-import {
-  FormEvent,
-  MouseEvent,
-  memo,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { memo, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
   selectTargetChatRoom,
-  chatType,
   addNewMessageToHistory_memory,
   msgType,
   MessageObject,
@@ -25,13 +17,9 @@ import {
 import { message_emitter } from "../../socket-io/emitters";
 import MessageInput from "./MessageInput";
 import ImageInput from "./ImageInput";
-import SelectFriendForGroup from "../group/SelectFriendForGroup";
-import SelectGroupForFriend from "../group/SelectGroupForFriend";
 import ChatLogs from "./ChatLogs";
-import MembersList from "../group/MembersList";
 import FileInput from "./FileInput";
-import { inputNames, resizeChatBoard, warningMessage } from "../../utils";
-import { InputFields } from "../input-field/InputField";
+import { warningMessage } from "../../utils";
 import ChatBoardSlides from "./ChatBoardSlides";
 import FilePreview from "./FilePreview";
 
@@ -97,22 +85,7 @@ function ChatBoard({
     if (fileInputRef && fileInputRef.current) {
       fileInputRef.current.value = "";
     }
-    const timeout = setTimeout(() => {
-      resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
-    }, 100);
-    return () => {
-      clearTimeout(timeout);
-    };
   }, [targetChatRoom]);
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
-    }, 50);
-    return () => {
-      clearTimeout(timeout);
-    };
-  }, [imageFile, textFile]);
 
   function clearImageHandler() {
     setImageFile(undefined);
@@ -126,14 +99,13 @@ function ChatBoard({
       fileInputRef.current.value = "";
     }
   }
-  function toggleEmojiPicker() {
-    setOpenEmojiPicker((prev) => !prev);
-    // since the "openEmojiPicker" has to be passed to the EmojiPicker, and the re-rendering
-    // cause the delay to styles transition, I have to change CSS here when the toggleEmojiPicker
-    // is triggered and before the "openEmojiPicker" is updated.
-    // I think this method could also apply to the FilePreview so that I don't need to use the
-    // resize function. But the compennet has to be mounted all the  time in
-    // order to trigger the styles transition
+  function toggleEmojiPicker(close: boolean = false) {
+    if (close) {
+      setOpenEmojiPicker(false);
+    } else {
+      setOpenEmojiPicker((prev) => !prev);
+    }
+    // (1) //
     if (openEmojiPicker) {
       emojiPickerRef.current!.style.height = "0";
       emojiPickerRef.current!.style.padding = "0";
@@ -201,10 +173,7 @@ function ChatBoard({
     }
     clearImageHandler();
     clearFileHandler();
-
-    // setTimeout(() => {
-    //   resizeChatBoard(chatBoardRef, inputRef, logsRef, buttonsRef);
-    // }, 200);
+    toggleEmojiPicker(true);
   }
 
   return (
@@ -241,6 +210,12 @@ function ChatBoard({
             clearHandler={clearImageHandler}
             isImage={true}
           />
+          <FilePreview
+            imageFile={undefined}
+            textFile={textFile}
+            clearHandler={clearFileHandler}
+            isImage={false}
+          />
           <EmojiPicker
             emojiPickerRef={emojiPickerRef}
             setMessageValue={setMessageValue}
@@ -261,7 +236,7 @@ function ChatBoard({
             <div className={styles_2.icon_wrapper}>
               <InsertEmoticonRoundedIcon
                 className={styles_2.input_icon}
-                onClick={toggleEmojiPicker}
+                onClick={() => toggleEmojiPicker(false)}
               />
             </div>
             <ImageInput
@@ -277,12 +252,6 @@ function ChatBoard({
               setTextFile={setTextFile}
               setSizeExceeded={setSizeExceeded}
               setNotSupported={setNotSupported}
-            />
-            <FilePreview
-              imageFile={undefined}
-              textFile={textFile}
-              clearHandler={clearFileHandler}
-              isImage={false}
             />
           </div>
 
@@ -314,3 +283,17 @@ function ChatBoard({
 }
 
 export default memo(ChatBoard);
+
+// NOTE //
+/*
+
+// (1) //
+since the "openEmojiPicker" has to be passed to the EmojiPicker, and the re-rendering
+cause the delay to styles transition, I have to change CSS here when the toggleEmojiPicker
+is triggered and before the "openEmojiPicker" is updated.
+This method could also apply to the FilePreview so that I don't need to use the
+resize function. But the compennet has to be mounted all the  time in
+order to trigger the styles transition
+
+
+*/

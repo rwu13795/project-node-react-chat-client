@@ -41,7 +41,7 @@
   background-color: var(--navbar-color);
   display: flex;
   flex-flow: column nowrap;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   overflow: hidden;
   z-index: 2;
@@ -52,11 +52,14 @@
 /* the visible height of the container is 50px + 20px padding 
   the rest of the height is under the input-container, to cover the background
   inconsistence while the input-container is being resized
+
+  PS: a new method is found to solve the expansion issue of the input-container
+      No need to use the resize function
 */
 .buttons_container {
   position: relative;
-  bottom: 60px;
-  min-height: 100px;
+  bottom: 20px;
+  min-height: 60px;
   min-width: 100%;
   background-color: var(--navbar-color);
   z-index: 1;

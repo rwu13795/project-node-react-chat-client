@@ -111,6 +111,7 @@ export interface GroupMember {
   email: string;
   avatar_url?: string;
 }
+
 export interface Group {
   group_id: string;
   group_name: string;

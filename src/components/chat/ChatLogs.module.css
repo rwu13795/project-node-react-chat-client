@@ -8,17 +8,6 @@
   flex-direction: column-reverse;
   overflow-wrap: break-word;
 }
-
-.logs_container {
-  margin: 20px 10px 14px 10px;
-  display: flex;
-  flex-direction: column-reverse;
-  height: 100%;
-  width: 98%;
-  max-width: 98%;
-  overflow-wrap: break-word;
-}
-
 .main::-webkit-scrollbar {
   width: 10px !important;
 }
@@ -35,4 +24,14 @@
 .main:hover::-webkit-scrollbar-thumb {
   background-color: #008ab4;
   border-radius: 10px;
+}
+
+.logs_container {
+  margin: 20px 10px 14px 10px;
+  display: flex;
+  flex-direction: column-reverse;
+  height: 100%;
+  width: 98%;
+  max-width: 98%;
+  overflow-wrap: break-word;
 }

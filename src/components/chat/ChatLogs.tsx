@@ -28,6 +28,7 @@ import pptx_icon from "../../images/file-icons/pptx_icon.png";
 import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
 import styles from "./ChatLogs.module.css";
 import { CircularProgress } from "@mui/material";
+import ChatMessagePrivate from "./ChatMessagePrivate";
 
 const fileIcons: FileIcons = {
   txt: txt_icon,
@@ -86,7 +87,6 @@ function ChatLogs(): JSX.Element {
           "http://localhost:5000/api" +
             `/chat/chat-history?id_1=${currentUserId}&id_2=${id}&page=${pageNum}&type=${type}&date_limit=${date_limit}`
         );
-
         dispatch(
           setInfiniteScrollStats({ hasMore: data.length >= MSG_PER_PAGE })
         );
@@ -104,7 +104,7 @@ function ChatLogs(): JSX.Element {
           })
         );
       } catch (err) {
-        console.log("something went wrong in fetching! ", err);
+        console.log("something went wrong in fetching more chat history", err);
       }
     }
   }, [
@@ -112,6 +112,7 @@ function ChatLogs(): JSX.Element {
     currentUsername,
     currentUserId,
     dispatch,
+    client,
     infiniteScrollStats,
     chatHistory.length,
   ]);
@@ -126,39 +127,37 @@ function ChatLogs(): JSX.Element {
         inverse={true} //
         hasMore={hasMore}
         scrollableTarget="chat-board"
-        loader={showLoader ? <h4>Loading...</h4> : <div></div>}
+        loader={showLoader ? <CircularProgress /> : <div></div>}
       >
         {loadingStatus === loadingStatusEnum.changingTargetRoom ||
         loadingStatus === loadingStatusEnum.loadChatHistory_loading ? (
           <h2>
-            Loading shit load of messages <CircularProgress />
+            Loading a shitload of messages <CircularProgress />
           </h2>
-        ) : (
+        ) : targetChatRoom.type === chatType.private ? (
           chatHistory.map((msg, index) => {
-            let folder = "users";
-            let folder_id = currentUserId; // the private folder of the current user
-            if (targetChatRoom.type === chatType.group) {
-              folder = "groups";
-              folder_id = targetChatRoom.id;
-            }
-
             return (
-              <div key={index} style={{ maxWidth: "100%" }}>
-                <div style={{ maxWidth: "100%" }}>
-                  <div style={{ maxWidth: "100%" }}>
-                    User {msg.sender_id} sent to User {msg.recipient_id}
-                  </div>
-                  <div
-                    style={{
-                      color: msg.warning ? "red" : "black",
-                      overflowWrap: "break-word",
-                      maxWidth: "100%",
-                      width: "100%",
-                    }}
-                  >
-                    {msg.msg_body} @ {msg.created_at}
-                  </div>
-                </div>
+              <ChatMessagePrivate
+                key={index}
+                message={msg}
+                targetId={targetChatRoom.id}
+              />
+            );
+          })
+        ) : (
+          <div></div>
+        )}
+      </InfiniteScroll>
+    </main>
+  );
+}
+
+export default memo(ChatLogs);
+
+/**<div key={index} className={msg_wrapper}>
+                <div className={styles.avatar}></div>
+                <div className={styles.msg_body}></div>
+
                 {msg.msg_type === "image" && (
                   <div>
                     <div>
@@ -195,13 +194,4 @@ function ChatLogs(): JSX.Element {
                     )}
                   </div>
                 )}
-              </div>
-            );
-          })
-        )}
-      </InfiniteScroll>
-    </main>
-  );
-}
-
-export default memo(ChatLogs);
+              </div> */

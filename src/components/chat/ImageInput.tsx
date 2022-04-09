@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, useEffect, useState } from "react";
+import { ChangeEvent, memo } from "react";
 
 // UI //
 import styles from "./ImageInput.module.css";

@@ -13,12 +13,29 @@ import {
   setInfiniteScrollStats,
 } from "../../redux/message/messageSlice";
 import { selectUserId, selectUsername } from "../../redux/user/userSlice";
-
-import { axios_client, loadingStatusEnum } from "../../utils";
+import {
+  axios_client,
+  FileIcons,
+  getFileIcon,
+  loadingStatusEnum,
+} from "../../utils";
 
 // UI //
+import txt_icon from "../../images/file-icons/txt_icon.png";
+import docx_icon from "../../images/file-icons/docx_icon.png";
+import pdf_icon from "../../images/file-icons/pdf_icon.png";
+import pptx_icon from "../../images/file-icons/pptx_icon.png";
+import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
 import styles from "./ChatLogs.module.css";
 import { CircularProgress } from "@mui/material";
+
+const fileIcons: FileIcons = {
+  txt: txt_icon,
+  doc: docx_icon,
+  pdf: pdf_icon,
+  ppt: pptx_icon,
+  xls: xlsx_icon,
+};
 
 function ChatLogs(): JSX.Element {
   const dispatch = useDispatch();
@@ -160,11 +177,22 @@ function ChatLogs(): JSX.Element {
                 )}
                 {msg.msg_type === "file" && (
                   <div>
-                    <a
-                      href={`https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${msg.file_url}`}
-                    >
-                      Link to file
-                    </a>
+                    {msg.file_url ? (
+                      <a
+                        href={`https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${msg.file_url}`}
+                      >
+                        Link to file
+                        <img
+                          src={getFileIcon(fileIcons, msg.file_type)}
+                          alt="file_icon"
+                        />
+                      </a>
+                    ) : (
+                      <img
+                        src={getFileIcon(fileIcons, msg.file_type)}
+                        alt="file_icon"
+                      />
+                    )}
                   </div>
                 )}
               </div>

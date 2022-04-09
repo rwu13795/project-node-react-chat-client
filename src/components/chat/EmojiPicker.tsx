@@ -24,10 +24,12 @@ function EmojiPicker({ emojiPickerRef, setMessageValue }: Props): JSX.Element {
   }, []);
 
   function onEmojiClickHandler(
-    e: React.MouseEvent<HTMLSpanElement, MouseEvent>
+    e: React.MouseEvent<HTMLSpanElement, MouseEvent>,
+    isRecentList?: boolean
   ) {
     const emoji = e.currentTarget.innerText;
     setMessageValue((prev) => prev + emoji);
+    if (isRecentList) return;
     if (emoji === recentEmoji[0]) return;
 
     const newRecent = recentEmoji;
@@ -52,7 +54,7 @@ function EmojiPicker({ emojiPickerRef, setMessageValue }: Props): JSX.Element {
             <span
               key={index}
               className={styles.emoji_wrapper}
-              onClick={onEmojiClickHandler}
+              onClick={(e) => onEmojiClickHandler(e, true)}
             >
               {emoji}
             </span>

@@ -79,6 +79,10 @@ function ChatBoard({
   useEffect(() => {
     setImageFile(undefined);
     setTextFile(undefined);
+    setOpenEmojiPicker(false);
+    emojiPickerRef.current!.style.height = "0";
+    emojiPickerRef.current!.style.padding = "0";
+    emojiPickerRef.current!.style.marginTop = "0";
     if (imageInputRef && imageInputRef.current) {
       imageInputRef.current.value = "";
     }
@@ -99,12 +103,8 @@ function ChatBoard({
       fileInputRef.current.value = "";
     }
   }
-  function toggleEmojiPicker(close: boolean = false) {
-    if (close) {
-      setOpenEmojiPicker(false);
-    } else {
-      setOpenEmojiPicker((prev) => !prev);
-    }
+  function toggleEmojiPicker() {
+    setOpenEmojiPicker((prev) => !prev);
     // (1) //
     if (openEmojiPicker) {
       emojiPickerRef.current!.style.height = "0";
@@ -119,13 +119,13 @@ function ChatBoard({
   }
 
   function sendMessageHandler() {
-    console.log(messageValue);
-    console.log(imageFile);
+    if (messageValue === "" && !(imageFile || textFile)) return;
     setMessageValue("");
 
     let msg_type = msgType.text;
     let file_name: string = "";
     let file_body: File | undefined = undefined;
+    let file_type: string = "";
     if (imageFile) {
       msg_type = msgType.image;
       file_name = imageFile.name;
@@ -134,6 +134,7 @@ function ChatBoard({
     if (textFile) {
       msg_type = msgType.file;
       file_name = textFile.name;
+      file_type = file_name.split(".")[1];
       file_body = textFile;
     }
 
@@ -146,6 +147,7 @@ function ChatBoard({
       msg_type,
       file_localUrl: imageFile ? URL.createObjectURL(imageFile) : "",
       file_name,
+      file_type,
       created_at: new Date().toString(),
     };
     // check if the user was kicked out of the group or blocked by a friend
@@ -173,7 +175,7 @@ function ChatBoard({
     }
     clearImageHandler();
     clearFileHandler();
-    toggleEmojiPicker(true);
+    if (openEmojiPicker) toggleEmojiPicker();
   }
 
   return (
@@ -236,7 +238,7 @@ function ChatBoard({
             <div className={styles_2.icon_wrapper}>
               <InsertEmoticonRoundedIcon
                 className={styles_2.input_icon}
-                onClick={() => toggleEmojiPicker(false)}
+                onClick={toggleEmojiPicker}
               />
             </div>
             <ImageInput
@@ -255,9 +257,15 @@ function ChatBoard({
             />
           </div>
 
-          <Button>
-            {!isSmall && <SendRoundedIcon />}
-            Send
+          <Button
+            className={styles.send_button}
+            variant="outlined"
+            onClick={sendMessageHandler}
+          >
+            <div className={styles.send_button_content}>
+              {!isSmall && <SendRoundedIcon />}
+            </div>
+            <div className={styles.send_button_content}>Send</div>
           </Button>
         </div>
       </div>

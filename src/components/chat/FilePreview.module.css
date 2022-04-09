@@ -1,8 +1,7 @@
 .preview_image_wrapper {
   position: relative;
-  max-height: 200px;
+  max-height: 250px;
   max-width: 300px;
-  background-color: white;
   transition: all 0.5s;
   display: flex;
   flex-flow: row;
@@ -11,6 +10,9 @@
   max-height: 150px;
   max-width: 300px;
   transition: all 0.5s;
+  border-radius: 10px;
+  border: solid 5px var(--main-color-1);
+  background-color: var(--main-color-1);
 }
 
 .preview_file_wrapper {
@@ -50,8 +52,16 @@
   object-fit: cover;
 }
 
-.clear_button {
-  position: relative;
-  width: 20px;
-  height: 20px;
+.delete_button {
+  margin-left: 10px;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  border-radius: 20px;
+  transition: all 0.3s;
+}
+
+.delete_button:hover {
+  transition: all 0.3s;
+  background-color: rgba(255, 0, 0, 0.582);
 }

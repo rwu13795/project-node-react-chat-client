@@ -1,13 +1,15 @@
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef } from "react";
 
 // UI //
 import styles from "./FilePreview.module.css";
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import txt_icon from "../../images/file-icons/txt_icon.png";
 import docx_icon from "../../images/file-icons/docx_icon.png";
 import pdf_icon from "../../images/file-icons/pdf_icon.png";
 import pptx_icon from "../../images/file-icons/pptx_icon.png";
 import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
+import { FileIcons, getFileIcon } from "../../utils";
 
 interface Props {
   imageFile: File | undefined;
@@ -15,6 +17,14 @@ interface Props {
   clearHandler: () => void;
   isImage: boolean;
 }
+
+const fileIcons: FileIcons = {
+  txt: txt_icon,
+  doc: docx_icon,
+  pdf: pdf_icon,
+  ppt: pptx_icon,
+  xls: xlsx_icon,
+};
 
 function FilePreview({
   imageFile,
@@ -27,27 +37,7 @@ function FilePreview({
   let file_icon = "";
   if (textFile) {
     const ext = textFile.name.split(".")[1].toLowerCase();
-    switch (ext) {
-      case "pdf":
-        file_icon = pdf_icon;
-        break;
-      case "txt":
-        file_icon = txt_icon;
-        break;
-      case "doc":
-      case "docx":
-      case "docm":
-        file_icon = docx_icon;
-        break;
-      case "xls":
-      case "xlsx":
-        file_icon = xlsx_icon;
-        break;
-      case "ppt":
-      case "pptx":
-        file_icon = pptx_icon;
-        break;
-    }
+    file_icon = getFileIcon(fileIcons, ext);
   }
 
   useEffect(() => {
@@ -60,7 +50,7 @@ function FilePreview({
       // This method works the best for the expanding transition, the only
       // drawback is a empty div must always be mounted. But the image inside
       // this empty div conditionally.
-      imageRef.current!.style.height = "200px";
+      imageRef.current!.style.height = "234px";
     } else {
       imageRef.current!.style.height = "0";
     }
@@ -76,7 +66,10 @@ function FilePreview({
               alt="preview"
               className={styles.preview_image}
             />
-            <button onClick={clearHandler}>clear</button>
+            <HighlightOffIcon
+              onClick={clearHandler}
+              className={styles.delete_button}
+            />
           </>
         )}
       </div>
@@ -91,7 +84,10 @@ function FilePreview({
               className={styles.preview_file}
             />
             <div>{textFile.name}</div>
-            <button onClick={clearHandler}>clear</button>
+            <HighlightOffIcon
+              onClick={clearHandler}
+              className={styles.delete_button}
+            />
           </div>
         </div>
       )}

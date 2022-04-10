@@ -1,8 +1,8 @@
-import { FormControl, FormHelperText, TextField } from "@mui/material";
-import { ChangeEvent, memo, MutableRefObject, useEffect } from "react";
+import { ChangeEvent, memo, useRef, MutableRefObject, useEffect } from "react";
 
 // UI //
 import styles from "./MessageInput.module.css";
+import { FormControl, FormHelperText, TextField } from "@mui/material";
 
 interface Props {
   messageError: string;
@@ -10,10 +10,6 @@ interface Props {
   setMessageError: React.Dispatch<React.SetStateAction<string>>;
   setMessageValue: React.Dispatch<React.SetStateAction<string>>;
   sendMessageHandler: () => void;
-  chatBoardRef: MutableRefObject<HTMLDivElement | null>;
-  logsRef: MutableRefObject<HTMLDivElement | null>;
-  inputRef: MutableRefObject<HTMLDivElement | null>;
-  buttonsRef: MutableRefObject<HTMLDivElement | null>;
 }
 
 function MessageInput({
@@ -23,12 +19,15 @@ function MessageInput({
   setMessageValue,
   sendMessageHandler,
 }: Props): JSX.Element {
+  const inputFieldRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     setMessageValue("");
   }, []);
 
   function onChangeHandler(e: ChangeEvent<HTMLInputElement>) {
     setMessageError("");
+
     const value = e.target.value;
     if (value.length > 250) {
       setMessageError("The message exceeds 250-charater limit");
@@ -45,17 +44,18 @@ function MessageInput({
   }
 
   return (
-    <main className={styles.input_field_wrapper}>
+    <main className={styles.input_field_wrapper} ref={inputFieldRef}>
       <FormControl error={messageError !== ""}>
         <TextField
           value={messageValue}
           onChange={onChangeHandler}
           onKeyDown={onSubmitUsingEnter}
           multiline={true}
-          maxRows={3}
+          maxRows={4}
           placeholder="Send a message"
           className={styles.input_field}
           error={messageError !== ""}
+          id="custom_scroll_2"
         />
       </FormControl>
       <FormHelperText className={styles.error}>{messageError}</FormHelperText>

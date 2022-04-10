@@ -136,11 +136,13 @@ function ChatLogs(): JSX.Element {
           </h2>
         ) : targetChatRoom.type === chatType.private ? (
           chatHistory.map((msg, index) => {
+            const next_msg = chatHistory[index + 1];
             return (
               <ChatMessagePrivate
                 key={index}
                 message={msg}
                 targetId={targetChatRoom.id}
+                next_created_at={next_msg ? next_msg.created_at : ""}
               />
             );
           })

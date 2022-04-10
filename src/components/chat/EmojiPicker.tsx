@@ -46,7 +46,7 @@ function EmojiPicker({ emojiPickerRef, setMessageValue }: Props): JSX.Element {
   }
 
   return (
-    <main className={styles.main} id="custom_scroll_1" ref={emojiPickerRef}>
+    <main className={styles.main} id="custom_scroll_2" ref={emojiPickerRef}>
       <div className={styles.list_wrapper}>
         recently used:
         {recentEmoji.map((emoji, index) => {

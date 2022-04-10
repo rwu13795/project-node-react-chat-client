@@ -1,6 +1,7 @@
 .input_field_wrapper {
   width: 90%;
   max-width: 90%;
+  height: auto;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
@@ -9,16 +10,28 @@
 }
 
 .input_field_wrapper div {
+  height: 100%;
   width: 100%;
 }
 
 .input_field {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+}
+.input_field div {
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
+}
+.input_field div textarea {
+  height: 100%;
   width: 100%;
   max-width: 100%;
 }
 
 .input_field div {
-  height: auto;
+  height: 100%;
   font-size: 18px;
   padding: 6px 10px;
 }

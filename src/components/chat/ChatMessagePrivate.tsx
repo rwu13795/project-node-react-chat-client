@@ -1,6 +1,10 @@
-import { memo } from "react";
+import { memo, useState } from "react";
 import { useSelector } from "react-redux";
-import { chatType, MessageObject } from "../../redux/message/messageSlice";
+import {
+  chatType,
+  MessageObject,
+  msgType,
+} from "../../redux/message/messageSlice";
 import {
   selectCurrentUser,
   selectTargetFriend,
@@ -15,6 +19,9 @@ import pptx_icon from "../../images/file-icons/pptx_icon.png";
 import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
 import styles from "./ChatMessage.module.css";
 import { Avatar } from "@mui/material";
+import ViewUserProfile from "../user/profile/ViewUserProfile";
+import { useNavigate } from "react-router-dom";
+import ChatTimeline from "./ChatTimeline";
 
 const fileIcons: FileIcons = {
   txt: txt_icon,
@@ -27,18 +34,29 @@ const fileIcons: FileIcons = {
 interface Props {
   message: MessageObject;
   targetId: string;
+  next_created_at: string;
 }
 
-function ChatMessagePrivate({ message, targetId }: Props): JSX.Element {
+const cloudFrontUrl = process.env.REACT_APP_AWS_CLOUD_FRONT_URL;
+
+function ChatMessagePrivate({
+  message,
+  targetId,
+  next_created_at,
+}: Props): JSX.Element {
+  const navigate = useNavigate();
+
   const {
     user_id: currentUserId,
     username,
     avatar_url: avatar_self,
   } = useSelector(selectCurrentUser);
-  const { avatar_url: avatar_friend, friend_username } = useSelector(
-    selectTargetFriend(targetId)
-  );
-
+  const {
+    avatar_url: avatar_friend,
+    friend_id,
+    friend_email,
+    friend_username,
+  } = useSelector(selectTargetFriend(targetId));
   const {
     sender_id,
     msg_body,
@@ -49,9 +67,20 @@ function ChatMessagePrivate({ message, targetId }: Props): JSX.Element {
     file_url,
     created_at,
   } = message;
+  const [openProfile, setOpenProfile] = useState<boolean>(false);
 
-  let folder = "users";
-  let folder_id = currentUserId; // the private folder of the current user
+  function closeProfileHandler() {
+    setOpenProfile(false);
+  }
+  function viewUserProfileHandler() {
+    setOpenProfile(true);
+  }
+  function viewSelfProfileHandler() {
+    navigate("/profile");
+  }
+
+  const folder = "users";
+  const folder_id = currentUserId; // the private folder of the current user
   // if (targetChatRoom.type === chatType.group) {
   //   folder = "groups";
   //   folder_id = targetChatRoom.id;
@@ -59,77 +88,98 @@ function ChatMessagePrivate({ message, targetId }: Props): JSX.Element {
   let isSelf = false;
   let s_wrapper = styles.msg_wrapper;
   let s_body = styles.msg_body;
+  let s_body_tip = styles.msg_body_tip;
   let s_content = styles.msg_content_private + " " + styles.msg_body_color;
   if (message.sender_id === currentUserId) {
     isSelf = true;
     s_wrapper = styles.msg_wrapper_yourself;
     s_body = styles.msg_body_yourself;
+    s_body_tip = styles.msg_body_tip_yourself;
     s_content =
       styles.msg_content_private + " " + styles.msg_body_color_yourself;
   }
 
   return (
     <main className={styles.msg_container}>
-      <div className={styles.time_line}>{created_at}</div>
-      <div className={s_wrapper}>
-        {!isSelf && (
-          <div className={styles.avatar}>
-            <Avatar
-              src={avatar_friend ? avatar_friend : friend_username[0]}
-              alt={friend_username[0]}
-            />
-          </div>
-        )}
-
-        <div className={s_body}>
-          {!isSelf && <div className={styles.msg_body_tip}>a</div>}
-          <div className={s_content}>
-            <div>{msg_body}</div>
-            {msg_type === "image" && (
-              <div>
-                <img
-                  alt="tesing"
-                  src={
-                    file_localUrl
-                      ? file_localUrl
-                      : `https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${file_url}`
-                  }
-                />
-              </div>
+      {msg_type === msgType.admin ? (
+        <div>Admin: {msg_body}</div>
+      ) : (
+        <>
+          <ChatTimeline
+            created_at={created_at}
+            next_created_at={next_created_at}
+          />
+          <div className={s_wrapper}>
+            {!isSelf && (
+              <Avatar
+                className={styles.avatar}
+                src={avatar_friend ? avatar_friend : friend_username[0]}
+                alt={friend_username[0]}
+                onClick={viewUserProfileHandler}
+              />
             )}
-            {msg_type === "file" && (
-              <div>
-                {file_url ? (
-                  <a
-                    href={`https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${file_url}`}
-                  >
-                    Link to file
+
+            <div className={s_body}>
+              {!isSelf && <div className={s_body_tip}></div>}
+              <div className={s_content}>
+                {msg_body !== "" && (
+                  <div className={styles.text_wrapper}>{msg_body}</div>
+                )}
+                {msg_type === msgType.image && (
+                  <img
+                    className={styles.image_wrapper}
+                    alt="expired"
+                    src={
+                      file_localUrl
+                        ? file_localUrl
+                        : `${cloudFrontUrl}/${folder}/${folder_id}/${file_url}`
+                    }
+                  />
+                )}
+                {msg_type === msgType.file &&
+                  (file_url ? (
+                    <a
+                      href={`${cloudFrontUrl}/${folder}/${folder_id}/${file_url}`}
+                    >
+                      <img
+                        className={styles.file_wrapper}
+                        src={getFileIcon(fileIcons, file_type)}
+                        alt="file_icon"
+                      />
+                    </a>
+                  ) : (
                     <img
+                      className={styles.file_wrapper}
                       src={getFileIcon(fileIcons, file_type)}
                       alt="file_icon"
                     />
-                  </a>
-                ) : (
-                  <img
-                    src={getFileIcon(fileIcons, file_type)}
-                    alt="file_icon"
-                  />
-                )}
+                  ))}
               </div>
+              {isSelf && <div className={s_body_tip}></div>}
+            </div>
+
+            {isSelf && (
+              <Avatar
+                className={styles.avatar}
+                src={avatar_self ? avatar_self : username[0]}
+                alt={username[0]}
+                onClick={viewSelfProfileHandler}
+              />
             )}
           </div>
-          {isSelf && <div className={styles.msg_body_tip}>a</div>}
-        </div>
+        </>
+      )}
 
-        {isSelf && (
-          <div className={styles.avatar}>
-            <Avatar
-              src={avatar_self ? avatar_self : username[0]}
-              alt={username[0]}
-            />
-          </div>
-        )}
-      </div>
+      {/* have to use margin instead of gap to seperate the timeline and body since the 
+        modal is counted as an inline element here, the gap will also be applied to it */}
+      <ViewUserProfile
+        openModal={openProfile}
+        user_id={friend_id}
+        username={friend_username}
+        email={friend_email}
+        avatar_url={avatar_friend}
+        closeModalHandler={closeProfileHandler}
+      />
     </main>
   );
 }

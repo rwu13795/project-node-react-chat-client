@@ -77,6 +77,8 @@ function ChatBoard({
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    setMessageValue("");
+    setMessageError("");
     setImageFile(undefined);
     setTextFile(undefined);
     setOpenEmojiPicker(false);
@@ -119,7 +121,7 @@ function ChatBoard({
   }
 
   function sendMessageHandler() {
-    if (messageValue === "" && !(imageFile || textFile)) return;
+    if (messageValue.trim() === "" && !(imageFile || textFile)) return;
     setMessageValue("");
 
     let msg_type = msgType.text;
@@ -201,10 +203,6 @@ function ChatBoard({
             setMessageError={setMessageError}
             setMessageValue={setMessageValue}
             sendMessageHandler={sendMessageHandler}
-            chatBoardRef={chatBoardRef}
-            logsRef={logsRef}
-            inputRef={inputRef}
-            buttonsRef={buttonsRef}
           />
           <FilePreview
             imageFile={imageFile}

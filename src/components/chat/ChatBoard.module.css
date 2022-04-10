@@ -32,15 +32,14 @@
 }
 .input_container {
   height: auto;
-  min-height: 40px;
   max-height: 80%;
   min-width: 100%;
   background-color: var(--navbar-color);
   display: flex;
   flex-flow: column nowrap;
-  justify-content: flex-start;
+  justify-content: flex-end;
   align-items: center;
-  overflow: hidden;
+  overflow: visible;
   z-index: 2;
   padding-top: 10px;
   transition: all 0.5s;

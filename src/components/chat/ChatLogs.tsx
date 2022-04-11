@@ -8,37 +8,44 @@ import {
   MessageObject,
   selectInfiniteScrollStats,
   selectLoadingStatus_msg,
-  selectTargetChatRoom,
   selectTargetChatRoom_history,
   setInfiniteScrollStats,
+  TargetChatRoom,
 } from "../../redux/message/messageSlice";
-import { selectUserId, selectUsername } from "../../redux/user/userSlice";
 import {
-  axios_client,
-  FileIcons,
-  getFileIcon,
-  loadingStatusEnum,
-} from "../../utils";
+  Friend,
+  selectCurrentUser,
+  selectTargetGroupMembers,
+} from "../../redux/user/userSlice";
+import ChatMessagePrivate from "./ChatMessagePrivate";
+import ChatMessageGroup from "./ChatMessageGroup";
+import { axios_client, loadingStatusEnum } from "../../utils";
 
 // UI //
 import styles from "./ChatLogs.module.css";
 import { CircularProgress } from "@mui/material";
-import ChatMessagePrivate from "./ChatMessagePrivate";
 
 interface Props {
   logsScrollRef: React.MutableRefObject<HTMLDivElement | null>;
+  targetFriend: Friend;
+  targetChatRoom: TargetChatRoom;
 }
 
-function ChatLogs({ logsScrollRef }: Props): JSX.Element {
+function ChatLogs({
+  logsScrollRef,
+  targetFriend,
+  targetChatRoom,
+}: Props): JSX.Element {
   const dispatch = useDispatch();
   const client = axios_client();
 
   const chatHistory = useSelector(selectTargetChatRoom_history);
-  const currentUserId = useSelector(selectUserId);
-  const currentUsername = useSelector(selectUsername);
-  const targetChatRoom = useSelector(selectTargetChatRoom);
+  const currentUser = useSelector(selectCurrentUser);
   const infiniteScrollStats = useSelector(selectInfiniteScrollStats);
   const loadingStatus = useSelector(selectLoadingStatus_msg);
+  const targetGroupMembers = useSelector(
+    selectTargetGroupMembers(targetChatRoom.id)
+  );
 
   const MSG_PER_PAGE = 10;
 
@@ -61,6 +68,7 @@ function ChatLogs({ logsScrollRef }: Props): JSX.Element {
 
   const fetchMoreData = useCallback(async () => {
     const { type, id, date_limit } = targetChatRoom;
+    const { user_id: currentUserId, username: currentUsername } = currentUser;
     const room_id = `${type}_${id}`;
     const { hasMore, pageNum } = infiniteScrollStats[`${type}_${id}`];
     if (hasMore && chatHistory.length >= MSG_PER_PAGE) {
@@ -100,8 +108,7 @@ function ChatLogs({ logsScrollRef }: Props): JSX.Element {
     }
   }, [
     targetChatRoom,
-    currentUsername,
-    currentUserId,
+    currentUser,
     dispatch,
     client,
     infiniteScrollStats,
@@ -133,14 +140,31 @@ function ChatLogs({ logsScrollRef }: Props): JSX.Element {
               <ChatMessagePrivate
                 key={index}
                 message={msg}
-                targetId={targetChatRoom.id}
+                targetFriend={targetFriend}
+                currentUser={currentUser}
+                currentTime={currentTime}
+                next_created_at={next_msg ? next_msg.created_at : ""}
+              />
+            );
+          })
+        ) : targetGroupMembers ? (
+          chatHistory.map((msg, index) => {
+            const next_msg = chatHistory[index + 1];
+            const currentTime = new Date();
+            return (
+              <ChatMessageGroup
+                key={index}
+                message={msg}
+                group_id={targetChatRoom.id}
+                targetGroupMembers={targetGroupMembers}
+                currentUser={currentUser}
                 currentTime={currentTime}
                 next_created_at={next_msg ? next_msg.created_at : ""}
               />
             );
           })
         ) : (
-          <div></div>
+          <CircularProgress />
         )}
       </InfiniteScroll>
     </main>

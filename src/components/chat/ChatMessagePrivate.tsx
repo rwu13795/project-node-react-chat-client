@@ -1,15 +1,21 @@
 import { memo, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
 import {
   chatType,
   MessageObject,
   msgType,
 } from "../../redux/message/messageSlice";
 import {
+  CurrentUser,
+  Friend,
   selectCurrentUser,
   selectTargetFriend,
 } from "../../redux/user/userSlice";
 import { FileIcons, getFileIcon } from "../../utils";
+import ChatTimeline from "./ChatTimeline";
+import ViewUserProfile from "../user/profile/ViewUserProfile";
 
 // UI //
 import txt_icon from "../../images/file-icons/txt_icon.png";
@@ -19,9 +25,6 @@ import pptx_icon from "../../images/file-icons/pptx_icon.png";
 import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
 import styles from "./ChatMessage.module.css";
 import { Avatar } from "@mui/material";
-import ViewUserProfile from "../user/profile/ViewUserProfile";
-import { useNavigate } from "react-router-dom";
-import ChatTimeline from "./ChatTimeline";
 
 const fileIcons: FileIcons = {
   txt: txt_icon,
@@ -33,7 +36,8 @@ const fileIcons: FileIcons = {
 
 interface Props {
   message: MessageObject;
-  targetId: string;
+  targetFriend: Friend;
+  currentUser: CurrentUser;
   next_created_at: string;
   currentTime: Date;
 }
@@ -42,7 +46,8 @@ const cloudFrontUrl = process.env.REACT_APP_AWS_CLOUD_FRONT_URL;
 
 function ChatMessagePrivate({
   message,
-  targetId,
+  targetFriend,
+  currentUser,
   next_created_at,
   currentTime,
 }: Props): JSX.Element {
@@ -50,25 +55,18 @@ function ChatMessagePrivate({
 
   const {
     user_id: currentUserId,
-    username,
     avatar_url: avatar_self,
-  } = useSelector(selectCurrentUser);
+    username,
+  } = currentUser;
   const {
     avatar_url: avatar_friend,
     friend_id,
     friend_email,
     friend_username,
-  } = useSelector(selectTargetFriend(targetId));
-  const {
-    sender_id,
-    msg_body,
-    msg_type,
-    file_localUrl,
-    file_name,
-    file_type,
-    file_url,
-    created_at,
-  } = message;
+  } = targetFriend;
+  const { msg_body, msg_type, file_localUrl, file_type, file_url, created_at } =
+    message;
+
   const [openProfile, setOpenProfile] = useState<boolean>(false);
 
   function closeProfileHandler() {
@@ -82,23 +80,19 @@ function ChatMessagePrivate({
   }
 
   const folder = "users";
-  const folder_id = currentUserId; // the private folder of the current user
-  // if (targetChatRoom.type === chatType.group) {
-  //   folder = "groups";
-  //   folder_id = targetChatRoom.id;
-  // }
+  const folder_id = currentUserId;
+
   let isSelf = false;
   let s_wrapper = styles.msg_wrapper;
   let s_body = styles.msg_body;
   let s_body_tip = styles.msg_body_tip;
-  let s_content = styles.msg_content_private + " " + styles.msg_body_color;
+  let s_content = styles.msg_content + " " + styles.msg_body_color;
   if (message.sender_id === currentUserId) {
     isSelf = true;
     s_wrapper = styles.msg_wrapper_yourself;
     s_body = styles.msg_body_yourself;
     s_body_tip = styles.msg_body_tip_yourself;
-    s_content =
-      styles.msg_content_private + " " + styles.msg_body_color_yourself;
+    s_content = styles.msg_content + " " + styles.msg_body_color_yourself;
   }
 
   return (

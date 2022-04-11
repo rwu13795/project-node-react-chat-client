@@ -177,13 +177,15 @@ function ChatBoard({
     }
 
     // auto scroll to bottom after sending a message
-    if (logsScrollRef && logsScrollRef.current) {
-      // logsScrollRef.current.scrollTop = logsScrollRef.current.offsetHeight;
-      logsScrollRef.current.scrollTo({
-        top: logsScrollRef.current.scrollHeight,
-        behavior: "smooth",
-      });
-    }
+    // logsScrollRef.current.scrollTop = logsScrollRef.current.offsetHeight;
+    setTimeout(() => {
+      if (logsScrollRef && logsScrollRef.current) {
+        logsScrollRef.current.scrollTo({
+          top: logsScrollRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      }
+    }, 200);
     clearImageHandler();
     clearFileHandler();
     if (openEmojiPicker) toggleEmojiPicker();
@@ -193,7 +195,11 @@ function ChatBoard({
     <main className={styles.main}>
       <div className={styles.body} id="chat-board-container">
         <div className={styles.chat_logs} id="chat-logs-container">
-          <ChatLogs logsScrollRef={logsScrollRef} />
+          <ChatLogs
+            logsScrollRef={logsScrollRef}
+            targetFriend={targetFriend}
+            targetChatRoom={targetChatRoom}
+          />
         </div>
 
         <div

@@ -50,6 +50,7 @@ function RoomLists({ socket }: Props): JSX.Element {
     // enters the next room
     const previousRoom_id = targetChatRoom.id;
     const previousRoom_type = targetChatRoom.type;
+
     dispatch(
       setTargetChatRoom({
         id: nextRoom_id,
@@ -58,6 +59,16 @@ function RoomLists({ socket }: Props): JSX.Element {
         date_limit: date_limit || "",
       })
     );
+    // if the target room is a group, then fetch the member list from DB for that group
+    if (nextRoom_type === chatType.group) {
+      console.log("getting memberlist");
+      dispatch(
+        getGroupMembersList_database({
+          group_id: nextRoom_id,
+          initialize: false,
+        })
+      );
+    }
     // load the latest 20 chat messages from server in the specific room only once
     dispatch(
       loadChatHistory_database({
@@ -77,16 +88,7 @@ function RoomLists({ socket }: Props): JSX.Element {
         nextRoom_id,
       })
     );
-    // if the target room is a group, then fetch the member list from DB for that group
-    if (nextRoom_type === chatType.group) {
-      console.log("getting member list", nextRoom_id);
-      dispatch(
-        getGroupMembersList_database({
-          group_id: nextRoom_id,
-          initialize: false,
-        })
-      );
-    }
+
     dispatch(setResult_groupInvitation(""));
 
     // (1) //

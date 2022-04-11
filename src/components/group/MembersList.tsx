@@ -1,9 +1,10 @@
 import { memo, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import { selectTargetChatRoom } from "../../redux/message/messageSlice";
 import {
+  clearLeftMember,
   GroupMember,
   selectCurrentUser,
   selectFriendsList,
@@ -21,6 +22,7 @@ import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import EditIcon from "@mui/icons-material/Edit";
 import ChangeGroupName from "./ChangeGroupName";
 import ViewUserProfile from "../user/profile/ViewUserProfile";
+import { kickMember_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -28,6 +30,8 @@ interface Props {
 }
 
 function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
+  const dispatch = useDispatch();
+
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const currentUser = useSelector(selectCurrentUser);
@@ -55,6 +59,13 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
   function viewUserProfileHandler(member: GroupMember) {
     setTargetUser(member);
     openProfileHandler();
+  }
+  function kickMemberHandler(member_user_id: string, member_username: string) {
+    console.log(member_user_id, member_username);
+    if (socket) {
+      kickMember_emitter(socket, { group_id, member_user_id, member_username });
+    }
+    dispatch(clearLeftMember({ group_id, member_user_id }));
   }
 
   return (
@@ -112,7 +123,17 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
                           {user_id === admin_user_id && (
                             <div className={styles.admin_tag}>Admin</div>
                           )}
-                          {kicking && <Button>Kick</Button>}
+                          {kicking && (
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              onClick={() =>
+                                kickMemberHandler(user_id, username)
+                              }
+                            >
+                              Kick
+                            </Button>
+                          )}
                         </>
                       )}
                     </div>
@@ -147,7 +168,17 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
                           {user_id === admin_user_id && (
                             <div className={styles.admin_tag}>Admin</div>
                           )}
-                          {kicking && <Button>Kick</Button>}
+                          {kicking && (
+                            <Button
+                              variant="outlined"
+                              color="error"
+                              onClick={() =>
+                                kickMemberHandler(user_id, username)
+                              }
+                            >
+                              Kick
+                            </Button>
+                          )}
                         </>
                       )}
                     </div>

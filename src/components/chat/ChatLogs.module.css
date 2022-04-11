@@ -32,8 +32,8 @@
   display: flex;
   flex-direction: column-reverse;
   height: 100%;
-  width: 98%;
-  max-width: 98%;
+  width: 96%;
+  max-width: 96%;
   overflow-wrap: break-word;
   gap: 20px;
   /* to override the infiniteScroll component's overflow */

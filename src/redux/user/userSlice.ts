@@ -361,6 +361,21 @@ export const selectTargetGroup = (group_id: string) =>
 export const selectTargetFriend = (friend_id: string) =>
   createSelector([selectFriendsList], (friends) => friends[friend_id]);
 
+export const selectTargetGroupMembers = (group_id: string) => {
+  return createSelector([selectGroupsList], (groups) => {
+    if (groups[group_id] && groups[group_id].group_members) {
+      const membersList: { [member_id: string]: GroupMember } = {};
+
+      for (let member of groups[group_id].group_members!) {
+        membersList[member.user_id] = member;
+      }
+      return membersList;
+    } else {
+      return {};
+    }
+  });
+};
+
 export const selectGroupsToJoin = createSelector(
   [selectUser],
   (userState) => userState.groupsToJoin

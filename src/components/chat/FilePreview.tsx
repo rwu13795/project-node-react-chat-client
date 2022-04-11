@@ -41,6 +41,7 @@ function FilePreview({
   }
 
   useEffect(() => {
+    if (!imageRef || !imageRef.current) return;
     if (imageFile) {
       // Don't know why, when I set the wrapper height to 150px, which is the
       // max-height of the image, the input-container dose not expand for 150px
@@ -50,9 +51,9 @@ function FilePreview({
       // This method works the best for the expanding transition, the only
       // drawback is a empty div must always be mounted. But the image inside
       // this empty div conditionally.
-      imageRef.current!.style.height = "234px";
+      imageRef.current.style.height = "234px";
     } else {
-      imageRef.current!.style.height = "0";
+      imageRef.current.style.height = "0";
     }
   }, [imageFile]);
 

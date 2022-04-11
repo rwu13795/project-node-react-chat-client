@@ -35,6 +35,7 @@ interface Props {
   message: MessageObject;
   targetId: string;
   next_created_at: string;
+  currentTime: Date;
 }
 
 const cloudFrontUrl = process.env.REACT_APP_AWS_CLOUD_FRONT_URL;
@@ -43,6 +44,7 @@ function ChatMessagePrivate({
   message,
   targetId,
   next_created_at,
+  currentTime,
 }: Props): JSX.Element {
   const navigate = useNavigate();
 
@@ -102,10 +104,14 @@ function ChatMessagePrivate({
   return (
     <main className={styles.msg_container}>
       {msg_type === msgType.admin ? (
-        <div>Admin: {msg_body}</div>
+        <div className={styles.notification}>
+          <div style={{ fontWeight: "bold" }}>Notification</div>
+          <div>{msg_body}</div>
+        </div>
       ) : (
         <>
           <ChatTimeline
+            currentTime={currentTime}
             created_at={created_at}
             next_created_at={next_created_at}
           />

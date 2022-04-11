@@ -21,24 +21,15 @@ import {
 } from "../../utils";
 
 // UI //
-import txt_icon from "../../images/file-icons/txt_icon.png";
-import docx_icon from "../../images/file-icons/docx_icon.png";
-import pdf_icon from "../../images/file-icons/pdf_icon.png";
-import pptx_icon from "../../images/file-icons/pptx_icon.png";
-import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
 import styles from "./ChatLogs.module.css";
 import { CircularProgress } from "@mui/material";
 import ChatMessagePrivate from "./ChatMessagePrivate";
 
-const fileIcons: FileIcons = {
-  txt: txt_icon,
-  doc: docx_icon,
-  pdf: pdf_icon,
-  ppt: pptx_icon,
-  xls: xlsx_icon,
-};
+interface Props {
+  logsScrollRef: React.MutableRefObject<HTMLDivElement | null>;
+}
 
-function ChatLogs(): JSX.Element {
+function ChatLogs({ logsScrollRef }: Props): JSX.Element {
   const dispatch = useDispatch();
   const client = axios_client();
 
@@ -118,7 +109,7 @@ function ChatLogs(): JSX.Element {
   ]);
 
   return (
-    <main className={styles.main} id="chat-board">
+    <main className={styles.main} id="chat-board" ref={logsScrollRef}>
       <InfiniteScroll
         className={styles.logs_container}
         dataLength={chatHistory.length}
@@ -137,11 +128,13 @@ function ChatLogs(): JSX.Element {
         ) : targetChatRoom.type === chatType.private ? (
           chatHistory.map((msg, index) => {
             const next_msg = chatHistory[index + 1];
+            const currentTime = new Date();
             return (
               <ChatMessagePrivate
                 key={index}
                 message={msg}
                 targetId={targetChatRoom.id}
+                currentTime={currentTime}
                 next_created_at={next_msg ? next_msg.created_at : ""}
               />
             );
@@ -155,45 +148,3 @@ function ChatLogs(): JSX.Element {
 }
 
 export default memo(ChatLogs);
-
-/**<div key={index} className={msg_wrapper}>
-                <div className={styles.avatar}></div>
-                <div className={styles.msg_body}></div>
-
-                {msg.msg_type === "image" && (
-                  <div>
-                    <div>
-                      User {msg.sender_id} sent to User {msg.recipient_id}
-                    </div>
-
-                    <img
-                      alt="tesing"
-                      src={
-                        msg.file_localUrl
-                          ? msg.file_localUrl
-                          : `https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${msg.file_url}`
-                      }
-                    />
-                  </div>
-                )}
-                {msg.msg_type === "file" && (
-                  <div>
-                    {msg.file_url ? (
-                      <a
-                        href={`https://d229fmuzhn8qxo.cloudfront.net/${folder}/${folder_id}/${msg.file_url}`}
-                      >
-                        Link to file
-                        <img
-                          src={getFileIcon(fileIcons, msg.file_type)}
-                          alt="file_icon"
-                        />
-                      </a>
-                    ) : (
-                      <img
-                        src={getFileIcon(fileIcons, msg.file_type)}
-                        alt="file_icon"
-                      />
-                    )}
-                  </div>
-                )}
-              </div> */

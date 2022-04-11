@@ -125,3 +125,13 @@
   transition: all 0.3s;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.815);
 }
+
+.notification {
+  width: 90%;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-bottom: solid 2px var(--main-color-2);
+}

@@ -1,8 +1,25 @@
 .main {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.timeline_wrapper {
   width: 90%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
-  margin-bottom: 14px;
+  gap: 6px;
+}
+.timeline {
+  text-align: center;
+}
+
+.line {
+  min-width: 20%;
+  min-height: 1px;
+  background-color: var(--main-color-2);
 }

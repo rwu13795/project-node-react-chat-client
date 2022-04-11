@@ -55,17 +55,11 @@ export function resizeMenu() {
   }
 
   function resize() {
-    console.log("startClientX", startClientX);
-    console.log("distance", dragDistance);
-
     // set the element's new position:
     if (!leftMenu || !righMenu) return;
 
-    console.log("leftMenu.scrollWidth", leftMenu.scrollWidth);
-    console.log("righMenu.scrollWidth", righMenu.scrollWidth);
-    // console.dir(leftMenu);
     let width = leftMenu.scrollWidth - dragDistance;
-    console.log("width", width);
+
     if (width > 675) {
       leftMenu.style.width = 675 + "px";
       // right menu has to overlap on the left menu, the 25px difference is

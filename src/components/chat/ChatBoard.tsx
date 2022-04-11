@@ -68,13 +68,10 @@ function ChatBoard({
   const [openEmojiPicker, setOpenEmojiPicker] = useState<boolean>(false);
 
   const slideAnchorRef = useRef<HTMLDivElement | null>(null);
-  const chatBoardRef = useRef<HTMLDivElement | null>(null);
-  const logsRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLDivElement | null>(null);
-  const buttonsRef = useRef<HTMLDivElement | null>(null);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const emojiPickerRef = useRef<HTMLDivElement | null>(null);
+  const logsScrollRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setMessageValue("");
@@ -82,9 +79,11 @@ function ChatBoard({
     setImageFile(undefined);
     setTextFile(undefined);
     setOpenEmojiPicker(false);
-    emojiPickerRef.current!.style.height = "0";
-    emojiPickerRef.current!.style.padding = "0";
-    emojiPickerRef.current!.style.marginTop = "0";
+    if (emojiPickerRef && emojiPickerRef.current) {
+      emojiPickerRef.current.style.height = "0";
+      emojiPickerRef.current.style.padding = "0";
+      emojiPickerRef.current.style.marginTop = "0";
+    }
     if (imageInputRef && imageInputRef.current) {
       imageInputRef.current.value = "";
     }
@@ -106,17 +105,18 @@ function ChatBoard({
     }
   }
   function toggleEmojiPicker() {
+    if (!emojiPickerRef || !emojiPickerRef.current) return;
     setOpenEmojiPicker((prev) => !prev);
     // (1) //
     if (openEmojiPicker) {
-      emojiPickerRef.current!.style.height = "0";
-      emojiPickerRef.current!.style.padding = "0";
-      emojiPickerRef.current!.style.marginTop = "0";
+      emojiPickerRef.current.style.height = "0";
+      emojiPickerRef.current.style.padding = "0";
+      emojiPickerRef.current.style.marginTop = "0";
     } else {
-      emojiPickerRef.current!.style.display = "flex";
-      emojiPickerRef.current!.style.padding = "4px";
-      emojiPickerRef.current!.style.marginTop = "6px";
-      emojiPickerRef.current!.style.height = "200px";
+      emojiPickerRef.current.style.display = "flex";
+      emojiPickerRef.current.style.padding = "4px";
+      emojiPickerRef.current.style.marginTop = "6px";
+      emojiPickerRef.current.style.height = "200px";
     }
   }
 
@@ -175,6 +175,15 @@ function ChatBoard({
         room_type: targetChatRoom.type,
       });
     }
+
+    // auto scroll to bottom after sending a message
+    if (logsScrollRef && logsScrollRef.current) {
+      // logsScrollRef.current.scrollTop = logsScrollRef.current.offsetHeight;
+      logsScrollRef.current.scrollTo({
+        top: logsScrollRef.current.scrollHeight,
+        behavior: "smooth",
+      });
+    }
     clearImageHandler();
     clearFileHandler();
     if (openEmojiPicker) toggleEmojiPicker();
@@ -182,19 +191,14 @@ function ChatBoard({
 
   return (
     <main className={styles.main}>
-      <div className={styles.body} id="chat-board-container" ref={chatBoardRef}>
-        <div
-          className={styles.chat_logs}
-          id="chat-logs-container"
-          ref={logsRef}
-        >
-          <ChatLogs />
+      <div className={styles.body} id="chat-board-container">
+        <div className={styles.chat_logs} id="chat-logs-container">
+          <ChatLogs logsScrollRef={logsScrollRef} />
         </div>
 
         <div
           className={styles.input_container}
           id="input-container"
-          ref={inputRef}
           onSubmit={sendMessageHandler}
         >
           <MessageInput
@@ -230,7 +234,7 @@ function ChatBoard({
       between itself and the "button_container", the background will look inconsistent.
       So I need to shrink or expand the "button_container" at the same time to make
       the transition look better */}
-      <div className={styles.buttons_container} ref={buttonsRef}>
+      <div className={styles.buttons_container}>
         <div className={styles.buttons_wrapper}>
           <div className={styles.buttons_wrapper_left}>
             <div className={styles_2.icon_wrapper}>
@@ -301,5 +305,11 @@ This method could also apply to the FilePreview so that I don't need to use the
 resize function. But the compennet has to be mounted all the  time in
 order to trigger the styles transition
 
+// the Refs used in the old resize function
+
+  const chatBoardRef = useRef<HTMLDivElement | null>(null);
+  const logsRef = useRef<HTMLDivElement | null>(null);
+  const inputRef = useRef<HTMLDivElement | null>(null);
+  const buttonsRef = useRef<HTMLDivElement | null>(null);
 
 */

@@ -4,15 +4,15 @@ import { Socket } from "socket.io-client";
 import { useDispatch } from "react-redux";
 
 import { signOut } from "../../../redux/user/asyncThunk";
+import { setIsLoggedIn } from "../../../redux/user/userSlice";
+import { logout_emitter } from "../../../socket-io/emitters";
+import { AvatarOptions } from "../../../utils";
 
 // UI //
 import styles from "./UserAvatar.module.css";
 import { Avatar, Button, Popover } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { setIsLoggedIn } from "../../../redux/user/userSlice";
-import { logout_emitter } from "../../../socket-io/emitters";
-import { AvatarOptions } from "../../../utils";
 
 interface Props {
   username: string;

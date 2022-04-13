@@ -29,7 +29,6 @@
   width: 90vw;
   max-width: 600px;
   margin-top: 20px;
-
   padding-top: 10px;
   border-top: 5px solid var(--main-color-4);
 }
@@ -45,4 +44,23 @@
   margin-top: 20px;
   font-size: 22px;
   font-weight: bold;
+}
+
+@media screen and (max-width: 765px) {
+  .text_grid {
+    width: 90vw;
+    margin-bottom: 20px;
+    font-size: 18px;
+  }
+  .text {
+    text-align: left;
+  }
+  .input_field {
+    margin-bottom: 10px;
+  }
+  .reset_text {
+    margin-top: 20px;
+    font-size: 22px;
+    font-weight: bold;
+  }
 }

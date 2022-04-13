@@ -60,6 +60,7 @@
   font-weight: bold;
   color: var(--main-color-2);
   text-shadow: 1px 1px 3px var(--main-color-1);
+  cursor: pointer;
 }
 .logo_no_auth {
   width: 100px;
@@ -77,5 +78,43 @@
   }
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media screen and (max-width: 765px) {
+  .main {
+    align-items: center;
+  }
+  .left_grid {
+    gap: 8px;
+  }
+  .avatar_dot_wrapper {
+    width: 44px;
+    height: 44px;
+    display: inline;
+  }
+
+  .right_grid {
+    justify-content: flex-start;
+    align-items: center;
+  }
+  .title {
+    font-size: 14px;
+  }
+  .logo_wrapper {
+    height: 20px;
+  }
+  .logo {
+    position: relative;
+    bottom: 8px;
+    right: 2px;
+    width: 50px;
+  }
+
+  .title_no_auth {
+    font-size: 32px;
+  }
+  .logo_no_auth {
+    width: 70px;
   }
 }

@@ -14,34 +14,34 @@ function RedirectToSignIn(): JSX.Element {
 
   const [countDown, SetCountDown] = useState<number>(6);
 
-  useEffect(() => {
-    // count down
-    const timer = () => {
-      SetCountDown((prev) => {
-        if (prev === 0) return 0;
-        return prev - 1;
-      });
-    };
-    timer();
-    const timerId = setInterval(timer, 1000);
+  // useEffect(() => {
+  //   // count down
+  //   const timer = () => {
+  //     SetCountDown((prev) => {
+  //       if (prev === 0) return 0;
+  //       return prev - 1;
+  //     });
+  //   };
+  //   timer();
+  //   const timerId = setInterval(timer, 1000);
 
-    // redirect time out
-    const id = setTimeout(() => {
-      navigate("/");
-    }, 5000);
+  //   // redirect time out
+  //   const id = setTimeout(() => {
+  //     navigate("/");
+  //   }, 5000);
 
-    return () => {
-      clearInterval(timerId);
-      clearTimeout(id);
-      dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
-    };
-  }, []);
+  //   return () => {
+  //     clearInterval(timerId);
+  //     clearTimeout(id);
+  //     dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
+  //   };
+  // }, []);
 
   return (
     <main className={styles.text}>
       <div>Your passwords has been reset successfully!</div>
       <div className={styles.sub_title}>
-        You will be redirected to the sign in page ... in {countDown} seconds
+        You will be redirected to the sign in page in {countDown} seconds ...
       </div>
     </main>
   );

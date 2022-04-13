@@ -22,3 +22,7 @@
   width: 35%;
   background-image: linear-gradient(270deg, transparent, rgb(78, 78, 78));
 }
+
+.padding_bot {
+  padding-bottom: 40px;
+}

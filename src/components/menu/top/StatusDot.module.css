@@ -61,3 +61,10 @@
   border-left: solid 2px black;
   border-bottom: solid 2px black;
 }
+
+@media screen and (max-width: 765px) {
+  .status_dot_top_avatar {
+    width: 12px;
+    height: 12px;
+  }
+}

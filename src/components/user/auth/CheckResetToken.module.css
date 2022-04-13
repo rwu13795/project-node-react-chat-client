@@ -1,6 +1,13 @@
 .expired_link {
   font-size: 26px;
+  padding: 0 8px;
 }
 .loading {
   color: var(--main-color-2);
+}
+
+@media screen and (max-width: 765px) {
+  .expired_link {
+    font-size: 20px;
+  }
 }

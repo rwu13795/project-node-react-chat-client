@@ -31,11 +31,17 @@ function OnlineOfflineList({
   const friendNotifications = useSelector(selectFriendNotifications);
   const friendsPosition = useSelector(selectFriendsPosition);
 
-  let title = isOnline ? "Online" : "Offline";
-  let color = isOnline ? styles.online : styles.offline;
+  let main = styles.main;
+  let title = "Online";
+  let color = styles.online;
+  if (!isOnline) {
+    main = main + " " + styles.padding_bot;
+    title = "Offline";
+    color = styles.offline;
+  }
 
   return (
-    <main className={styles.main}>
+    <main className={main}>
       <div className={styles.title}>{title}</div>
       <div className={color}></div>
       <div className={styles_2.group_list}>

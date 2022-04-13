@@ -1,13 +1,12 @@
 .sign_in_button {
   float: right;
-  height: 44px;
+  height: 45px;
   width: 44%;
   min-width: 200px;
   max-width: 300px;
   border-radius: 6px !important;
   border: 0 !important;
   margin-bottom: 6px;
-  transition: all 1s;
 }
 
 .sign_in_button:hover {
@@ -35,8 +34,10 @@
 }
 
 .text {
+  width: 76%;
   color: black;
   font-size: 16px;
+  text-align: center;
 }
 
 .loading {
@@ -52,4 +53,17 @@
   text-align: left;
   font-size: 14px;
   color: red;
+}
+
+@media screen and (max-width: 765px) {
+  .sign_in_button {
+    height: 38px;
+  }
+
+  .text {
+    font-size: 14px;
+  }
+  .logo {
+    width: 26px;
+  }
 }

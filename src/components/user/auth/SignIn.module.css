@@ -68,3 +68,43 @@
   background-color: var(--main-color-1);
   color: var(--main-color-2);
 }
+
+@media screen and (max-width: 765px) {
+  .title {
+    text-align: left;
+    width: 90vw;
+    max-width: 600px;
+    padding-bottom: 6px;
+    margin-bottom: 20px;
+    border-bottom: solid 5px var(--main-color-4);
+  }
+  .buttons_group {
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    font-size: 16px;
+  }
+  .link {
+    min-width: 200px;
+  }
+  .buttons_wrapper {
+    width: 100%;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+  }
+  .button {
+    width: 50%;
+    min-width: 200px;
+    max-width: 200px;
+    font-size: 14px;
+  }
+  .appear_offline_wrapper {
+    font-size: 14px;
+  }
+}

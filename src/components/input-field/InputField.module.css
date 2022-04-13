@@ -50,3 +50,47 @@
 .error_text_change_user_name {
   max-width: 300px;
 }
+
+@media screen and (max-width: 765px) {
+  .main {
+    justify-content: center;
+    align-items: center;
+  }
+
+  .input_label_lg {
+    font-size: 20px;
+  }
+  .input_label_md {
+    font-size: 22px;
+  }
+
+  .input_field_lg {
+    width: 90vw;
+    font-size: 20px;
+    height: 60px;
+  }
+  .input_field_md {
+    width: 90vw;
+    max-width: 460px;
+    background-color: rgba(240, 248, 255, 0.808);
+    font-size: 22px;
+  }
+  .input_field_change_user_name {
+    min-height: 40px;
+    max-width: 300px;
+    background-color: rgba(240, 248, 255, 0.808);
+  }
+  .input_field_change_group_name {
+    min-height: 40px;
+    width: 500px;
+    max-width: 500px;
+    background-color: rgba(240, 248, 255, 0.808);
+  }
+
+  .error_text_lg {
+    font-size: 14px;
+  }
+  .error_text_md {
+    font-size: 12px;
+  }
+}

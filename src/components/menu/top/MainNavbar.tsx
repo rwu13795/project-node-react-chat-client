@@ -64,7 +64,11 @@ function MainNavbar({ socket }: Props): JSX.Element {
     </main>
   ) : (
     <main className={styles.main_no_auth}>
-      <div className={styles.title_no_auth}>Reachat</div>
+      <Tooltip title="Home Page">
+        <div className={styles.title_no_auth} onClick={backToHomePage}>
+          Reachat
+        </div>
+      </Tooltip>
       <img src={logo} alt="logo" className={styles.logo_no_auth} />
     </main>
   );

@@ -19,7 +19,7 @@ import InputField, { InputFields } from "../../input-field/InputField";
 // UI //
 import styles from "./SignIn.module.css";
 import { LoadingButton } from "@mui/lab";
-import { Checkbox } from "@mui/material";
+import { Checkbox, useMediaQuery } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import GoogleSignIn from "./GoogleSignIn";
 
@@ -29,6 +29,7 @@ function SignIn(): JSX.Element {
   const dispatch = useDispatch();
   const requestErrors = useSelector(selectRequestErrors);
   const loading = useSelector(selectLoadingStatus_user);
+  const isSmall = useMediaQuery("(max-width: 765px)");
 
   const [inputValues, setInputValues] = useState<InputFields>(
     initializeValues(inputFields)
@@ -96,9 +97,11 @@ function SignIn(): JSX.Element {
         </div>
 
         <div className={styles.buttons_group}>
-          <Link to="/auth/forgot-password" className={styles.link}>
-            Forgot password?
-          </Link>
+          {!isSmall && (
+            <Link to="/auth/forgot-password" className={styles.link}>
+              Forgot password?
+            </Link>
+          )}
 
           <div className={styles.buttons_wrapper}>
             <LoadingButton
@@ -114,6 +117,12 @@ function SignIn(): JSX.Element {
             </LoadingButton>
             <GoogleSignIn appearOffline={appearOffline} />
           </div>
+
+          {isSmall && (
+            <Link to="/auth/forgot-password" className={styles.link}>
+              Forgot password?
+            </Link>
+          )}
         </div>
       </form>
     </main>

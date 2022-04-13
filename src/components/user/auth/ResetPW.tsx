@@ -107,7 +107,7 @@ function ResetPassword({ expirationInMS, token, user_id }: Props): JSX.Element {
               requestError={requestErrors[name]}
               setInputValues={setInputValues}
               setInputErrors={setInputErrors}
-              isDisabled={loading === loadingStatusEnum.succeeded || isExpired}
+              // isDisabled={loading === loadingStatusEnum.succeeded || isExpired}
             />
           );
         })}
@@ -124,25 +124,23 @@ function ResetPassword({ expirationInMS, token, user_id }: Props): JSX.Element {
         </LoadingButton>
       </form>
 
-      <div>
-        {loading === loadingStatusEnum.succeeded ? (
-          <RedirectToSignIn />
-        ) : (
-          <div className={styles.expired_link}>
-            {isExpired || loading === loadingStatusEnum.time_out ? (
-              <>
-                Session time out, please make a{" "}
-                <Link to={"/auth/forgot-password"}>NEW REQUEST</Link> again.
-              </>
-            ) : (
-              <>
-                Session expires in
-                {` 0${minute}`}:{second > 9 ? second : `0${second}`}
-              </>
-            )}
-          </div>
-        )}
-      </div>
+      {loading === loadingStatusEnum.succeeded ? (
+        <RedirectToSignIn />
+      ) : (
+        <div className={styles.expired_link}>
+          {isExpired || loading === loadingStatusEnum.time_out ? (
+            <>
+              Session time out, please make a{" "}
+              <Link to={"/auth/forgot-password"}>NEW REQUEST</Link> again.
+            </>
+          ) : (
+            <>
+              Session expires in
+              {` 0${minute}`}:{second > 9 ? second : `0${second}`}
+            </>
+          )}
+        </div>
+      )}
     </main>
   );
 }

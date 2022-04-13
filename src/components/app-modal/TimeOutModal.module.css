@@ -1,0 +1,45 @@
+.modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-height: 200px;
+  max-height: 700px;
+  transform: translate(-50%, -50%);
+  width: 680px;
+  background-color: white;
+  background-image: var(--modal-bgc-1);
+  border: 2px solid #000;
+  padding: 20px;
+  box-shadow: 3px 6px 8px;
+  overflow: hidden;
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+}
+
+.text {
+  width: 98%;
+  text-align: center;
+  font-size: 24px;
+}
+.count_down {
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.buttons_wrapper {
+  width: 98%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-around;
+  align-items: center;
+}
+.button {
+  min-width: 160px;
+  font-size: 16px;
+}
+.button_color {
+  background: var(--button-bgc-1);
+}

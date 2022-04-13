@@ -23,8 +23,10 @@ export function useCheckToken(token: string | null, user_id: string | null) {
 
       setIsValid(data.isValid);
       setExpirationInMS(data.expirationInMS);
+      setIsLoading(false);
     } catch (err) {
       setIsValid(false);
+      setIsLoading(false);
     }
   }, [token, user_id]);
 
@@ -32,7 +34,6 @@ export function useCheckToken(token: string | null, user_id: string | null) {
     if (token && user_id) {
       setIsLoading(true);
       checkToken();
-      setIsLoading(false);
     }
   }, [checkToken, token, user_id]);
 

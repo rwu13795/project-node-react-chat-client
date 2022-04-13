@@ -65,6 +65,9 @@ import {
   setUserOnlineStatus_reducer,
   updateGroupAdmin_reducer,
   updateGroupsList_reducer,
+  resetAfterSignOut_user_reducer,
+  setOpenAlertModal_sameUser_reducer,
+  setOpenAlertModal_timeOut_reducer,
 } from "./reducers";
 import { InputFields } from "../../components/input-field/InputField";
 
@@ -147,6 +150,8 @@ export interface UserState {
   // layout
   loadingStatus: string;
   requestErrors: RequestErrors;
+  openAlertModal_sameUser: boolean;
+  openAlertModal_timeOut: boolean;
 }
 
 export const initialState_user: UserState = {
@@ -169,6 +174,8 @@ export const initialState_user: UserState = {
   newGroupToJoin: "",
   loadingStatus: loadingStatusEnum.idle,
   requestErrors: {},
+  openAlertModal_sameUser: false,
+  openAlertModal_timeOut: false,
 };
 
 const userSlice = createSlice({
@@ -210,6 +217,12 @@ const userSlice = createSlice({
     setIsLoggedIn: setIsLoggedIn_reducer,
 
     updateGroupAdmin: updateGroupAdmin_reducer,
+
+    resetAfterSignOut_user: resetAfterSignOut_user_reducer,
+
+    setOpenAlertModal_sameUser: setOpenAlertModal_sameUser_reducer,
+
+    setOpenAlertModal_timeOut: setOpenAlertModal_timeOut_reducer,
   },
 
   extraReducers: (builder) => {
@@ -292,6 +305,9 @@ export const {
   clearRequestError,
   setIsLoggedIn,
   updateGroupAdmin,
+  resetAfterSignOut_user,
+  setOpenAlertModal_sameUser,
+  setOpenAlertModal_timeOut,
 } = userSlice.actions;
 
 export default userSlice.reducer;
@@ -395,4 +411,12 @@ export const selectFriendsArray = createSelector(
 export const selectGroupsArray = createSelector(
   [selectUser],
   (userState) => userState.groupsArray
+);
+export const selectOpenAlertModal_sameUser = createSelector(
+  [selectUser],
+  (userState) => userState.openAlertModal_sameUser
+);
+export const selectOpenAlertModal_timeOut = createSelector(
+  [selectUser],
+  (userState) => userState.openAlertModal_timeOut
 );

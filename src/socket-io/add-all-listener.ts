@@ -7,6 +7,7 @@ import {
   blockFriend_listener,
   check_addFriendRequest_listener,
   check_groupInvitation_listener,
+  disconnectSameUser_listener,
   groupAdminNotification_listener,
   groupInvitationRequest_listener,
   joinNewGroup_listener,
@@ -40,6 +41,7 @@ export default function addAllListeners(
   online_listener(socket, dispatch);
   onlineEcho_listener(socket, dispatch);
   offline_listener(socket, dispatch);
+  disconnectSameUser_listener(socket, dispatch);
 
   // friends
   addFriendRequest_listener(socket, dispatch);

@@ -18,11 +18,13 @@ function CheckResetToken(): JSX.Element {
     searchParams.get("user_id")
   );
 
+  console.log("isLoading", isLoading);
+
   return (
     <main className={styles_2.main} id="main_body">
       {isLoading ? (
         <CircularProgress className={styles.loading} />
-      ) : !isValid ? (
+      ) : isValid === false ? (
         <div className={styles.expired_link}>
           The link for resetting your password has expired, please make a{" "}
           <Link to="/auth/forgot-password">NEW REQUEST</Link> again.

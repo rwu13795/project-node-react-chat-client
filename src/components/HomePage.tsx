@@ -67,16 +67,21 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
       if (!currentUserId) return;
       if (socket) return;
 
-      dispatch(getNotifications({ currentUserId }));
-      dispatch(setCurrentUserId_msg(currentUserId));
       // only initialize the socket once. Pass all the user_id to socket-server to let
       // the server identify this socket-client
       let newSocket: Socket = connectSocket(currentUserId, currentUsername);
-      setSocket(newSocket);
-      // initialize all the listeners //
-      addAllListeners(newSocket, dispatch, {
-        user_id: currentUserId,
-        group_ids: groupsToJoin,
+
+      newSocket.on("connect", () => {
+        dispatch(getNotifications({ currentUserId }));
+        dispatch(setCurrentUserId_msg(currentUserId));
+        setSocket(newSocket);
+        // initialize all the listeners //
+        addAllListeners(newSocket, dispatch, {
+          user_id: currentUserId,
+          group_ids: groupsToJoin,
+        });
+
+        console.log("client socket connected", newSocket.id);
       });
     }
   }, [isLoggedIn, socket]);

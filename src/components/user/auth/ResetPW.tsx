@@ -96,6 +96,7 @@ function ResetPassword({ expirationInMS, token, user_id }: Props): JSX.Element {
   return (
     <main className={styles.main}>
       <form onSubmit={onSubmitHandler} id="input_fields">
+        <div className={styles.title}>Reset your password</div>
         {Object.entries(inputValues).map(([name, value]) => {
           return (
             <InputField

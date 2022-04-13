@@ -14,3 +14,4 @@ export * from "./user/message-listener";
 export * from "./user/offline-listener";
 export * from "./user/online-echo-listener";
 export * from "./user/online-listener";
+export * from "./user/disconnect-same-user-listener";

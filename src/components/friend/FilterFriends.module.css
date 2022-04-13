@@ -50,3 +50,34 @@
   text-align: center;
   font-size: 30px;
 }
+
+@media screen and (max-width: 765px) {
+  .main {
+    gap: 10px;
+  }
+  .title {
+    font-size: 30px;
+  }
+  .border {
+    margin: 0;
+  }
+  .filter {
+    width: 90%;
+  }
+  .filter_text_field {
+    width: 100%;
+  }
+
+  .list {
+    height: 80vh;
+    max-height: min(400px, 60vh);
+    width: 100%;
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 8px;
+    overflow-y: visible;
+    overflow-x: hidden;
+    text-align: center;
+    font-size: 30px;
+  }
+}

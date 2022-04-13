@@ -1,13 +1,13 @@
 .main {
   display: flex;
-  flex-flow: row nowrap;
+  flex-flow: row wrap;
   align-items: baseline;
   gap: 8px;
 }
 
 .text_button_wrapper {
   overflow-wrap: break-word;
-  max-width: min(460px, 36vw);
+  max-width: min(500px, 40vw);
   display: flex;
   flex-flow: row wrap;
   gap: 5px;
@@ -15,6 +15,15 @@
 }
 
 .username {
-  max-width: min(460px, 36vw);
   overflow-wrap: break-word;
+}
+
+@media screen and (max-width: 765px) {
+  .main {
+    width: 75%;
+  }
+  .text_button_wrapper {
+    width: 100%;
+    max-width: min(500px, 70vw);
+  }
 }

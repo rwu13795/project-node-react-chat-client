@@ -158,7 +158,7 @@ function AddAvatar({ socket, handleCloseModal }: Props): JSX.Element {
       {sizeExceeded && (
         <div>Image size exceeds maximum allowable size (1 MB).</div>
       )}
-      {notSupported && <div>Please only select PNG, GIF, or JPG picture.</div>}
+      {notSupported && <div>Only PNG, GIF, or JPG picture is supported.</div>}
 
       {Boolean(imgSrc) && (
         <div className={styles.button_wrapper}>

@@ -112,17 +112,19 @@ function UserProfile({ socket, setSocket }: Props): JSX.Element {
               </div>
             </div>
             <div className={styles.upper_right}>
-              <div className={styles.info_text}>
+              <div className={styles.info_text_wrapper}>
                 <span className={styles.sub_title}>ID:</span>
                 <span>{user_id}</span>
               </div>
               <div className={styles.info_text_border}></div>
-              <div className={styles.info_text}>
+
+              <div className={styles.info_text_wrapper}>
                 <span className={styles.sub_title}>Email:</span>
-                <span>{email}</span>
+                <span className={styles.info_email}>{email}</span>
               </div>
               <div className={styles.info_text_border}></div>
-              <div className={styles.info_text}>
+
+              <div className={styles.info_text_wrapper}>
                 <span className={styles.sub_title}>Nickname:</span>
                 <ChangeUsername username={username} />
               </div>

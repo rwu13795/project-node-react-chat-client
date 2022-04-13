@@ -12,3 +12,15 @@
   );
   background-color: white;
 }
+
+@media screen and (max-width: 765px) {
+  .main {
+    min-height: calc(100vh - 62px);
+    max-height: calc(100vh - 62px);
+    background: linear-gradient(
+      90deg,
+      var(--navbar-color) 0%,
+      rgb(255, 255, 255) 90%
+    );
+  }
+}

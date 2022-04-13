@@ -28,7 +28,6 @@
 
 .room_list {
   width: calc(100% - 25px); /* leave  room for the drag-button */
-
   min-height: calc(100vh - 102px);
   max-height: calc(100vh - 102px);
   display: flex;
@@ -102,6 +101,8 @@
     justify-content: stretch;
     align-items: stretch;
     overflow: scroll;
+    min-height: calc(100vh - 62px);
+    max-height: calc(100vh - 62px);
   }
 
   .left_grid {
@@ -109,10 +110,14 @@
     position: static;
     min-width: 100vw;
     width: 100vw;
+    min-height: calc(100vh - 62px);
+    max-height: calc(100vh - 62px);
   }
 
   .room_list {
     width: 100%;
+    min-height: calc(100vh - 62px);
+    max-height: calc(100vh - 62px);
   }
 
   .right_grid {
@@ -120,5 +125,7 @@
     width: 100vw;
     min-width: 100vw;
     padding-left: 4px;
+    min-height: calc(100vh - 62px);
+    max-height: calc(100vh - 62px);
   }
 }

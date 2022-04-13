@@ -53,7 +53,7 @@ function SearchFound({
           socket={undefined}
           option={AvatarOptions.topAvatar}
         />
-        {username}
+        <div className={styles.username}>{username}</div>
       </div>
 
       <InputField

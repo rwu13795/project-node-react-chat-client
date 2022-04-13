@@ -58,10 +58,10 @@
   }
 
   .input_label_lg {
-    font-size: 20px;
+    font-size: 22px;
   }
   .input_label_md {
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .input_field_lg {
@@ -70,15 +70,16 @@
     height: 60px;
   }
   .input_field_md {
-    width: 90vw;
-    max-width: 460px;
-    background-color: rgba(240, 248, 255, 0.808);
-    font-size: 22px;
+    font-size: 18px;
   }
   .input_field_change_user_name {
-    min-height: 40px;
-    max-width: 300px;
-    background-color: rgba(240, 248, 255, 0.808);
+    width: 75vw;
+  }
+  .input_field_change_user_name div {
+    padding: 0;
+  }
+  .input_field_change_user_name textarea {
+    font-size: 20px;
   }
   .input_field_change_group_name {
     min-height: 40px;
@@ -91,6 +92,6 @@
     font-size: 14px;
   }
   .error_text_md {
-    font-size: 12px;
+    font-size: 14px;
   }
 }

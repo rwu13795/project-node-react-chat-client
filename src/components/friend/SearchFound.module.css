@@ -19,11 +19,15 @@
 }
 
 .avatar_wrapper {
+  width: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   align-items: center;
   gap: 16px;
+}
+.username {
+  max-width: 70%;
   font-size: 30px;
 }
 
@@ -39,4 +43,20 @@
 }
 .button:hover {
   background: var(--button-bgc-2);
+}
+
+@media screen and (max-width: 765px) {
+  .title {
+    font-size: 30px;
+  }
+  .border {
+    margin: 0;
+  }
+  .button {
+    font-size: 16px;
+  }
+
+  .username {
+    font-size: 24px;
+  }
 }

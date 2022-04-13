@@ -2,7 +2,7 @@
   margin-top: 10px;
   margin-bottom: 16px;
   display: flex;
-  width: 96%;
+  width: 100%;
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
@@ -36,6 +36,7 @@
 .button {
   float: right;
   font-size: 20px;
+  width: 140px;
 }
 .button:hover {
   background: var(--button-bgc-2);
@@ -61,7 +62,31 @@
 
 .found_friend {
   width: 68%;
-  border-bottom: 4px solid var(--main-color-2);
+  border-bottom: 2px solid var(--main-color-2);
   padding-left: 8px;
-  padding-bottom: 4px;
+}
+
+@media screen and (max-width: 765px) {
+  .title {
+    font-size: 30px;
+  }
+  .border {
+    margin: 0;
+  }
+  .radio_lable {
+    font-size: 16px;
+  }
+
+  .button {
+    font-size: 16px;
+  }
+  .error_text {
+    font-size: 16px;
+  }
+
+  .found_friend {
+    width: 100%;
+    padding-left: 0;
+    padding-bottom: 4px;
+  }
 }

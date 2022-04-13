@@ -29,3 +29,10 @@
   margin-top: 10px;
   font-size: 18px;
 }
+
+@media screen and (max-width: 765px) {
+  .button {
+    width: 50%;
+    font-size: 14px;
+  }
+}

@@ -37,3 +37,28 @@
   max-height: 700px;
   object-fit: contain;
 }
+
+@media screen and (max-width: 765px) {
+  .main {
+    min-height: 110px;
+  }
+
+  .button_wrapper {
+    width: min(86%, 400px);
+  }
+  .button {
+    font-size: min(18px, 7vw);
+  }
+
+  .crop_image_wrapper {
+    padding-top: 20px;
+    max-width: 640px;
+    max-height: 700px;
+    margin-bottom: 20px;
+  }
+  .crop_image {
+    max-width: 640px;
+    max-height: 700px;
+    object-fit: contain;
+  }
+}

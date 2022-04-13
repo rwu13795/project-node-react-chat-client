@@ -11,9 +11,10 @@ import { selectTargetChatRoom } from "../../../redux/message/messageSlice";
 
 interface Props {
   socket: Socket | undefined;
+  homePageMainGridRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
-function ChatRoom({ socket }: Props): JSX.Element {
+function ChatRoom({ socket, homePageMainGridRef }: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
 
   const [openMemberList, setOpenMemberList] = useState<boolean>(false);
@@ -27,6 +28,7 @@ function ChatRoom({ socket }: Props): JSX.Element {
         setOpenMemberList={setOpenMemberList}
         setOpenFriendForGroup={setOpenFriendForGroup}
         setOpenGroupForFriend={setGroupForFriend}
+        homePageMainGridRef={homePageMainGridRef}
       />
       <ChatBoard
         socket={socket}

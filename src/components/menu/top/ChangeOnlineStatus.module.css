@@ -24,6 +24,7 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: left;
 }
 
 .popover_box {

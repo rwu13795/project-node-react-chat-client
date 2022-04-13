@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
-  leaveGroup,
   selectUserId,
   setLoadingStatus_user,
   setResult_groupInvitation,
@@ -25,16 +24,19 @@ import GroupsList from "./GroupsList";
 // UI //
 import styles from "./RoomLists.module.css";
 import { changeTargetRoom_emitter } from "../../../socket-io/emitters";
-import { loadingStatusEnum } from "../../../utils";
+import { loadingStatusEnum, scrollMainPage } from "../../../utils";
+import { useMediaQuery } from "@mui/material";
 
 interface Props {
   socket: Socket | undefined;
+  homePageMainGridRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
-function RoomLists({ socket }: Props): JSX.Element {
+function RoomLists({ socket, homePageMainGridRef }: Props): JSX.Element {
   const dispatch = useDispatch();
   const currentUserId = useSelector(selectUserId);
   const targetChatRoom = useSelector(selectTargetChatRoom);
+  const isSmall = useMediaQuery("(max-width: 765px)");
 
   function selectTargetChatRoomHandler(
     nextRoom_id: string,
@@ -42,8 +44,6 @@ function RoomLists({ socket }: Props): JSX.Element {
     nextRoom_type: string,
     date_limit?: string | null
   ) {
-    // let elem = document.getElementById("chat-board");
-    // if (elem) elem.scrollTo({ top: elem.scrollHeight, behavior: "auto" });
     dispatch(setLoadingStatus_msg(loadingStatusEnum.changingTargetRoom));
 
     // clear the notifications of the previous room in database, only when the user
@@ -90,6 +90,9 @@ function RoomLists({ socket }: Props): JSX.Element {
     );
 
     dispatch(setResult_groupInvitation(""));
+
+    // scroll to right to show the chatBoard when user clicks on any room
+    if (isSmall) scrollMainPage(homePageMainGridRef, "right");
 
     // (1) //
     if (socket)

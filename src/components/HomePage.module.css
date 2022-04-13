@@ -1,7 +1,7 @@
 .main_grid {
   width: 100vw;
   height: 100%;
-  max-height: calc(100vh - 100px);
+  max-height: calc(100vh - 102px);
 }
 
 .left_grid {
@@ -9,8 +9,8 @@
   position: absolute;
   min-width: 100px;
   width: 294px;
-  height: 100%;
-  max-height: calc(100vh - 105px);
+  min-height: calc(100vh - 102px);
+  max-height: calc(100vh - 102px);
   overflow: hidden;
   z-index: 8;
   display: flex;
@@ -28,7 +28,8 @@
 
 .room_list {
   width: calc(100% - 25px); /* leave  room for the drag-button */
-  height: 100%;
+
+  min-height: calc(100vh - 102px);
   max-height: calc(100vh - 102px);
   display: flex;
   flex-flow: row nowrap;
@@ -91,4 +92,33 @@
   width: 4px;
   height: 45%;
   background: var(--button-bgc-4);
+}
+
+@media screen and (max-width: 765px) {
+  .main_grid {
+    min-width: 100vw;
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: stretch;
+    align-items: stretch;
+    overflow: scroll;
+  }
+
+  .left_grid {
+    float: none;
+    position: static;
+    min-width: 100vw;
+    width: 100vw;
+  }
+
+  .room_list {
+    width: 100%;
+  }
+
+  .right_grid {
+    float: none;
+    width: 100vw;
+    min-width: 100vw;
+    padding-left: 4px;
+  }
 }

@@ -17,6 +17,7 @@ interface Props {
   setOpenMemberList: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenFriendForGroup: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenGroupForFriend: React.Dispatch<React.SetStateAction<boolean>>;
+  homePageMainGridRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 function ChatRoomMenu({
@@ -24,6 +25,7 @@ function ChatRoomMenu({
   setOpenMemberList,
   setOpenFriendForGroup,
   setOpenGroupForFriend,
+  homePageMainGridRef,
 }: Props): JSX.Element {
   const targetChatRoom = useSelector(selectTargetChatRoom);
 
@@ -35,6 +37,7 @@ function ChatRoomMenu({
           socket={socket}
           setOpenMemberList={setOpenMemberList}
           setOpenFriendForGroup={setOpenFriendForGroup}
+          homePageMainGridRef={homePageMainGridRef}
         />
       )}
       {targetChatRoom.type === chatType.private && (
@@ -42,6 +45,7 @@ function ChatRoomMenu({
           friend_id={targetChatRoom.id}
           socket={socket}
           setOpenGroupForFriend={setOpenGroupForFriend}
+          homePageMainGridRef={homePageMainGridRef}
         />
       )}
     </main>

@@ -14,12 +14,14 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import { Tooltip, useMediaQuery } from "@mui/material";
 import MembersListAvatars from "../../group/MembersListAvatars";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
+import { scrollMainPage } from "../../../utils";
 
 interface Props {
   target_id: string;
   socket: Socket | undefined;
   setOpenMemberList: React.Dispatch<React.SetStateAction<boolean>>;
   setOpenFriendForGroup: React.Dispatch<React.SetStateAction<boolean>>;
+  homePageMainGridRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 function GroupChatMenu({
@@ -27,6 +29,7 @@ function GroupChatMenu({
   socket,
   setOpenMemberList,
   setOpenFriendForGroup,
+  homePageMainGridRef,
 }: Props): JSX.Element {
   const isSmall = useMediaQuery("(max-width:765px)");
   const max_900px = useMediaQuery("(max-width:900px)");
@@ -57,10 +60,19 @@ function GroupChatMenu({
     setOpenMemberList(false);
   }
 
+  function goBackHandler() {
+    scrollMainPage(homePageMainGridRef, "left");
+  }
+
   return (
     <main className={styles.main}>
       <div className={styles.left}>
-        {isSmall && <ArrowBackIosIcon className={styles.back_arrow} />}
+        {isSmall && (
+          <ArrowBackIosIcon
+            className={styles.back_arrow}
+            onClick={goBackHandler}
+          />
+        )}
       </div>
       <div className={styles.center}>
         <div className={styles.center_upper}>{group_name}</div>

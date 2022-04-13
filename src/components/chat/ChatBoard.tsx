@@ -271,7 +271,7 @@ function ChatBoard({
             onClick={sendMessageHandler}
           >
             <div className={styles.send_button_content}>
-              {!isSmall && <SendRoundedIcon />}
+              <SendRoundedIcon />
             </div>
             <div className={styles.send_button_content}>Send</div>
           </Button>

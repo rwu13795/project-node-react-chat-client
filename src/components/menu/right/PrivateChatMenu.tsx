@@ -14,17 +14,20 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
 import ViewUserProfile from "../../user/profile/ViewUserProfile";
 import OptionsPrivateChatMenu from "./OptionsPrivateChatMenu";
+import { scrollMainPage } from "../../../utils";
 
 interface Props {
   friend_id: string;
   socket: Socket | undefined;
   setOpenGroupForFriend: React.Dispatch<React.SetStateAction<boolean>>;
+  homePageMainGridRef: React.MutableRefObject<HTMLDivElement | null>;
 }
 
 function PrivateChatMenu({
   friend_id,
   socket,
   setOpenGroupForFriend,
+  homePageMainGridRef,
 }: Props): JSX.Element {
   const isSmall = useMediaQuery("(max-width:765px)");
   const max_900px = useMediaQuery("(max-width:900px)");
@@ -51,6 +54,9 @@ function PrivateChatMenu({
   function openGroupForFriendHandler() {
     setOpenGroupForFriend((prev) => !prev);
   }
+  function goBackHandler() {
+    scrollMainPage(homePageMainGridRef, "left");
+  }
 
   useEffect(() => {
     setOpenGroupForFriend(false);
@@ -60,7 +66,12 @@ function PrivateChatMenu({
     <>
       <main className={styles.main}>
         <div className={styles.left}>
-          {isSmall && <ArrowBackIosIcon className={styles.back_arrow} />}
+          {isSmall && (
+            <ArrowBackIosIcon
+              className={styles.back_arrow}
+              onClick={goBackHandler}
+            />
+          )}
         </div>
         <div className={styles.center}>
           <div className={styles_2.avatar_wrapper}>

@@ -23,7 +23,7 @@ import connectSocket from "../socket-io/socketConnection";
 
 // UI //
 import styles from "./HomePage.module.css";
-import { CircularProgress } from "@mui/material";
+import { CircularProgress, useMediaQuery } from "@mui/material";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
 import addAllListeners from "../socket-io/add-all-listener";
 import { loadingStatusEnum, resizeMenu } from "../utils";
@@ -39,6 +39,7 @@ interface Props {
 function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const isSmall = useMediaQuery("(max-width: 765px)");
 
   const isLoggedIn = useSelector(selectIsLoggedIn);
   const currentUserId = useSelector(selectUserId);
@@ -46,6 +47,8 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   const currentOnlineStatus = useSelector(selectUserOnlineStatus);
   const groupsToJoin = useSelector(selectGroupsToJoin);
   const loadingStatus = useSelector(selectLoadingStatus_msg);
+
+  const homePageMainGridRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     setShowFooter(false);
@@ -101,7 +104,7 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   }, [loadingStatus, currentOnlineStatus, socket, dispatch]);
 
   return (
-    <main className={styles.main_grid}>
+    <main className={styles.main_grid} ref={homePageMainGridRef}>
       {isLoggedIn === undefined ? (
         <CircularProgress />
       ) : (
@@ -112,20 +115,29 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
             // onMouseEnter={showResizeHandle}
           >
             <div className={styles.room_list}>
-              <RoomLists socket={socket} />
-            </div>
-            <div className={styles.resize_handle_wrapper}>
-              <div className={styles.resize_bar_top}></div>
-              <DragHandleIcon
-                id="resize_handle"
-                className={styles.resize_handle}
+              <RoomLists
+                socket={socket}
+                homePageMainGridRef={homePageMainGridRef}
               />
-              <div className={styles.resize_bar_bot}></div>
             </div>
+
+            {!isSmall && (
+              <div className={styles.resize_handle_wrapper}>
+                <div className={styles.resize_bar_top}></div>
+                <DragHandleIcon
+                  id="resize_handle"
+                  className={styles.resize_handle}
+                />
+                <div className={styles.resize_bar_bot}></div>
+              </div>
+            )}
           </div>
 
           <div className={styles.right_grid} id="right_menu">
-            <ChatRoom socket={socket} />
+            <ChatRoom
+              socket={socket}
+              homePageMainGridRef={homePageMainGridRef}
+            />
           </div>
         </>
       )}

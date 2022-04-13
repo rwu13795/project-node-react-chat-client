@@ -14,6 +14,7 @@ export * from "./helpers/crop-image";
 export * from "./helpers/resize-chat-board";
 export * from "./helpers/warningMessage";
 export * from "./helpers/get-file-icon";
+export * from "./helpers/scrollMainPage";
 
 export * from "./helpers/input-check/on-blur-check";
 export * from "./helpers/input-check/on-change-check";

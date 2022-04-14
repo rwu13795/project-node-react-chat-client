@@ -1,5 +1,5 @@
 import { Avatar, Popover } from "@mui/material";
-import { ChangeEvent, memo, useState } from "react";
+import { ChangeEvent, memo, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
@@ -37,6 +37,10 @@ function InviteFriendToGroup({
   const friendsList = useSelector(selectFriendsList);
   const result_invitation = useSelector(selectResult_groupInvitation);
 
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | undefined>();
+  const [targetId, setTargetId] = useState<string>("");
+  const mainRef = useRef<HTMLDivElement | null>(null);
+
   function handleClose() {
     setOpenFriendForGroup(false);
   }
@@ -50,9 +54,15 @@ function InviteFriendToGroup({
         admin_user_id,
       });
     }
-    setTimeout(() => {
+    setTargetId(friend_id);
+
+    // set a timer to clear the result before the receiving the result
+    if (timerId) clearTimeout(timerId);
+    const id = setTimeout(() => {
       dispatch(setResult_groupInvitation(""));
+      setTargetId("");
     }, 10000);
+    setTimerId(id);
   }
 
   return (
@@ -63,7 +73,7 @@ function InviteFriendToGroup({
           onClick={handleClose}
         />
       </div>
-      <main className={styles.main}>
+      <main className={styles.main} ref={mainRef}>
         <div className={styles.group_name_wrapper}>
           <div id="main_title_2">Invite Friends to the Group</div>
           <div className={styles_2.border}></div>
@@ -76,25 +86,40 @@ function InviteFriendToGroup({
             {Object.values(friendsList).map((friend) => {
               const { friend_id, avatar_url, friend_username } = friend;
 
+              let outter_wrapper = styles.outter_wrapper;
+              let isTarget = false;
+              if (
+                result_invitation !== "" &&
+                targetId === friend_id &&
+                friendsList[targetId]
+              ) {
+                outter_wrapper = styles.outter_wrapper_target;
+                isTarget = true;
+              }
+
               return (
                 <div
                   key={friend_id}
-                  className={styles.member_wrapper}
-                  onClick={() => invitationHandler(friend.friend_id)}
+                  className={outter_wrapper}
+                  onClick={() => invitationHandler(friend_id)}
                 >
-                  <Avatar
-                    src={avatar_url ? avatar_url : friend_username[0]}
-                    alt={friend_username[0]}
-                    className={styles.avatar}
-                  />
-                  <div className={styles.username}>{friend_username}</div>
+                  <div className={styles.member_wrapper}>
+                    <Avatar
+                      src={avatar_url ? avatar_url : friend_username[0]}
+                      alt={friend_username[0]}
+                      className={styles.avatar}
+                    />
+                    <div className={styles.username}>{friend_username}</div>
+                  </div>
+
+                  {isTarget && (
+                    <div className={styles.inv_result}>{result_invitation}</div>
+                  )}
                 </div>
               );
             })}
           </div>
         </div>
-
-        <div className={styles.inv_result}>{result_invitation}</div>
       </main>
     </>
   );

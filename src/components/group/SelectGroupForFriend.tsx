@@ -5,7 +5,6 @@ import { Socket } from "socket.io-client";
 import {
   selectGroupsList,
   selectResult_groupInvitation,
-  selectUsername,
   setResult_groupInvitation,
 } from "../../redux/user/userSlice";
 import { groupInvitationRequest_emitter } from "../../socket-io/emitters";
@@ -34,6 +33,9 @@ function SelectGroupForFriend({
   const result_invitation = useSelector(selectResult_groupInvitation);
   const groupsList = useSelector(selectGroupsList);
 
+  const [timerId, setTimerId] = useState<NodeJS.Timeout | undefined>();
+  const [targetId, setTargetId] = useState<string>("");
+
   function handleClose() {
     setOpenGroupForFriend(false);
   }
@@ -51,10 +53,13 @@ function SelectGroupForFriend({
         admin_user_id,
       });
     }
+    setTargetId(group_id);
 
-    setTimeout(() => {
+    if (timerId) clearTimeout(timerId);
+    const id = setTimeout(() => {
       dispatch(setResult_groupInvitation(""));
     }, 10000);
+    setTimerId(id);
   }
 
   return (
@@ -72,29 +77,46 @@ function SelectGroupForFriend({
         </div>
 
         <div className={styles_3.list}>
-          <div className={styles_3.sub_title}>Friends</div>
+          <div className={styles_3.sub_title}>Groups</div>
           <div className={styles_3.short_border}></div>
           <div className={styles_3.list_body}>
             {Object.values(groupsList).map((group) => {
               const { group_id, group_name, admin_user_id } = group;
+
+              let outter_wrapper = styles.outter_wrapper;
+              let isTarget = false;
+              if (
+                result_invitation !== "" &&
+                targetId === group_id &&
+                groupsList[targetId]
+              ) {
+                outter_wrapper = styles.outter_wrapper_target;
+                isTarget = true;
+              }
+
               return (
-                <Button
-                  variant="outlined"
-                  key={group_id}
-                  className={styles.group_wrapper}
-                  onClick={() =>
-                    invitationHandler(group_id, group_name, admin_user_id)
-                  }
-                >
-                  <GroupIcon />
-                  <div className={styles.group_name}>{group_name}</div>
-                </Button>
+                <div className={outter_wrapper} key={group_id}>
+                  <Button
+                    variant="outlined"
+                    className={styles.group_wrapper}
+                    onClick={() =>
+                      invitationHandler(group_id, group_name, admin_user_id)
+                    }
+                  >
+                    <GroupIcon />
+                    <div className={styles.group_name}>{group_name}</div>
+                  </Button>
+
+                  {isTarget && (
+                    <div className={styles_3.inv_result}>
+                      {result_invitation}
+                    </div>
+                  )}
+                </div>
               );
             })}
           </div>
         </div>
-
-        <div className={styles_3.inv_result}>{result_invitation}</div>
       </main>
     </>
   );

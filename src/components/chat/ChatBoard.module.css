@@ -125,8 +125,14 @@
   z-index: 2;
 }
 
-@media screen and (max-height: 775px) {
-  .input_container {
-    overflow-y: scroll;
+@media screen and (max-width: 765px) {
+  .main {
+    /* 118 = 56(chatMenu) + 62(navBar) */
+    height: calc(100vh - 118px);
+    min-height: calc(100vh - 118px);
+  }
+  .body {
+    /* 168 = 56(chatMenu) + 62(navBar) + 50(buttons-container)*/
+    min-height: calc(100vh - 168px);
   }
 }

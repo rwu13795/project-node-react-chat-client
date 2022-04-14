@@ -24,10 +24,6 @@
   text-align: center;
   font-size: 24px;
 }
-.count_down {
-  font-size: 30px;
-  font-weight: bold;
-}
 
 .buttons_wrapper {
   width: 98%;
@@ -42,4 +38,18 @@
 }
 .button_color {
   background: var(--button-bgc-1);
+}
+
+@media screen and (max-width: 765px) {
+  .modal {
+    min-width: min(700px, 86vw);
+    max-width: min(700px, 86vw);
+    max-height: 86vh;
+  }
+  .text {
+    font-size: 20px;
+  }
+  .button {
+    font-size: 14px;
+  }
 }

@@ -7,7 +7,7 @@
   flex-flow: column nowrap;
   justify-content: flex-start;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
 }
 
 .close_icon_wrapper {
@@ -67,6 +67,20 @@
   background-color: var(--main-color-2);
 }
 
+.outter_wrapper {
+  width: 100px;
+  max-width: 150px;
+  margin: 5px;
+}
+.outter_wrapper_target {
+  width: 90%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin: 5px;
+}
 .member_wrapper {
   width: 100px;
   max-width: 150px;
@@ -75,8 +89,14 @@
   justify-content: center;
   align-items: center;
   gap: 4px;
-  margin: 0 5px;
 }
+.inv_result {
+  width: auto;
+  height: auto;
+  font-size: 16px;
+  color: var(--main-color-3);
+}
+
 .avatar {
   width: 60px;
   height: 60px;
@@ -100,7 +120,11 @@
   font-size: 14px;
 }
 
-.inv_result {
-  font-size: 22px;
-  color: var(--main-color-3);
+@media screen and (max-width: 765px) {
+  .sub_title {
+    font-size: 20px;
+  }
+  .list_body {
+    max-width: 100%;
+  }
 }

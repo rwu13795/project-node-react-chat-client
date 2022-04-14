@@ -160,14 +160,32 @@
 
 @media screen and (max-width: 765px) {
   .modal {
-    width: calc(100vw - 20px);
-    height: calc(100vh - 50px);
-    max-height: calc(100vh - 50px);
+    min-width: min(700px, 86vw);
+    max-width: min(700px, 86vw);
+    max-height: 86vh;
     padding: 40px 10px 10px 10px;
   }
+  .close_icon_wrapper {
+    top: 0px;
+    position: sticky;
+    height: 0;
+    width: 100%;
+    text-align: right;
+  }
+  .close_icon {
+    position: relative;
+    right: 2px;
+    top: -30px;
+    cursor: pointer;
+  }
+
   .title {
     font-size: 34px;
     font-weight: bold;
+  }
+
+  .invitation_wrapper {
+    flex-flow: row wrap;
   }
 
   .invitation {
@@ -176,6 +194,13 @@
     align-items: center;
     gap: 6px;
   }
+  .buttons_wrapper {
+    width: 90%;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+  }
+
   .username {
     max-width: 100%;
     font-size: 18px;

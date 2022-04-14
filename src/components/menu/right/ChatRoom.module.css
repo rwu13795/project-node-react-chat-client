@@ -1,7 +1,6 @@
 .main {
   width: 94%;
-  /* min-width: 600px; */
-  min-height: calc(100vh - 102px);
+  min-height: calc(100vh - 62px);
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
@@ -13,4 +12,16 @@
 .no_target {
   width: 94%;
   height: calc(100vh - 110px);
+}
+
+@media screen and (max-width: 765px) {
+  .main {
+    width: 100%;
+    min-height: calc(100vh - 62px);
+    border-radius: 0;
+  }
+  .no_target {
+    width: 100%;
+    height: calc(100vh - 62px);
+  }
 }

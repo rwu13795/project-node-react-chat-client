@@ -173,18 +173,18 @@
     width: 8px !important;
   }
   .modal::-webkit-scrollbar-track {
-    border-radius: 10px;
+    border-radius: 8px;
   }
   .modal::-webkit-scrollbar-thumb {
-    border-radius: 10px;
+    border-radius: 8px;
   }
   .modal:hover::-webkit-scrollbar-track {
     box-shadow: inset 0 0 5px #008ab475;
-    border-radius: 10px;
+    border-radius: 8px;
   }
   .modal:hover::-webkit-scrollbar-thumb {
     background-color: #008ab4;
-    border-radius: 10px;
+    border-radius: 8px;
   }
 }
 

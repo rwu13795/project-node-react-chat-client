@@ -124,8 +124,8 @@
     float: none;
     width: 100vw;
     min-width: 100vw;
-    padding-left: 4px;
     min-height: calc(100vh - 62px);
     max-height: calc(100vh - 62px);
+    padding-left: 0;
   }
 }

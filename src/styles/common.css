@@ -83,12 +83,12 @@
     font-size: min(34px, 9vw);
     font-weight: bold;
     color: var(--main-color-4);
-  } /*
+  }
   #main_title_2 {
-    font-size: 34px;
+    font-size: 24px;
     font-weight: bold;
   }
-  
+  /*
   #input_fields {
     display: flex;
     flex-flow: column nowrap;

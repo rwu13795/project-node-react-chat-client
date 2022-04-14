@@ -14,10 +14,7 @@
   transition: all 0.3s;
   cursor: pointer;
 }
-.avatar:hover {
-  transition: all 0.3s;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.815);
-}
+
 .username {
   font-size: 22px;
   text-align: left;
@@ -26,4 +23,28 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media screen and (min-width: 765px) {
+  .avatar:hover {
+    transition: all 0.3s;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.815);
+  }
+}
+
+@media screen and (max-width: 765px) {
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border: solid 4px #00a7d1;
+    border-radius: 100px;
+    font-size: 28px;
+    background: var(--main-color-1);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .username {
+    font-size: 18px;
+    -webkit-line-clamp: 1;
+  }
 }

@@ -34,8 +34,13 @@
   background-image: var(--border-color-3);
 }
 .center_lower {
-  font-size: 14px;
+  font-size: 18px;
   color: rgb(170, 0, 0);
+  position: relative;
+  height: 0;
+  top: 14px;
+  z-index: 9;
+  text-shadow: 0 0 10px red, 0 0 20px red;
 }
 
 .right {
@@ -93,5 +98,17 @@
   }
   .center_upper {
     font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 765px) {
+  .main {
+    height: 56px;
+  }
+  .center_lower {
+    top: 10px;
+  }
+  .center_boreder {
+    height: 3px;
   }
 }

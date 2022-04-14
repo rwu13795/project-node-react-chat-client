@@ -42,3 +42,24 @@
   background: var(--button-bgc-2);
   margin-bottom: 24px;
 }
+
+@media screen and (max-width: 765px) {
+  .profile_wrapper {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+  .avatar {
+    width: min(240px, 60vw);
+    height: min(240px, 60vw);
+    font-size: min(180px, 50vw);
+  }
+  .sub_title {
+    font-size: 18px;
+  }
+  .text {
+    font-size: 24px;
+  }
+}

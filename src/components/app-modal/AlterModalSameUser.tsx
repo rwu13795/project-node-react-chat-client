@@ -32,7 +32,7 @@ function AlterModalSameUser(): JSX.Element {
       <Fade in={openModal}>
         <Box className={styles.modal}>
           <div className={styles.text}>
-            You have signed in using a different browser or device. You are
+            You have signed in using a different browser or device. You were
             automatically logged out from this session.
           </div>
           <div className={styles.buttons_wrapper}>

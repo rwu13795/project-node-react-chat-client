@@ -4,3 +4,10 @@
   max-height: 86px;
   background: var(--navbar-color);
 }
+
+@media screen and (max-width: 765px) {
+  .chat_menu {
+    min-height: 56px;
+    max-height: 56px;
+  }
+}

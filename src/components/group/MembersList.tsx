@@ -209,7 +209,7 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
               </div>
             </div>
 
-            {group_members.length > 1 && (
+            {group_members.length > 1 && admin_user_id === currentUser.user_id && (
               <Button
                 variant="contained"
                 color="error"

@@ -26,3 +26,14 @@
   overflow-y: visible;
   overflow-x: hidden;
 }
+
+@media screen and (max-width: 765px) {
+  .slide_1st {
+    bottom: calc(100vh - 89px);
+    /* 40px less in navBar and 30px less in chatMenu */
+  }
+
+  .slide_2nd {
+    bottom: calc(100vh - 37px + 94%);
+  }
+}

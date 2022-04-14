@@ -8,22 +8,20 @@
 }
 
 .msg_wrapper_yourself {
-  width: 100%;
+  width: 97%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-end;
   align-items: flex-start;
   gap: 10px;
-  padding: 0 6px;
 }
 .msg_wrapper {
-  width: 100%;
+  width: 97%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: flex-start;
   align-items: flex-start;
   gap: 10px;
-  padding: 0 6px;
 }
 
 .msg_body_yourself {
@@ -169,4 +167,21 @@
 .avatar_member:hover {
   transition: all 0.3s;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.815);
+}
+
+@media screen and (max-width: 765px) {
+  .avatar {
+    position: relative;
+    bottom: 2px;
+    width: 42px;
+    height: 42px;
+    font-size: 36px;
+  }
+  .avatar_member {
+    position: relative;
+    top: 2px;
+    width: 42px;
+    height: 42px;
+    font-size: 36px;
+  }
 }

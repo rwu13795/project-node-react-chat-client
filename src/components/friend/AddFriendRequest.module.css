@@ -47,11 +47,17 @@
   align-items: center;
   gap: 16px;
 }
+
 .avatar {
-  width: 70px;
+  width: 80px;
+  height: 80px;
+  border: solid 4px #00a7d1;
+  font-size: 56px;
+  background-color: var(--main-color-1);
 }
+
 .user_info {
-  max-width: 65%;
+  max-width: 75%;
   display: flex;
   flex-flow: column nowrap;
   justify-content: flex-start;
@@ -68,12 +74,12 @@
 }
 
 .message_box_wrapper {
-  width: 70%;
+  min-width: 300px;
   height: auto;
 }
 
 .message_box {
-  width: 100%;
+  width: auto;
   height: auto;
   border: solid 4px var(--main-color-2);
   background-color: white;
@@ -96,14 +102,20 @@
   z-index: -1;
 }
 .buttons_wrapper {
-  width: 80%;
+  width: 100%;
   display: flex;
   flex-flow: row nowrap;
-  justify-content: flex-end;
+  justify-content: center;
   gap: 20px;
 }
 
-.button:hover {
+.button_1 {
+  width: 120px;
+}
+.button_2 {
+  width: 120px;
+}
+.button_1:hover {
   background: var(--button-bgc-2);
 }
 
@@ -138,9 +150,33 @@
 
 @media screen and (max-width: 765px) {
   .title {
-    font-size: 30px;
+    font-size: 34px;
   }
   .border {
     margin: 0;
+  }
+  .modal {
+    min-width: min(700px, 86vw);
+    max-width: min(700px, 86vw);
+    max-height: 86vh;
+    padding: 20px;
+  }
+  .avatar {
+    width: 70px;
+    height: 70px;
+    font-size: 50px;
+  }
+  .user_info {
+    font-size: 16px;
+  }
+  .message_box_wrapper {
+    min-width: min(300px, 80vw);
+    height: auto;
+  }
+  .button_1 {
+    font-size: 12px;
+  }
+  .button_2 {
+    font-size: 12px;
   }
 }

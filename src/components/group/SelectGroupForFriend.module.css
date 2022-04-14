@@ -1,7 +1,23 @@
+.outter_wrapper {
+  min-width: 45%;
+  max-width: 45%;
+  margin: 6px;
+}
+.outter_wrapper_target {
+  min-width: 45%;
+  max-width: 90%;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin: 6px;
+}
+
 .group_wrapper {
   margin: 8px;
-  width: 45%;
-  max-width: 45%;
+  width: 100%;
+  max-width: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
@@ -17,4 +33,16 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+@media screen and (max-width: 500px) {
+  .outter_wrapper {
+    width: 90%;
+    max-width: 90%;
+  }
+  .outter_wrapper_target {
+    flex-flow: column nowrap;
+    justify-content: center;
+    align-items: center;
+  }
 }

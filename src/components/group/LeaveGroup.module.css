@@ -28,3 +28,9 @@
   align-items: center;
   gap: 14px;
 }
+
+@media screen and (max-width: 765px) {
+  .text {
+    font-size: 18px;
+  }
+}

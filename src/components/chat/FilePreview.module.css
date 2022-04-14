@@ -1,7 +1,7 @@
 .preview_image_wrapper {
   position: relative;
-  max-height: 250px;
-  max-width: 300px;
+  max-height: 162px;
+  max-width: 312px;
   transition: all 0.5s;
   display: flex;
   flex-flow: row;
@@ -13,6 +13,7 @@
   border-radius: 10px;
   border: solid 5px var(--main-color-1);
   background-color: var(--main-color-1);
+  object-fit: contain;
 }
 
 .preview_file_wrapper {

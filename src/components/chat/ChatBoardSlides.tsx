@@ -3,7 +3,7 @@ import MembersList from "../group/MembersList";
 
 // UI //
 import styles from "./ChatBoardSlides.module.css";
-import { Slide } from "@mui/material";
+import { Slide, useMediaQuery } from "@mui/material";
 import SelectFriendForGroup from "../group/SelectFriendForGroup";
 import SelectGroupForFriend from "../group/SelectGroupForFriend";
 import { Friend, Group } from "../../redux/user/userSlice";
@@ -37,12 +37,14 @@ function ChatBoardSlides({
   setOpenFriendForGroup,
   setOpenGroupForFriend,
 }: Props): JSX.Element {
+  const isSmall = useMediaQuery("(max-width: 765px)");
+
   return (
     <>
       {targetChatRoom.type === chatType.group && (
         <>
           <Slide
-            id="custom_scroll_3"
+            id={isSmall ? "custom_scroll_2" : "custom_scroll_3"}
             direction="left"
             in={openMemberList}
             container={slideAnchorRef.current}
@@ -55,7 +57,7 @@ function ChatBoardSlides({
             </div>
           </Slide>
           <Slide
-            id="custom_scroll_3"
+            id={isSmall ? "custom_scroll_2" : "custom_scroll_3"}
             direction="left"
             in={openFriendForGroup}
             container={slideAnchorRef.current}
@@ -75,7 +77,7 @@ function ChatBoardSlides({
 
       {targetChatRoom.type === chatType.private && (
         <Slide
-          id="custom_scroll_3"
+          id={isSmall ? "custom_scroll_2" : "custom_scroll_3"}
           direction="left"
           in={openGroupForFriend}
           container={slideAnchorRef.current}

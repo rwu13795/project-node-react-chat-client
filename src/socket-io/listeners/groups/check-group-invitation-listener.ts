@@ -16,8 +16,9 @@ export function check_groupInvitation_listener(
     // know how the status of this request. Display this message on top of the
     // chat-board
     dispatch(setResult_groupInvitation(message));
+
     // expand the <div> which contains the check-group-invitation message
-    let elem = document.getElementById("invitation-result");
-    if (elem) elem.style.maxHeight = elem.scrollHeight + "px";
+    // let elem = document.getElementById("invitation-result");
+    // if (elem) elem.style.maxHeight = elem.scrollHeight + "px";
   });
 }

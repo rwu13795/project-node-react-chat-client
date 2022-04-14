@@ -104,7 +104,7 @@ function ChangeGroupName({
               </div>
             ) : (
               <div className={styles.text_button_wrapper}>
-                <div className={styles.title}>{group_name}</div>
+                <div id="main_title_2">{group_name}</div>
                 <Button
                   variant="contained"
                   color="secondary"
@@ -118,7 +118,7 @@ function ChangeGroupName({
             )}
           </>
         ) : (
-          <div className={styles.title}>{group_name}</div>
+          <div id="main_title_2">{group_name}</div>
         ))}
     </main>
   );

@@ -13,15 +13,22 @@ import {
 } from "../../redux/user/userSlice";
 
 import { addFriendResponse_emitter } from "../../socket-io/emitters";
-import { AvatarOptions, loadingStatusEnum } from "../../utils";
-import UserAvatar from "../menu/top/UserAvatar";
+import { loadingStatusEnum } from "../../utils";
 
 // UI //
 import styles from "./AddFriendRequest.module.css";
 import styles_2 from "../menu/left/RenderFriend.module.css";
 import styles_3 from "../menu/left/GroupsList.module.css";
 import { LoadingButton } from "@mui/lab";
-import { Backdrop, Badge, Box, Button, Fade, Modal } from "@mui/material";
+import {
+  Avatar,
+  Backdrop,
+  Badge,
+  Box,
+  Button,
+  Fade,
+  Modal,
+} from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 
@@ -68,6 +75,10 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
     }
     setReqIndex(index);
     setReqSenderId(sender_id);
+    if (!accept) {
+      dispatch(clearAddFriendRequests(index));
+      dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
+    }
   }
 
   useEffect(() => {
@@ -134,14 +145,12 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
                   <div key={index} className={styles.requests_wrapper}>
                     <div className={styles.border}></div>
                     <div className={styles.avatar_wrapper}>
-                      <div className={styles.avatar}>
-                        <UserAvatar
-                          username={sender_username}
-                          avatar_url={sender_avatar}
-                          socket={undefined}
-                          option={AvatarOptions.topAvatar}
-                        />
-                      </div>
+                      <Avatar
+                        className={styles.avatar}
+                        src={sender_avatar ? sender_avatar : sender_username[0]}
+                        alt={sender_username[0]}
+                      />
+
                       <div className={styles.user_info}>
                         <div className={styles.user_info_sub}>
                           <div>Username:</div>
@@ -159,7 +168,7 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
                     </div>
                     <div className={styles.buttons_wrapper}>
                       <LoadingButton
-                        className={styles.button}
+                        className={styles.button_1}
                         variant="outlined"
                         color="primary"
                         disabled={
@@ -182,6 +191,7 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
                         Add Friend
                       </LoadingButton>
                       <Button
+                        className={styles.button_2}
                         variant="outlined"
                         color="error"
                         disabled={

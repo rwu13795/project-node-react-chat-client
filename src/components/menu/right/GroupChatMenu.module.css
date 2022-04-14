@@ -34,11 +34,13 @@
   background-image: var(--border-color-3);
 }
 .center_lower {
+  width: 150%;
   font-size: 18px;
+  text-align: left;
   color: rgb(170, 0, 0);
   position: relative;
   height: 0;
-  top: 14px;
+  bottom: 6px;
   z-index: 9;
   text-shadow: 0 0 10px red, 0 0 20px red;
 }
@@ -92,6 +94,9 @@
   }
   .center {
     align-items: center;
+  }
+  .center_lower {
+    text-align: center;
   }
   .center_boreder {
     background-image: var(--border-color-2);

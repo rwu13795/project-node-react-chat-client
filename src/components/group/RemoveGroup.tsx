@@ -19,9 +19,13 @@ import styles_2 from "../menu/left/GroupsList.module.css";
 import { Backdrop, Box, Button, Fade, Modal, Tooltip } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import { axios_client } from "../../utils";
+import { axios_client, scrollMainPage } from "../../utils";
 
-function RemoveGroup(): JSX.Element {
+interface Props {
+  homePageMainGridRef: React.MutableRefObject<HTMLDivElement | null>;
+}
+
+function RemoveGroup({ homePageMainGridRef }: Props): JSX.Element {
   const dispatch = useDispatch();
   const client = axios_client();
 
@@ -43,6 +47,8 @@ function RemoveGroup(): JSX.Element {
     dispatch(setTargetChatRoom({ id: "", name: "", type: "", date_limit: "" }));
     dispatch(removeGroup({ group_id }));
     dispatch(removeGroupPosition({ group_id }));
+
+    scrollMainPage(homePageMainGridRef, "left");
   }
 
   function handleClose() {
@@ -78,7 +84,7 @@ function RemoveGroup(): JSX.Element {
             </div>
             <div className={styles.main}>
               <div className={styles.text}>
-                Are you sure you want to permanently remove this group from you
+                Are you sure you want to permanently remove this group from your
                 group list?
               </div>
               <div className={styles.buttons_wrapper}>

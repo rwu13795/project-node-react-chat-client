@@ -130,8 +130,8 @@
 
 .loading {
   position: absolute;
-  left: 20%;
-  top: 10%;
+  top: 34%;
+  transform: translate(-50%, -50%);
 }
 
 .close_icon_wrapper {
@@ -163,7 +163,7 @@
     min-width: min(700px, 86vw);
     max-width: min(700px, 86vw);
     max-height: 86vh;
-    padding: 40px 10px 10px 10px;
+    padding: 20px 10px 10px 10px;
   }
   .close_icon_wrapper {
     top: 0px;
@@ -175,7 +175,7 @@
   .close_icon {
     position: relative;
     right: 2px;
-    top: -30px;
+    top: -10px;
     cursor: pointer;
   }
 

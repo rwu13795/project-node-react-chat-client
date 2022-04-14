@@ -87,7 +87,7 @@ function GroupChatMenu({
       <div className={styles.right}>
         {user_left ? (
           <div className={styles.icon_wrapper}>
-            <RemoveGroup />
+            <RemoveGroup homePageMainGridRef={homePageMainGridRef} />
           </div>
         ) : max_900px ? (
           <OptionsGroupChatMenu

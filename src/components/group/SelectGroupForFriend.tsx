@@ -81,7 +81,11 @@ function SelectGroupForFriend({
           <div className={styles_3.short_border}></div>
           <div className={styles_3.list_body}>
             {Object.values(groupsList).map((group) => {
-              const { group_id, group_name, admin_user_id } = group;
+              const { group_id, group_name, admin_user_id, user_left } = group;
+
+              if (user_left) {
+                return <div key={group_id} style={{ display: "none" }}></div>;
+              }
 
               let outter_wrapper = styles.outter_wrapper;
               let isTarget = false;
@@ -93,7 +97,6 @@ function SelectGroupForFriend({
                 outter_wrapper = styles.outter_wrapper_target;
                 isTarget = true;
               }
-
               return (
                 <div className={outter_wrapper} key={group_id}>
                   <Button

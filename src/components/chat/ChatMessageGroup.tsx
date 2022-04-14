@@ -126,11 +126,11 @@ function ChatMessageGroup({
           />
           <div className={s_wrapper}>
             {!isSelf && (
-              <Avatar
+              <RenderAvatar
                 className={styles.avatar_member}
-                src={avatar_member ? avatar_member : member_name[0]}
-                alt={member_name[0]}
-                onClick={member_id === "" ? () => {} : viewUserProfileHandler}
+                avatar_url={avatar_member}
+                member_name={member_name}
+                viewProfileHandler={viewUserProfileHandler}
               />
             )}
             <div className={member_name_content}>
@@ -180,11 +180,11 @@ function ChatMessageGroup({
             </div>
 
             {isSelf && (
-              <Avatar
+              <RenderAvatar
                 className={styles.avatar_member}
-                src={avatar_self ? avatar_self : username[0]}
-                alt={username[0]}
-                onClick={viewSelfProfileHandler}
+                avatar_url={avatar_self}
+                member_name={username}
+                viewProfileHandler={viewSelfProfileHandler}
               />
             )}
           </div>
@@ -206,3 +206,30 @@ function ChatMessageGroup({
 }
 
 export default memo(ChatMessageGroup);
+
+// since the properties of the avatar stay the same
+// use memo to wrap the "avatar" to prevent unneccessary re-rendering
+const RenderAvatar = memo(RenderAvatarHanlder);
+
+interface AvatarProps {
+  className: string;
+  avatar_url: string | undefined;
+  member_name: string;
+  viewProfileHandler: () => void;
+}
+function RenderAvatarHanlder({
+  className,
+  avatar_url,
+  member_name,
+  viewProfileHandler,
+}: AvatarProps): JSX.Element {
+  const avatar_src = avatar_url ? avatar_url : member_name[0];
+  return (
+    <Avatar
+      className={className}
+      src={avatar_src}
+      alt={member_name[0]}
+      onClick={viewProfileHandler}
+    />
+  );
+}

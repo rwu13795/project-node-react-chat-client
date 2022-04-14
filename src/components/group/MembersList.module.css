@@ -43,6 +43,7 @@
   margin-bottom: 30px;
 }
 .list_body {
+  width: 86%;
   margin-top: 14px;
   max-width: 86%;
   display: flex;

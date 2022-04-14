@@ -16,11 +16,10 @@
   height: 90%;
   border: solid 4px #00a7d1;
   cursor: pointer;
-  transition: 0.5s;
+  transition: transform 0.5s, box-shadow 0.5s;
 }
 .avatar:hover {
-  transition: 0.5s;
-  border: solid 4px #002a798f;
+  transition: transform 0.5s, box-shadow 0.5s;
   box-shadow: 0 0 10px var(--main-color-1), 0 0 20px var(--main-color-1);
   transform: scale(1.1);
   z-index: 3;

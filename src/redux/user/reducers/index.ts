@@ -1,5 +1,6 @@
 export * from "./setUserOnlineStatus";
 export * from "./setLoadingStatus_user";
+export * from "./setLoadingStatus_2_user";
 export * from "./setFriendsOnlineStatus";
 export * from "./setAddFriendRequests";
 export * from "./clearAddFriendRequests";

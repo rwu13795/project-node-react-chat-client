@@ -1,6 +1,10 @@
 import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
-import { axios_client, onlineStatus_enum } from "../../../utils";
+import {
+  axios_client,
+  loadingStatusEnum,
+  onlineStatus_enum,
+} from "../../../utils";
 
 import { serverUrl } from "../../utils";
 import {
@@ -18,17 +22,18 @@ interface Payload {
   addFriendRequests: AddFriendRequest[];
   groupsList: Group[];
   groupInvitations: GroupInvitation[];
+  forUpdate?: boolean;
 }
 
-export const getUserAuth = createAsyncThunk<Payload>(
+export const getUserAuth = createAsyncThunk<Payload, boolean | undefined>(
   "user/getUserAuth",
-  async () => {
+  async (forUpdate) => {
     const client = axios_client();
 
     const response = await client.get<Payload>(
       serverUrl + `/auth/user-auth-status`
     );
-    return response.data;
+    return { ...response.data, forUpdate };
   }
 );
 
@@ -46,6 +51,7 @@ export function getUserAuth_fulfilled(
     groupInvitations,
     groupsList,
     friendsList,
+    forUpdate,
   } = action.payload;
 
   state.friendsArray = friendsList;
@@ -69,5 +75,9 @@ export function getUserAuth_fulfilled(
       state.friendsList[friend.friend_id].onlineStatus =
         onlineStatus_enum.offline;
     }
+  }
+
+  if (forUpdate) {
+    state.loadingStatus_2 = loadingStatusEnum.getAuth_succeeded;
   }
 }

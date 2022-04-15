@@ -60,6 +60,7 @@ import {
   setGroupInvitation_reducer,
   setIsLoggedIn_reducer,
   setLoadingStatus_user_reducer,
+  setLoadingStatus_2_user_reducer,
   setResult_addFriendRequest_reducer,
   setResult_groupInvitation_reducer,
   setUserOnlineStatus_reducer,
@@ -149,6 +150,7 @@ export interface UserState {
   result_groupInvitation: string;
   // layout
   loadingStatus: string;
+  loadingStatus_2: string;
   requestErrors: RequestErrors;
   openAlertModal_sameUser: boolean;
   openAlertModal_timeOut: boolean;
@@ -173,6 +175,7 @@ export const initialState_user: UserState = {
   groupsToJoin: [],
   newGroupToJoin: "",
   loadingStatus: loadingStatusEnum.idle,
+  loadingStatus_2: loadingStatusEnum.idle,
   requestErrors: {},
   openAlertModal_sameUser: false,
   openAlertModal_timeOut: false,
@@ -183,6 +186,8 @@ const userSlice = createSlice({
   initialState: initialState_user,
   reducers: {
     setLoadingStatus_user: setLoadingStatus_user_reducer,
+
+    setLoadingStatus_2_user: setLoadingStatus_2_user_reducer,
 
     setFriendsOnlineStatus: setFriendsOnlineStatus_reducer,
 
@@ -288,6 +293,7 @@ const userSlice = createSlice({
 
 export const {
   setLoadingStatus_user,
+  setLoadingStatus_2_user,
   setFriendsOnlineStatus,
   setAddFriendRequests,
   clearAddFriendRequests,
@@ -404,6 +410,11 @@ export const selectLoadingStatus_user = createSelector(
   [selectUser],
   (userState) => userState.loadingStatus
 );
+export const selectLoadingStatus_2_user = createSelector(
+  [selectUser],
+  (userState) => userState.loadingStatus_2
+);
+
 export const selectFriendsArray = createSelector(
   [selectUser],
   (userState) => userState.friendsArray

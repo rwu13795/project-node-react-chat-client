@@ -184,6 +184,7 @@ function GroupsList({
               socket={socket}
               selectTargetChatRoomHandler={selectTargetChatRoomHandler}
               handleCloseModal={closeCreateGroup}
+              setExpandList={setExpand}
             />
           </Box>
         </Fade>

@@ -29,12 +29,14 @@ interface Props {
   socket: Socket | undefined;
   selectTargetChatRoomHandler: (id: string, name: string, type: string) => void;
   handleCloseModal: () => void;
+  setExpandList: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 function CreateGroup({
   socket,
   selectTargetChatRoomHandler,
   handleCloseModal,
+  setExpandList,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
 
@@ -62,8 +64,9 @@ function CreateGroup({
         inputValues[inputNames.new_group_name],
         chatType.group
       );
-      handleCloseModal();
       dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
+      setExpandList(true);
+      handleCloseModal();
     }
   }, [loadingStatus, newGroupToJoin]);
 

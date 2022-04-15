@@ -33,4 +33,6 @@ export enum loadingStatusEnum {
 
   loadChatHistory_succeeded = "loadChatHistory_succeeded",
   loadChatHistory_loading = "loadChatHistory_loading",
+
+  getAuth_succeeded = "getAuth_succeeded",
 }

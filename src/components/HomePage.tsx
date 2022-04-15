@@ -11,9 +11,13 @@ import {
 import {
   selectGroupsToJoin,
   selectIsLoggedIn,
+  selectLoadingStatus_2_user,
+  selectLoadingStatus_user,
   selectUserId,
   selectUsername,
   selectUserOnlineStatus,
+  setLoadingStatus_2_user,
+  setLoadingStatus_user,
 } from "../redux/user/userSlice";
 import { getNotifications } from "../redux/message/asyncThunk";
 import connectSocket from "../socket-io/socketConnection";
@@ -44,7 +48,9 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   const currentUsername = useSelector(selectUsername);
   const currentOnlineStatus = useSelector(selectUserOnlineStatus);
   const groupsToJoin = useSelector(selectGroupsToJoin);
-  const loadingStatus = useSelector(selectLoadingStatus_msg);
+  const loadingStatus_user = useSelector(selectLoadingStatus_user);
+  const loadingStatus_2_user = useSelector(selectLoadingStatus_2_user);
+  const loadingStatus_msg = useSelector(selectLoadingStatus_msg);
 
   const homePageMainGridRef = useRef<HTMLDivElement | null>(null);
 
@@ -86,7 +92,24 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
   }, [isLoggedIn, socket]);
 
   useEffect(() => {
-    if (loadingStatus === loadingStatusEnum.getNotifications_succeeded) {
+    if (
+      loadingStatus_user === loadingStatusEnum.addFriend_succeeded &&
+      loadingStatus_2_user === loadingStatusEnum.getAuth_succeeded
+    ) {
+      // after a new friend is added, only getNotifications after the "getAuth"
+      // is fulfilled. Otherwise if the "getNotifications" is fulfilled before
+      // the "getAuth", the online_emitter will be triggered before
+      // the "getAuth" finished updating the new friendList, then if both
+      // users are online at the same time, nethier of them will see the online
+      // status of each other
+      dispatch(getNotifications({ currentUserId }));
+      dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
+      dispatch(setLoadingStatus_2_user(loadingStatusEnum.idle));
+    }
+  }, [loadingStatus_user, loadingStatus_2_user, currentUserId, dispatch]);
+
+  useEffect(() => {
+    if (loadingStatus_msg === loadingStatusEnum.getNotifications_succeeded) {
       // let all the friends know this user is online only after loading all
       // the friendList and notications. So when this client received the echo
       // the friendList[id] will not be undefined
@@ -97,7 +120,7 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
       }
       dispatch(setLoadingStatus_msg(loadingStatusEnum.idle));
     }
-  }, [loadingStatus, currentOnlineStatus, socket, dispatch]);
+  }, [loadingStatus_msg, currentOnlineStatus, socket, dispatch]);
 
   return (
     <main className={styles.main_grid} ref={homePageMainGridRef}>

@@ -1,15 +1,14 @@
 import { memo, useState } from "react";
 
+import { Socket } from "socket.io-client";
+import BlockUnblockFriend from "../../friend/BlockUnblockFriend";
+
 // UI //
 import styles from "./OptionsGroupChatMenu.module.css";
 import styles_2 from "../top/UserAvatar.module.css";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import { Button, Popover, Tooltip } from "@mui/material";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import GroupsIcon from "@mui/icons-material/Groups";
-import LeaveGroup from "../../group/LeaveGroup";
-import { Socket } from "socket.io-client";
-import BlockUnblockFriend from "../../friend/BlockUnblockFriend";
 
 interface Props {
   socket: Socket | undefined;

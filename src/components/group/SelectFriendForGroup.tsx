@@ -1,13 +1,11 @@
-import { Avatar, Popover } from "@mui/material";
-import { ChangeEvent, memo, useEffect, useRef, useState } from "react";
+import { Avatar } from "@mui/material";
+import { memo, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
   selectFriendsList,
   selectResult_groupInvitation,
-  selectUserId,
-  selectUsername,
   setResult_groupInvitation,
 } from "../../redux/user/userSlice";
 import { groupInvitationRequest_emitter } from "../../socket-io/emitters";

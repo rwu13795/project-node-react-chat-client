@@ -1,5 +1,7 @@
 import { memo, useEffect, useRef } from "react";
 
+import { FileIcons, getFileIcon } from "../../utils";
+
 // UI //
 import styles from "./FilePreview.module.css";
 import AttachFileRoundedIcon from "@mui/icons-material/AttachFileRounded";
@@ -9,7 +11,6 @@ import docx_icon from "../../images/file-icons/docx_icon.png";
 import pdf_icon from "../../images/file-icons/pdf_icon.png";
 import pptx_icon from "../../images/file-icons/pptx_icon.png";
 import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
-import { FileIcons, getFileIcon } from "../../utils";
 
 interface Props {
   imageFile: File | undefined;

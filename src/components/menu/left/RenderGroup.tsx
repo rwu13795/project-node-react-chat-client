@@ -1,10 +1,8 @@
 import { memo } from "react";
 import { Socket } from "socket.io-client";
 
-import { chatType, Notifications } from "../../../redux/message/messageSlice";
+import { chatType } from "../../../redux/message/messageSlice";
 import { Group } from "../../../redux/user/userSlice";
-import LeaveGroup from "../../group/LeaveGroup";
-import SelectFriendForGroup from "../../group/SelectFriendForGroup";
 
 // UI //
 import styles from "./RenderGroup.module.css";
@@ -27,7 +25,6 @@ interface Props {
 function RenderGroup({
   group,
   notificationCount,
-  socket,
   target_room,
   selectTargetChatRoomHandler,
 }: Props): JSX.Element {
@@ -45,14 +42,7 @@ function RenderGroup({
   }
 
   if (group) {
-    let {
-      group_id,
-      group_name,
-      user_left,
-      user_left_at,
-      admin_user_id,
-      was_kicked,
-    } = group;
+    let { group_id, group_name, user_left_at } = group;
     let room_id = `${chatType.group}_${group_id}`;
     let isTargetRoom =
       room_id === target_room

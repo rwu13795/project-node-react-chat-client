@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, useState } from "react";
+import { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
@@ -11,7 +11,8 @@ import {
   selectTargetGroup,
   selectUserId,
 } from "../../redux/user/userSlice";
-// import { client } from "../../redux/utils";
+import { axios_client, scrollMainPage } from "../../utils";
+import { serverUrl } from "../../redux/utils";
 
 // UI //
 import styles from "./LeaveGroup.module.css";
@@ -19,7 +20,6 @@ import styles_2 from "../menu/left/GroupsList.module.css";
 import { Backdrop, Box, Button, Fade, Modal, Tooltip } from "@mui/material";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import { axios_client, scrollMainPage } from "../../utils";
 
 interface Props {
   homePageMainGridRef: React.MutableRefObject<HTMLDivElement | null>;
@@ -38,7 +38,7 @@ function RemoveGroup({ homePageMainGridRef }: Props): JSX.Element {
   // remove the group from groupList after leaving or being kicked
   async function removeGroupHandler() {
     const { group_id, was_kicked } = targetGroup;
-    await client.post("http://localhost:5000/api/user/remove-group", {
+    await client.post(serverUrl + "/user/remove-group", {
       group_id,
       user_id: currentUserId,
       was_kicked,

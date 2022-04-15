@@ -11,6 +11,9 @@ import {
 import ChangeUsername from "./ChangeUsername";
 import ChangePW from "./ChangePW";
 import AddAvatar from "./AddAvatar";
+import connectSocket from "../../../socket-io/socketConnection";
+import addAllListeners from "../../../socket-io/add-all-listener";
+import { setCurrentUserId_msg } from "../../../redux/message/messageSlice";
 import { scrollToTop } from "../../../utils";
 
 // UI //
@@ -27,9 +30,6 @@ import {
 } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import EditIcon from "@mui/icons-material/Edit";
-import connectSocket from "../../../socket-io/socketConnection";
-import addAllListeners from "../../../socket-io/add-all-listener";
-import { setCurrentUserId_msg } from "../../../redux/message/messageSlice";
 
 interface Props {
   socket: Socket | undefined;

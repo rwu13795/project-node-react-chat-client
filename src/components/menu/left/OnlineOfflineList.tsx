@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo } from "react";
 import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
@@ -9,12 +9,12 @@ import {
 } from "../../../redux/message/messageSlice";
 import { selectFriendsList } from "../../../redux/user/userSlice";
 import RenderFriend from "./RenderFriend";
+import { onlineStatus_enum } from "../../../utils";
 
 // UI //
 import styles from "./OnlineOfflineList.module.css";
 import styles_2 from "./GroupsList.module.css";
 import { CircularProgress } from "@mui/material";
-import { onlineStatus_enum } from "../../../utils";
 
 interface Props {
   socket: Socket | undefined;

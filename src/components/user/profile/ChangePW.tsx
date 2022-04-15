@@ -2,7 +2,6 @@ import { memo, useEffect, useState, MouseEvent, FormEvent } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
-  selectCurrentUser,
   selectLoadingStatus_user,
   selectRequestErrors,
   setLoadingStatus_user,

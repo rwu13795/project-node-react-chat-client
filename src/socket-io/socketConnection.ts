@@ -1,8 +1,12 @@
 import { io } from "socket.io-client";
 
 export default function connectSocket(user_id: string, username: string) {
-  // use the "handshake" to let server to identify the current user
-  let socket = io("http://localhost:5000", {
+  const server = process.env.REACT_APP_SERVER_URL
+    ? process.env.REACT_APP_SERVER_URL
+    : "http://localhost:5000";
+
+  const socket = io(server, {
+    // use the "handshake" to let server to identify the current user
     query: { user_id, username },
   });
 

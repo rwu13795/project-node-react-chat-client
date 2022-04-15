@@ -14,16 +14,10 @@ export function deleteGroupInvitation_reducer(
         inv.discarded = true;
       }
     }
-    console.log("groupInvitation discard");
-
     return;
   }
-
-  console.log("group_id in delete", group_id);
 
   state.groupInvitations = state.groupInvitations.filter((group) => {
     return group.group_id !== group_id;
   });
-
-  console.log("groupInvitations", [...state.groupInvitations]);
 }

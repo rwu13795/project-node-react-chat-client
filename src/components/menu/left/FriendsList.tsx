@@ -12,7 +12,6 @@ import FilterFriends from "../../friend/FilterFriends";
 // UI //
 import styles from "./GroupsList.module.css";
 import {
-  Tooltip,
   Badge,
   Collapse,
   Fade,
@@ -25,7 +24,6 @@ import {
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
 import ListOptions from "./ListOptions";
 
 interface Props {

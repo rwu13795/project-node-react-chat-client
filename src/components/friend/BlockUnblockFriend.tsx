@@ -34,8 +34,6 @@ function BlockFriend({
   }
 
   function unblockFriendHandler() {
-    console.log("unblock friend", friend_id);
-
     if (socket) {
       blockFriend_emitter(socket, { friend_id, block: false });
     }

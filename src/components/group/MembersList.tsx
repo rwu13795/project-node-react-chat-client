@@ -9,20 +9,16 @@ import {
   selectCurrentUser,
   selectFriendsList,
   selectTargetGroup,
-  selectUserId,
 } from "../../redux/user/userSlice";
-import KickMember from "./KickMember";
+import ChangeGroupName from "./ChangeGroupName";
+import ViewUserProfile from "../user/profile/ViewUserProfile";
+import { kickMember_emitter } from "../../socket-io/emitters";
 
 // UI //
 import styles from "./MembersList.module.css";
 import styles_2 from "../group/CreateGroup.module.css";
-import styles_3 from "../user/profile/UserProfile.module.css";
 import { Avatar, Button } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
-import EditIcon from "@mui/icons-material/Edit";
-import ChangeGroupName from "./ChangeGroupName";
-import ViewUserProfile from "../user/profile/ViewUserProfile";
-import { kickMember_emitter } from "../../socket-io/emitters";
 
 interface Props {
   socket: Socket | undefined;
@@ -61,7 +57,6 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
     openProfileHandler();
   }
   function kickMemberHandler(member_user_id: string, member_username: string) {
-    console.log(member_user_id, member_username);
     if (socket) {
       kickMember_emitter(socket, { group_id, member_user_id, member_username });
     }

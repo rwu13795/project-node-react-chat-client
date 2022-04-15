@@ -1,4 +1,4 @@
-import { ChangeEvent, memo, useRef, MutableRefObject, useEffect } from "react";
+import { ChangeEvent, memo, useRef, useEffect } from "react";
 
 // UI //
 import styles from "./MessageInput.module.css";

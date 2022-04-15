@@ -28,8 +28,6 @@ export function groupAdminNotification_listener(
         })
       );
 
-      console.log("newAdmin", newAdmin);
-
       if (newAdmin !== undefined) {
         dispatch(updateGroupAdmin({ newAdmin, group_id }));
       }

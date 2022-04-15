@@ -23,7 +23,6 @@ import InputField, { InputFields } from "../input-field/InputField";
 
 // UI //
 import styles from "./CreateGroup.module.css";
-import { Button } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 
 interface Props {

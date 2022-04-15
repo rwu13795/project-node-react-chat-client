@@ -1,7 +1,5 @@
 import { PixelCrop } from "react-image-crop";
 
-const TO_RADIANS = Math.PI / 180;
-
 function toBlob(canvas: HTMLCanvasElement): Promise<Blob | null> {
   return new Promise((resolve: (blob: Blob | null) => void) => {
     canvas.toBlob(resolve);

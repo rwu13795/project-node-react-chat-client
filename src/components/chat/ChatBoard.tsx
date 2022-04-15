@@ -22,14 +22,14 @@ import FileInput from "./FileInput";
 import { warningMessage } from "../../utils";
 import ChatBoardSlides from "./ChatBoardSlides";
 import FilePreview from "./FilePreview";
+import EmojiPicker from "./EmojiPicker";
 
 // UI //
 import styles from "./ChatBoard.module.css";
 import styles_2 from "./ImageInput.module.css";
 import InsertEmoticonRoundedIcon from "@mui/icons-material/InsertEmoticonRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import { Button, useMediaQuery } from "@mui/material";
-import EmojiPicker from "./EmojiPicker";
+import { Button } from "@mui/material";
 
 interface Props {
   socket: Socket | undefined;
@@ -57,7 +57,6 @@ function ChatBoard({
   const targetChatRoom = useSelector(selectTargetChatRoom);
   const targetGroup = useSelector(selectTargetGroup(targetChatRoom.id));
   const targetFriend = useSelector(selectTargetFriend(targetChatRoom.id));
-  const isSmall = useMediaQuery("(max-width: 765px)");
 
   const [messageValue, setMessageValue] = useState<string>("");
   const [messageError, setMessageError] = useState<string>("");

@@ -13,12 +13,8 @@ export function check_groupInvitation_listener(
 ) {
   socket.on("check-group-invitation", ({ message }: Data) => {
     // after sending the group-invitation, the server will let the client
-    // know how the status of this request. Display this message on top of the
-    // chat-board
+    // know how the status of this request. Display this message right next to
+    // the selected target in the "GroupForFriend" or "FriendForGroup"
     dispatch(setResult_groupInvitation(message));
-
-    // expand the <div> which contains the check-group-invitation message
-    // let elem = document.getElementById("invitation-result");
-    // if (elem) elem.style.maxHeight = elem.scrollHeight + "px";
   });
 }

@@ -1,21 +1,19 @@
 import { memo } from "react";
 import { Socket } from "socket.io-client";
+import { useSelector } from "react-redux";
 
 import {
   chatType,
-  Notifications,
   selectTargetChatRoom,
 } from "../../../redux/message/messageSlice";
-import { Friend, Group } from "../../../redux/user/userSlice";
-
-// UI //
-import styles from "./RenderFriend.module.css";
-
-import { Button, Badge } from "@mui/material";
+import { Friend } from "../../../redux/user/userSlice";
 import UserAvatar from "../top/UserAvatar";
 import { AvatarOptions } from "../../../utils";
 import StatusDot from "../top/StatusDot";
-import { useSelector } from "react-redux";
+
+// UI //
+import styles from "./RenderFriend.module.css";
+import { Button, Badge } from "@mui/material";
 
 interface Props {
   friend: Friend;
@@ -81,11 +79,7 @@ function RenderFriend({
       </main>
     );
   } else {
-    return (
-      <main>
-        <h3>Loading ................</h3>
-      </main>
-    );
+    return <main></main>;
   }
 }
 

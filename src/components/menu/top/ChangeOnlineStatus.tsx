@@ -1,17 +1,17 @@
 import { Button, Popover } from "@mui/material";
-import { ChangeEvent, memo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { memo, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Socket } from "socket.io-client";
 
+import { changeOnlineStatus_session } from "../../../redux/user/asyncThunk";
+import { changeOnlineStatus_emitter } from "../../../socket-io/emitters";
+import { AvatarOptions, onlineStatus_enum } from "../../../utils";
 import { setUserOnlineStatus } from "../../../redux/user/userSlice";
 import StatusDot from "./StatusDot";
 
 // UI //
 import styles from "./ChangeOnlineStatus.module.css";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import { changeOnlineStatus_session } from "../../../redux/user/asyncThunk";
-import { changeOnlineStatus_emitter } from "../../../socket-io/emitters";
-import { AvatarOptions, onlineStatus_enum } from "../../../utils";
 
 interface Props {
   socket: Socket | undefined;

@@ -18,7 +18,6 @@ import {
   FormHelperText,
   OutlinedInput,
   InputLabel,
-  useMediaQuery,
   TextField,
 } from "@mui/material";
 
@@ -58,7 +57,6 @@ function InputField({
   size,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
-  const isSmall = useMediaQuery("(max-width: 765px)");
 
   const [touched, setTouched] = useState<boolean>(false);
   const [showError, setShowError] = useState<boolean>(false);

@@ -5,7 +5,6 @@ import { getNotifications } from "../../../redux/message/asyncThunk/get-notifica
 import { getUserAuth } from "../../../redux/user/asyncThunk/get-user-auth";
 import { setLoadingStatus_user } from "../../../redux/user/userSlice";
 import { loadingStatusEnum } from "../../../utils";
-import { online_emitter } from "../../emitters";
 
 export function newFriendAdded_listener(
   socket: Socket,

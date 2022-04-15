@@ -10,7 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
-  Friend,
   selectCurrentUser,
   selectFriendsList,
   selectResult_addFriendRequest,
@@ -95,8 +94,7 @@ function SearchUser({
     let hasError = false;
     if (findById) {
       hasError = onSubmitCheck(idInput, setIdInput);
-      console.log("hasError", hasError, idError);
-      console.log(currentUser.user_id, idInput[inputNames.user_ID]);
+
       if (currentUser.user_id === idInput[inputNames.user_ID]) {
         setErrorMsg("You cannot add yourself as a friend.....");
         hasError = true;

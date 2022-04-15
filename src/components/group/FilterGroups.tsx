@@ -2,18 +2,12 @@ import { memo, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import {
-  Friend,
-  Group,
-  selectFriendsArray,
-  selectGroupsArray,
-} from "../../redux/user/userSlice";
-import RenderFriend from "../menu/left/RenderFriend";
+import { Group, selectGroupsArray } from "../../redux/user/userSlice";
+import RenderGroup from "../menu/left/RenderGroup";
 
 // UI //
 import styles from "../friend/FilterFriends.module.css";
 import { TextField } from "@mui/material";
-import RenderGroup from "../menu/left/RenderGroup";
 
 interface Props {
   socket: Socket | undefined;

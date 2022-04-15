@@ -3,10 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
-  selectLoadingStatus_msg,
-  setLoadingStatus_msg,
-} from "../../redux/message/messageSlice";
-import {
   GroupInvitation as GroupInvitation_type,
   deleteGroupInvitation,
   selectFriendsList,

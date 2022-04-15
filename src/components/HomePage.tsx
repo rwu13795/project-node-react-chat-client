@@ -1,4 +1,4 @@
-import { memo, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { memo, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
@@ -16,19 +16,17 @@ import {
   selectUserOnlineStatus,
 } from "../redux/user/userSlice";
 import { getNotifications } from "../redux/message/asyncThunk";
-import ChatBoard from "./chat/ChatBoard";
-import RoomLists from "./menu/left/RoomLists";
-import ChatRoomMenu from "./menu/right/ChatRoomMenu";
 import connectSocket from "../socket-io/socketConnection";
+import addAllListeners from "../socket-io/add-all-listener";
+import { loadingStatusEnum, resizeMenu } from "../utils";
+import { online_emitter } from "../socket-io/emitters";
+import RoomLists from "./menu/left/RoomLists";
+import ChatRoom from "./menu/right/ChatRoom";
 
 // UI //
 import styles from "./HomePage.module.css";
 import { CircularProgress, useMediaQuery } from "@mui/material";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
-import addAllListeners from "../socket-io/add-all-listener";
-import { loadingStatusEnum, resizeMenu } from "../utils";
-import { online_emitter } from "../socket-io/emitters";
-import ChatRoom from "./menu/right/ChatRoom";
 
 interface Props {
   socket: Socket | undefined;
@@ -83,8 +81,6 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
           user_id: currentUserId,
           group_ids: groupsToJoin,
         });
-
-        console.log("client socket connected", newSocket.id);
       });
     }
   }, [isLoggedIn, socket]);

@@ -1,8 +1,8 @@
 import { memo } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { clearLeftMember, selectUsername } from "../../redux/user/userSlice";
+import { clearLeftMember } from "../../redux/user/userSlice";
 import { kickMember_emitter } from "../../socket-io/emitters";
 
 interface Props {
@@ -21,15 +21,12 @@ function KickMember({
   currentUserId,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
-  const currentUsername = useSelector(selectUsername);
 
   function kickMemberHandler() {
-    if (socket)
+    if (socket) {
       kickMember_emitter(socket, { group_id, member_user_id, member_username });
-
+    }
     dispatch(clearLeftMember({ group_id, member_user_id }));
-
-    console.log("kicked user", member_user_id, member_username);
   }
 
   return (

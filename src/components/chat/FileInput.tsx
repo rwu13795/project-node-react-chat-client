@@ -1,20 +1,4 @@
-import { ChangeEvent, FormEvent, memo, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { Socket } from "socket.io-client";
-import {
-  addNewMessageToHistory_memory,
-  chatType,
-  MessageObject,
-  msgType,
-  TargetChatRoom,
-} from "../../redux/message/messageSlice";
-import {
-  Friend,
-  Group,
-  selectUserId,
-  selectUsername,
-} from "../../redux/user/userSlice";
-import { message_emitter } from "../../socket-io/emitters";
+import { ChangeEvent, memo } from "react";
 
 // UI //
 import styles from "./ImageInput.module.css";
@@ -62,7 +46,7 @@ function FileInput({
         return;
       }
       // the type of file is not consistent, For txt file, the type is 'text/plain',
-      // for "msWord", it is "application/many-different-extensions"
+      // but for "microsoft word", it is "application/many-different-extensions"
       // I should just check the extension of the file by splitting the file name
       const ext = newFile.name.split(".")[1].toLowerCase();
       if (!fileExtensions.includes(ext)) {

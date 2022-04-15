@@ -1,8 +1,6 @@
-import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { NewGroupNotification } from "../../socket-io/listeners";
+import { createSelector, createSlice } from "@reduxjs/toolkit";
 import { loadingStatusEnum } from "../../utils";
 import type { RootState } from "../index";
-import { selectGroupInvitations } from "../user/userSlice";
 
 import {
   loadChatHistory_database,
@@ -263,13 +261,10 @@ export function pushPositionToTop(
   // array.slice takes O(n), array.indexof takes O(n)
   // Cannot use binary-search on position array since the ids are not sorted
   // it should be more efficient than using array.sort() for the newly added notification
-
   const targetIndex = position.indexOf(target_id);
   const newPosition = [target_id];
   newPosition.push(...position.slice(0, targetIndex));
   newPosition.push(...position.slice(targetIndex + 1));
-
-  console.log("newPosition", [...newPosition]);
 
   return newPosition;
 }

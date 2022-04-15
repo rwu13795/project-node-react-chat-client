@@ -12,10 +12,6 @@ interface Data {
 // is online by emitting a "online-echo" messsage
 export function onlineEcho_listener(socket: Socket, dispatch: Dispatch) {
   socket.on("online-echo", ({ sender_id, status }: Data) => {
-    console.log(
-      `user ${sender_id} let me know he change online status to ${status}`
-    );
-
     dispatch(setFriendsOnlineStatus({ sender_id, status }));
   });
 }

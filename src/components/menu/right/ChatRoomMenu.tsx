@@ -1,4 +1,4 @@
-import { memo, useState } from "react";
+import { memo } from "react";
 import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 

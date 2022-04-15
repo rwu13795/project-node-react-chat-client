@@ -27,7 +27,6 @@ export default function addAllListeners(
     group_ids: string[];
   }
 ): void {
-  console.log("setting up listeners");
   const { user_id, group_ids } = data;
 
   // each user will join his/her private room and all the groups room after signing in

@@ -11,7 +11,6 @@ interface Data {
 // to all the friends of that user.
 export function offline_listener(socket: Socket, dispatch: Dispatch) {
   socket.on("offline", ({ sender_id }: Data) => {
-    console.log(`user ${sender_id} is offline`);
     dispatch(
       setFriendsOnlineStatus({
         sender_id,

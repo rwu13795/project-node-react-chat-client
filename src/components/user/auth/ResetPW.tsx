@@ -7,7 +7,6 @@ import {
   clearRequestError,
   selectLoadingStatus_user,
   selectRequestErrors,
-  setLoadingStatus_user,
 } from "../../../redux/user/userSlice";
 import { forgotPasswordReset } from "../../../redux/user/asyncThunk";
 import { inputNames, loadingStatusEnum, onSubmitCheck } from "../../../utils";
@@ -15,7 +14,6 @@ import RedirectToSignIn from "../../menu/RedirectToSignIn";
 
 // UI //
 import styles from "./ResetPW.module.css";
-import styles_2 from "./SignIn.module.css";
 import { LoadingButton } from "@mui/lab";
 
 interface Props {

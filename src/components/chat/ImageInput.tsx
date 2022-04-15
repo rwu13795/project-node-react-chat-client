@@ -34,8 +34,6 @@ function ImageInput({
     setSizeExceeded("");
     setNotSupported("");
 
-    console.log(e.target);
-
     if (e.target.files && e.target.files.length > 0) {
       const newImage = e.target.files[0] as File;
 

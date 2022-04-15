@@ -14,9 +14,6 @@ export function addFriendResponse_listener(
   currentUserId: string
 ) {
   socket.on("add-friend-response", ({ acceptor_name }: Data) => {
-    console.log(
-      `user ${acceptor_name} has accepted you request, you are friends now!`
-    );
     // after the invitee accepted the request, server will emit the "add-friend-response"
     // get the updated friends_pair, private_message and notification from server for this inviter.
     // don't initialize the onlineStatus, otherwise all friends will be marked as offline

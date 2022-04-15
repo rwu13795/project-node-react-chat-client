@@ -62,7 +62,6 @@ export function joinNewGroup_listener(socket: Socket, dispatch: Dispatch<any>) {
       // won't be updated if I don't force this user "click" on this group
       let elem = document.getElementById(`${chatType.group}_${newGroupId}`);
       if (elem) {
-        console.log("enter room ", newGroupId);
         elem.click();
       }
     }

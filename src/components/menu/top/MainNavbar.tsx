@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Socket } from "socket.io-client";
 
 import { selectCurrentUser } from "../../../redux/user/userSlice";
@@ -9,8 +9,7 @@ import UserAvatar from "./UserAvatar";
 
 // UI //
 import styles from "./MainNavbar.module.css";
-import { Badge, Tooltip } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Tooltip } from "@mui/material";
 
 import logo from "../../../images/logo.svg";
 import { AvatarOptions, scrollToTop } from "../../../utils";

@@ -1,14 +1,15 @@
+import { memo } from "react";
+import { Socket } from "socket.io-client";
+
 import { chatType, TargetChatRoom } from "../../redux/message/messageSlice";
 import MembersList from "../group/MembersList";
+import SelectFriendForGroup from "../group/SelectFriendForGroup";
+import SelectGroupForFriend from "../group/SelectGroupForFriend";
+import { Friend, Group } from "../../redux/user/userSlice";
 
 // UI //
 import styles from "./ChatBoardSlides.module.css";
 import { Slide, useMediaQuery } from "@mui/material";
-import SelectFriendForGroup from "../group/SelectFriendForGroup";
-import SelectGroupForFriend from "../group/SelectGroupForFriend";
-import { Friend, Group } from "../../redux/user/userSlice";
-import { Socket } from "socket.io-client";
-import { memo } from "react";
 
 interface Props {
   socket: Socket | undefined;

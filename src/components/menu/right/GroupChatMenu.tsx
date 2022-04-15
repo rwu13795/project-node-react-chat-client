@@ -4,17 +4,16 @@ import { Socket } from "socket.io-client";
 
 import { selectTargetGroup } from "../../../redux/user/userSlice";
 import LeaveGroup from "../../group/LeaveGroup";
-
 import RemoveGroup from "../../group/RemoveGroup";
 import OptionsGroupChatMenu from "./OptionsGroupChatMenu";
+import MembersListAvatars from "../../group/MembersListAvatars";
+import { scrollMainPage } from "../../../utils";
 
 // UI //
 import styles from "./GroupChatMenu.module.css";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
-import { Tooltip, useMediaQuery } from "@mui/material";
-import MembersListAvatars from "../../group/MembersListAvatars";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import { scrollMainPage } from "../../../utils";
+import { Tooltip, useMediaQuery } from "@mui/material";
 
 interface Props {
   target_id: string;
@@ -55,7 +54,6 @@ function GroupChatMenu({
   }
 
   function openFriendForGroupHandler() {
-    console.log("openFriendForGroupHandler");
     setOpenFriendForGroup((prev) => !prev);
     setOpenMemberList(false);
   }

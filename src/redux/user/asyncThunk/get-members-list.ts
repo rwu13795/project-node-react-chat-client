@@ -29,7 +29,6 @@ export const getGroupMembersList_database = createAsyncThunk<
   // if the room is visited, that means chat history has been loaded,
   // then don't make request again
   if (thunkAPI.getState().message.visitedRoom[room_id] && !initialize) {
-    console.log("visied room - not getting member list again");
     return {
       group_id,
       group_members: [],
@@ -40,7 +39,6 @@ export const getGroupMembersList_database = createAsyncThunk<
   const response = await client.get<GroupMember[]>(
     serverUrl + `/user/get-members-list?group_id=${group_id}`
   );
-  console.log(response.data);
 
   return {
     group_id,
@@ -58,5 +56,4 @@ export function getGroupMembersList_database_fulfilled(
 
   state.groupsList[group_id].group_members = group_members;
   state.groupsList[group_id].wasMembersListLoaded = true;
-  // state.loadingStatus = "succeeded";
 }

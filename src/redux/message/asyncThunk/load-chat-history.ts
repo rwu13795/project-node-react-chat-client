@@ -49,7 +49,6 @@ export const loadChatHistory_database = createAsyncThunk<
     const room_id = `${targetRoom_type}_${targetRoom_id}`;
     // if the room is visited, that means chat history has been loaded, then don't make request again
     if (thunkAPI.getState().message.visitedRoom[room_id]) {
-      console.log("visied room");
       return {
         chatHistory: [],
         currentUsername: "",

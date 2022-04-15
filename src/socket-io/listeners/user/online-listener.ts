@@ -13,9 +13,6 @@ interface Data {
 // listen to that message, and mark this friend as online in the store
 export function online_listener(socket: Socket, dispatch: Dispatch) {
   socket.on("online", ({ sender_id, status }: Data) => {
-    console.log(
-      `user ${sender_id} just emit "online" as ${status}, let him know I am online`
-    );
     dispatch(setFriendsOnlineStatus({ sender_id, status }));
 
     // let the friend who just logged in know that the current user is online also

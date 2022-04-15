@@ -1,30 +1,20 @@
 import { memo, useState } from "react";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-import {
-  chatType,
-  MessageObject,
-  msgType,
-} from "../../redux/message/messageSlice";
-import {
-  CurrentUser,
-  Friend,
-  selectCurrentUser,
-  selectTargetFriend,
-} from "../../redux/user/userSlice";
+import { MessageObject, msgType } from "../../redux/message/messageSlice";
+import { CurrentUser, Friend } from "../../redux/user/userSlice";
 import { FileIcons, getFileIcon } from "../../utils";
 import ChatTimeline from "./ChatTimeline";
 import ViewUserProfile from "../user/profile/ViewUserProfile";
+import { RenderAvatar } from "./ChatMessageGroup";
 
 // UI //
+import styles from "./ChatMessage.module.css";
 import txt_icon from "../../images/file-icons/txt_icon.png";
 import docx_icon from "../../images/file-icons/docx_icon.png";
 import pdf_icon from "../../images/file-icons/pdf_icon.png";
 import pptx_icon from "../../images/file-icons/pptx_icon.png";
 import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
-import styles from "./ChatMessage.module.css";
-import { Avatar } from "@mui/material";
 
 const fileIcons: FileIcons = {
   txt: txt_icon,
@@ -111,11 +101,11 @@ function ChatMessagePrivate({
           />
           <div className={s_wrapper}>
             {!isSelf && (
-              <Avatar
+              <RenderAvatar
                 className={styles.avatar}
-                src={avatar_friend ? avatar_friend : friend_username[0]}
-                alt={friend_username[0]}
-                onClick={viewUserProfileHandler}
+                avatar_url={avatar_friend}
+                member_name={friend_username}
+                viewProfileHandler={viewUserProfileHandler}
               />
             )}
 
@@ -159,11 +149,11 @@ function ChatMessagePrivate({
             </div>
 
             {isSelf && (
-              <Avatar
+              <RenderAvatar
                 className={styles.avatar}
-                src={avatar_self ? avatar_self : username[0]}
-                alt={username[0]}
-                onClick={viewSelfProfileHandler}
+                avatar_url={avatar_self}
+                member_name={username}
+                viewProfileHandler={viewSelfProfileHandler}
               />
             )}
           </div>
@@ -185,3 +175,14 @@ function ChatMessagePrivate({
 }
 
 export default memo(ChatMessagePrivate);
+
+/**
+ * 
+ * 
+ * <Avatar
+                className={styles.avatar}
+                src={avatar_self ? avatar_self : username[0]}
+                alt={username[0]}
+                onClick={viewSelfProfileHandler}
+              />
+ */

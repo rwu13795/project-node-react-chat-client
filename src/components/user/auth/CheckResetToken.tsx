@@ -18,8 +18,6 @@ function CheckResetToken(): JSX.Element {
     searchParams.get("user_id")
   );
 
-  console.log("isLoading", isLoading);
-
   return (
     <main className={styles_2.main} id="main_body">
       {isLoading ? (

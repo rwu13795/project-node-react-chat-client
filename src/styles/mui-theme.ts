@@ -17,13 +17,6 @@ const theme = createTheme({
     },
     h3: {
       fontSize: "3vw",
-      // "@media (min-width:580px)": {
-      //   fontSize: "3.5vw",
-      // },
-      // "@media (min-width:770px)": {
-      //   fontSize: "3vw",
-      // },
-      // fontFamily: ["Quantico", "sans-serif"].join(","),
     },
   },
   breakpoints: {

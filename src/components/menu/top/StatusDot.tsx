@@ -1,4 +1,4 @@
-import { memo, useEffect, useLayoutEffect, useState } from "react";
+import { memo, useEffect, useState } from "react";
 
 import { AvatarOptions, onlineStatus_enum } from "../../../utils";
 

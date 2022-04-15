@@ -1,26 +1,20 @@
 import { memo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
 
 import ViewUserProfile from "../user/profile/ViewUserProfile";
 import { MessageObject, msgType } from "../../redux/message/messageSlice";
 import { FileIcons, getFileIcon } from "../../utils";
+import { CurrentUser, GroupMember } from "../../redux/user/userSlice";
+import ChatTimeline from "./ChatTimeline";
 
 // UI //
+import styles from "./ChatMessage.module.css";
 import txt_icon from "../../images/file-icons/txt_icon.png";
 import docx_icon from "../../images/file-icons/docx_icon.png";
 import pdf_icon from "../../images/file-icons/pdf_icon.png";
 import pptx_icon from "../../images/file-icons/pptx_icon.png";
 import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
-import styles from "./ChatMessage.module.css";
 import { Avatar } from "@mui/material";
-import {
-  CurrentUser,
-  GroupMember,
-  selectCurrentUser,
-  selectTargetGroup,
-} from "../../redux/user/userSlice";
-import ChatTimeline from "./ChatTimeline";
 
 const fileIcons: FileIcons = {
   txt: txt_icon,
@@ -107,8 +101,6 @@ function ChatMessageGroup({
     member_name_content =
       styles.member_name_content_wrapper + " " + styles.align_right;
   }
-
-  console.log("member_id", member_id);
 
   return (
     <main className={styles.msg_container}>
@@ -209,7 +201,7 @@ export default memo(ChatMessageGroup);
 
 // since the properties of the avatar stay the same
 // use memo to wrap the "avatar" to prevent unneccessary re-rendering
-const RenderAvatar = memo(RenderAvatarHanlder);
+export const RenderAvatar = memo(RenderAvatarHanlder);
 
 interface AvatarProps {
   className: string;

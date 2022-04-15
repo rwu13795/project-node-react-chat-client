@@ -1,5 +1,7 @@
-import { memo, useEffect, useState } from "react";
+import { memo, useState } from "react";
+import { useSelector } from "react-redux";
 
+import { selectLoadingStatus_user } from "../../redux/user/userSlice";
 import {
   AvatarOptions,
   inputFieldSizes,
@@ -13,8 +15,6 @@ import UserAvatar from "../menu/top/UserAvatar";
 // UI //
 import styles from "./SearchFound.module.css";
 import { LoadingButton } from "@mui/lab";
-import { useSelector } from "react-redux";
-import { selectLoadingStatus_user } from "../../redux/user/userSlice";
 
 interface Props {
   username: string;

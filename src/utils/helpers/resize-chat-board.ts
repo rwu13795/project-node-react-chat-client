@@ -6,7 +6,6 @@ export function resizeChatBoard(
   logsRef: MutableRefObject<HTMLDivElement | null>,
   buttonsRef: MutableRefObject<HTMLDivElement | null>
 ) {
-  console.log("in chatBoard, resize the input-container");
   inputRef.current!.style.height = "auto";
 
   const diff =

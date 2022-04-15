@@ -13,8 +13,6 @@ interface Data {
 
 export function message_listener(socket: Socket, dispatch: Dispatch) {
   socket.on("message-to-client", async ({ messageObject, room_type }: Data) => {
-    console.log(messageObject);
-
     dispatch(
       addNewMessageToHistory_memory({
         messageObject,

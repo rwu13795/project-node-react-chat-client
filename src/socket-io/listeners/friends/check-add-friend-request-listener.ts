@@ -15,8 +15,6 @@ export function check_addFriendRequest_listener(
   dispatch: Dispatch
 ) {
   socket.on("check-add-friend-request", ({ message }: Data) => {
-    console.log(message);
-
     dispatch(setResult_addFriendRequest(message));
     dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
   });

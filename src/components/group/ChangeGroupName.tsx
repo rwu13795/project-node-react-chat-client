@@ -11,6 +11,7 @@ import InputField, {
   inputFieldStyles,
   InputFields,
 } from "../input-field/InputField";
+import { changeGroupName } from "../../redux/user/asyncThunk";
 
 // UI //
 import styles from "./ChangeGroupName.module.css";
@@ -18,7 +19,6 @@ import styles_2 from "../user/profile/UserProfile.module.css";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import { Button } from "@mui/material";
-import { changeGroupName } from "../../redux/user/asyncThunk";
 
 interface Props {
   group_name: string;

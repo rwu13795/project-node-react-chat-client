@@ -1,9 +1,10 @@
-import { ChangeEvent, memo, useState } from "react";
+import { memo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
 import {
   addNewMessageToHistory_memory,
+  msgType,
   selectTargetChatRoom,
 } from "../../redux/message/messageSlice";
 import {
@@ -72,7 +73,7 @@ function LeaveGroup({
           recipient_id: group_id,
           recipient_name: "",
           msg_body,
-          msg_type: "admin",
+          msg_type: msgType.admin,
           created_at: new Date().toString(),
           file_type: "none",
           file_name: "none",

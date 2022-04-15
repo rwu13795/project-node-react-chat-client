@@ -7,7 +7,5 @@ export function changeAvatar_emitter(
     type: string;
   }
 ) {
-  console.log("emitting avatar !!!");
-
   socket.emit("change-avatar", data);
 }

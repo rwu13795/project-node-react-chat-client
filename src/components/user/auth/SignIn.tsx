@@ -15,13 +15,13 @@ import {
   initializeValues,
 } from "../../../utils";
 import InputField, { InputFields } from "../../input-field/InputField";
+import GoogleSignIn from "./GoogleSignIn";
 
 // UI //
 import styles from "./SignIn.module.css";
 import { LoadingButton } from "@mui/lab";
 import { Checkbox, useMediaQuery } from "@mui/material";
 import CheckBoxIcon from "@mui/icons-material/CheckBox";
-import GoogleSignIn from "./GoogleSignIn";
 
 const inputFields = [inputNames.email, inputNames.password];
 

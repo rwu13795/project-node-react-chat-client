@@ -78,9 +78,6 @@ function ChatLogs({
       // I guess that the "fetchMoreData" is triggered on dataLength={chatHistory.length}
       // the <InifinteScroll /> might still used the previous chatHistory.length
       // after the room changed in the first rendering
-      console.log("page num", pageNum);
-      console.log("hasMore", hasMore);
-      console.log("fetching more chatHistory");
       try {
         const { data } = await client.get<MessageObject[]>(
           "http://localhost:5000/api" +

@@ -18,13 +18,13 @@ import {
   clearNotifications,
   loadChatHistory_database,
 } from "../../../redux/message/asyncThunk";
+import { changeTargetRoom_emitter } from "../../../socket-io/emitters";
+import { loadingStatusEnum, scrollMainPage } from "../../../utils";
 import FriendsList from "./FriendsList";
 import GroupsList from "./GroupsList";
 
 // UI //
 import styles from "./RoomLists.module.css";
-import { changeTargetRoom_emitter } from "../../../socket-io/emitters";
-import { loadingStatusEnum, scrollMainPage } from "../../../utils";
 import { useMediaQuery } from "@mui/material";
 
 interface Props {
@@ -61,7 +61,6 @@ function RoomLists({ socket, homePageMainGridRef }: Props): JSX.Element {
     );
     // if the target room is a group, then fetch the member list from DB for that group
     if (nextRoom_type === chatType.group) {
-      console.log("getting memberlist");
       dispatch(
         getGroupMembersList_database({
           group_id: nextRoom_id,

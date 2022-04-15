@@ -1,9 +1,3 @@
-import txt_icon from "../../images/file-icons/txt_icon.png";
-import docx_icon from "../../images/file-icons/docx_icon.png";
-import pdf_icon from "../../images/file-icons/pdf_icon.png";
-import pptx_icon from "../../images/file-icons/pptx_icon.png";
-import xlsx_icon from "../../images/file-icons/xlsx_icon.png";
-
 export interface FileIcons {
   txt: string;
   doc: string;

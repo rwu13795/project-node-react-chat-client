@@ -1,9 +1,11 @@
 import { memo, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-
 import { Socket } from "socket.io-client";
-import { selectTargetFriend } from "../../../redux/user/userSlice";
 
+import { selectTargetFriend } from "../../../redux/user/userSlice";
+import ViewUserProfile from "../../user/profile/ViewUserProfile";
+import OptionsPrivateChatMenu from "./OptionsPrivateChatMenu";
+import { scrollMainPage } from "../../../utils";
 import BlockUnblockFriend from "../../friend/BlockUnblockFriend";
 
 // UI //
@@ -12,9 +14,6 @@ import styles_2 from "./PrivateChatMenu.module.css";
 import { Avatar, Tooltip, useMediaQuery } from "@mui/material";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import GroupAddIcon from "@mui/icons-material/GroupAdd";
-import ViewUserProfile from "../../user/profile/ViewUserProfile";
-import OptionsPrivateChatMenu from "./OptionsPrivateChatMenu";
-import { scrollMainPage } from "../../../utils";
 
 interface Props {
   friend_id: string;

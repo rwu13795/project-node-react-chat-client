@@ -9,6 +9,8 @@ import "react-image-crop/dist/ReactCrop.css";
 import { useDispatch } from "react-redux";
 import { Socket } from "socket.io-client";
 
+import { changeAvatar_emitter } from "../../../socket-io/emitters";
+import { imageTypes } from "../../chat/ImageInput";
 import { cropImage } from "../../../utils";
 
 // UI //
@@ -17,8 +19,6 @@ import { Button } from "@mui/material";
 import { changeAvatar } from "../../../redux/user/userSlice";
 import ImageIcon from "@mui/icons-material/Image";
 import SaveIcon from "@mui/icons-material/Save";
-import { changeAvatar_emitter } from "../../../socket-io/emitters";
-import { imageTypes } from "../../chat/ImageInput";
 
 interface Props {
   socket: Socket | undefined;
@@ -91,7 +91,6 @@ function AddAvatar({ socket, handleCloseModal }: Props): JSX.Element {
       changeAvatar_emitter(socket, imageObject);
       dispatch(changeAvatar(URL.createObjectURL(croppedImageBlob)));
     }
-    console.log("changing avatar !!!");
 
     handleCloseModal();
   }

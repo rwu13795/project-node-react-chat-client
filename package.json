@@ -33,6 +33,10 @@
   "devDependencies": {
     "react-scripts": "5.0.0"
   },
+  "engines": {
+    "npm": "6.x",
+    "node": "14.x"
+  },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",

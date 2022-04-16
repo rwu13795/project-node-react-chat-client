@@ -5,9 +5,6 @@ export default function connectSocket(user_id: string, username: string) {
     // use the "handshake" to let server to identify the current user
     query: { user_id, username },
     // withCredentials: true,
-    extraHeaders: {
-      Origin: "https://www.reachat.live",
-    },
   });
 
   return socket;

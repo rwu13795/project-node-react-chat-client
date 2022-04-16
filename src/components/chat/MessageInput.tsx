@@ -37,7 +37,7 @@ function MessageInput({
   }
 
   function onSubmitUsingEnter(e: React.KeyboardEvent<HTMLDivElement>) {
-    if (e.code === "Enter") {
+    if (e.code === "Enter" || e.code === "NumpadEnter") {
       e.preventDefault();
       sendMessageHandler();
     }

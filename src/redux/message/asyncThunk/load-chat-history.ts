@@ -104,11 +104,11 @@ export function loadChatHistory_database_fulfilled(
   // the user is scrolling up for older messages
   state.visitedRoom[`${type}_${id}`] = true;
 
-  state.loadingStatus = loadingStatusEnum.idle;
+  state.loadingStatus_2 = loadingStatusEnum.idle;
 }
 
 export function loadChatHistory_database_pending(
   state: WritableDraft<MessageState>
 ) {
-  state.loadingStatus = loadingStatusEnum.loadChatHistory_loading;
+  state.loadingStatus_2 = loadingStatusEnum.loadChatHistory_loading;
 }

@@ -7,6 +7,7 @@ import {
   loadMoreOldChatHistory_database,
   MessageObject,
   selectInfiniteScrollStats,
+  selectLoadingStatus_2_msg,
   selectLoadingStatus_msg,
   selectTargetChatRoom_history,
   setInfiniteScrollStats,
@@ -20,6 +21,7 @@ import {
 import ChatMessagePrivate from "./ChatMessagePrivate";
 import ChatMessageGroup from "./ChatMessageGroup";
 import { axios_client, loadingStatusEnum } from "../../utils";
+import { serverUrl } from "../../redux/utils";
 
 // UI //
 import styles from "./ChatLogs.module.css";
@@ -43,6 +45,7 @@ function ChatLogs({
   const currentUser = useSelector(selectCurrentUser);
   const infiniteScrollStats = useSelector(selectInfiniteScrollStats);
   const loadingStatus = useSelector(selectLoadingStatus_msg);
+  const loadingStatus_2 = useSelector(selectLoadingStatus_2_msg);
   const targetGroupMembers = useSelector(
     selectTargetGroupMembers(targetChatRoom.id)
   );
@@ -80,7 +83,7 @@ function ChatLogs({
       // after the room changed in the first rendering
       try {
         const { data } = await client.get<MessageObject[]>(
-          "http://localhost:5000/api" +
+          serverUrl +
             `/chat/chat-history?id_1=${currentUserId}&id_2=${id}&page=${pageNum}&type=${type}&date_limit=${date_limit}`
         );
         dispatch(
@@ -125,7 +128,7 @@ function ChatLogs({
         loader={showLoader ? <CircularProgress /> : <div></div>}
       >
         {loadingStatus === loadingStatusEnum.changingTargetRoom ||
-        loadingStatus === loadingStatusEnum.loadChatHistory_loading ? (
+        loadingStatus_2 === loadingStatusEnum.loadChatHistory_loading ? (
           <h2>
             Loading a shitload of messages <CircularProgress />
           </h2>

@@ -19,6 +19,7 @@ import {
   resetVisitedRoom_reducer,
   setCurrentUserId_msg_reducer,
   setInfiniteScrollStats_reducer,
+  setLoadingStatus_2_msg_reducer,
   setLoadingStatus_msg_reducer,
   setTargetChatRoom_reducer,
   updateGroupNote_afterJoining_reducer,
@@ -84,6 +85,7 @@ export interface MessageState {
     [room_id: string]: { hasMore: boolean; pageNum: number };
   };
   loadingStatus: string;
+  loadingStatus_2: string;
 }
 
 export const initialState_msg: MessageState = {
@@ -97,6 +99,7 @@ export const initialState_msg: MessageState = {
   currentUserId_message: "",
   infiniteScrollStats: {},
   loadingStatus: loadingStatusEnum.idle,
+  loadingStatus_2: loadingStatusEnum.idle,
 };
 
 const messageSlice = createSlice({
@@ -116,6 +119,8 @@ const messageSlice = createSlice({
     resetVisitedRoom: resetVisitedRoom_reducer,
 
     setLoadingStatus_msg: setLoadingStatus_msg_reducer,
+
+    setLoadingStatus_2_msg: setLoadingStatus_2_msg_reducer,
 
     updateGroupNote_afterJoining: updateGroupNote_afterJoining_reducer,
 
@@ -152,6 +157,7 @@ export const {
   setInfiniteScrollStats,
   resetVisitedRoom,
   setLoadingStatus_msg,
+  setLoadingStatus_2_msg,
   updateGroupNote_afterJoining,
   resetAfterSignOut_msg,
   removeGroupPosition,
@@ -207,6 +213,11 @@ export const selectLoadingStatus_msg = createSelector(
   [selectMessageState],
   (userState) => userState.loadingStatus
 );
+export const selectLoadingStatus_2_msg = createSelector(
+  [selectMessageState],
+  (userState) => userState.loadingStatus_2
+);
+
 export const selectTotalGroupNoteCount = createSelector(
   [selectGroupsPosition, selectGroupNotifications],
   (positions, notes) => {

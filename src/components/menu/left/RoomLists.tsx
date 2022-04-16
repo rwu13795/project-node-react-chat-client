@@ -94,10 +94,11 @@ function RoomLists({ socket, homePageMainGridRef }: Props): JSX.Element {
     if (isSmall) scrollMainPage(homePageMainGridRef, "right");
 
     // (1) //
-    if (socket)
+    if (socket) {
       changeTargetRoom_emitter(socket, {
         room_id: `${nextRoom_type}_${nextRoom_id}`,
       });
+    }
 
     dispatch(setLoadingStatus_msg(loadingStatusEnum.idle));
     dispatch(setLoadingStatus_user(loadingStatusEnum.idle));

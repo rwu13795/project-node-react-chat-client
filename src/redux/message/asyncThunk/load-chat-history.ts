@@ -82,7 +82,10 @@ export function loadChatHistory_database_fulfilled(
 
   const chatHistory = action.payload.chatHistory;
 
-  if (action.payload.wasHistoryLoaded) return;
+  if (action.payload.wasHistoryLoaded) {
+    state.loadingStatus_2 = loadingStatusEnum.idle;
+    return;
+  }
 
   // map the chat history for different room_type `${type}_${id}`
   state.chatHistory[`${type}_${id}`] = chatHistory.map((msg) => {

@@ -10,8 +10,6 @@ interface Data {
 
 export function changeUsername_listener(socket: Socket, dispatch: Dispatch) {
   socket.on("change-username", ({ sender_id, new_name }: Data) => {
-    console.log("new_name", new_name);
-
     dispatch(setFriendNewName({ sender_id, new_name }));
   });
 }

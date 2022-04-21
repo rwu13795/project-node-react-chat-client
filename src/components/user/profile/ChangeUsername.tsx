@@ -50,7 +50,6 @@ function ChangeUsername({ socket, username }: Props): JSX.Element {
     if (loading === loadingStatusEnum.changeUsername_succeeded) {
       toggleEditing();
       if (socket) {
-        console.log("new name", inputValues[inputNames.username]);
         changeUsername_emitter(socket, {
           new_name: inputValues[inputNames.username],
         });

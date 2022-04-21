@@ -10,8 +10,6 @@ interface Data {
 
 export function changeAvatar_listener(socket: Socket, dispatch: Dispatch) {
   socket.on("change-avatar", ({ sender_id, new_avatar_url }: Data) => {
-    console.log("new_avatar_url", new_avatar_url);
-
     dispatch(setFriendNewAvatar({ sender_id, new_avatar_url }));
   });
 }

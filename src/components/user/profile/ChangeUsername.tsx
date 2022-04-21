@@ -1,5 +1,6 @@
 import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Socket } from "socket.io-client";
 
 import {
   selectLoadingStatus_user,
@@ -19,12 +20,14 @@ import styles_2 from "./UserProfile.module.css";
 import EditIcon from "@mui/icons-material/Edit";
 import SaveIcon from "@mui/icons-material/Save";
 import { Button } from "@mui/material";
+import { changeUsername_emitter } from "../../../socket-io/emitters";
 
 interface Props {
+  socket: Socket | undefined;
   username: string;
 }
 
-function ChangeUsername({ username }: Props): JSX.Element {
+function ChangeUsername({ socket, username }: Props): JSX.Element {
   const dispatch = useDispatch();
 
   const requestErrors = useSelector(selectRequestErrors);
@@ -44,11 +47,17 @@ function ChangeUsername({ username }: Props): JSX.Element {
   }, [username]);
 
   useEffect(() => {
-    if (loading === loadingStatusEnum.succeeded) {
+    if (loading === loadingStatusEnum.changeUsername_succeeded) {
       toggleEditing();
+      if (socket) {
+        console.log("new name", inputValues[inputNames.username]);
+        changeUsername_emitter(socket, {
+          new_name: inputValues[inputNames.username],
+        });
+      }
       dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
     }
-  }, [loading, dispatch]);
+  }, [loading, dispatch, inputValues, socket]);
 
   function toggleEditing() {
     setEditing((prev) => !prev);

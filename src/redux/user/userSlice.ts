@@ -69,8 +69,10 @@ import {
   resetAfterSignOut_user_reducer,
   setOpenAlertModal_sameUser_reducer,
   setOpenAlertModal_timeOut_reducer,
+  setFriendNewName_reducer,
 } from "./reducers";
 import { InputFields } from "../../components/input-field/InputField";
+import { setFriendNewAvatar_reducer } from "./reducers/setFriendNewAvatar";
 
 export interface CurrentUser {
   username: string;
@@ -228,6 +230,10 @@ const userSlice = createSlice({
     setOpenAlertModal_sameUser: setOpenAlertModal_sameUser_reducer,
 
     setOpenAlertModal_timeOut: setOpenAlertModal_timeOut_reducer,
+
+    setFriendNewName: setFriendNewName_reducer,
+
+    setFriendNewAvatar: setFriendNewAvatar_reducer,
   },
 
   extraReducers: (builder) => {
@@ -314,6 +320,8 @@ export const {
   resetAfterSignOut_user,
   setOpenAlertModal_sameUser,
   setOpenAlertModal_timeOut,
+  setFriendNewName,
+  setFriendNewAvatar,
 } = userSlice.actions;
 
 export default userSlice.reducer;

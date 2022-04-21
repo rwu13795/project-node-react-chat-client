@@ -17,3 +17,4 @@ export * from "./user/logout-emitter";
 export * from "./user/message-emitter";
 export * from "./user/online-emitter";
 export * from "./user/online-echo-emitter";
+export * from "./user/change-username-emitter";

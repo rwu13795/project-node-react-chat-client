@@ -20,3 +20,4 @@ export * from "./updateGroupAdmin";
 export * from "./resetAfterSignOut_user";
 export * from "./setOpenAlertModal_sameUser";
 export * from "./setOpenAlertModal_timeOut";
+export * from "./setFriendNewName";

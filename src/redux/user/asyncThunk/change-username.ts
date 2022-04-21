@@ -37,7 +37,7 @@ export function changeUsername_fulfilled(
   action: PayloadAction<Payload>
 ) {
   state.currentUser.username = action.payload.username;
-  state.loadingStatus = loadingStatusEnum.succeeded;
+  state.loadingStatus = loadingStatusEnum.changeUsername_succeeded;
 }
 
 export function changeUsername_pending(state: WritableDraft<UserState>) {

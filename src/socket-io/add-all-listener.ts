@@ -5,6 +5,8 @@ import {
   addFriendRequest_listener,
   addFriendResponse_listener,
   blockFriend_listener,
+  changeAvatar_listener,
+  changeUsername_listener,
   check_addFriendRequest_listener,
   check_groupInvitation_listener,
   disconnectSameUser_listener,
@@ -48,6 +50,8 @@ export default function addAllListeners(
   blockFriend_listener(socket, dispatch);
   check_addFriendRequest_listener(socket, dispatch);
   newFriendAdded_listener(socket, dispatch, user_id);
+  changeUsername_listener(socket, dispatch);
+  changeAvatar_listener(socket, dispatch);
 
   // groups
   check_groupInvitation_listener(socket, dispatch);

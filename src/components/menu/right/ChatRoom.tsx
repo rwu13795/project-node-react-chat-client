@@ -8,6 +8,7 @@ import ChatRoomMenu from "./ChatRoomMenu";
 
 // UI //
 import styles from "./ChatRoom.module.css";
+import ViewUserProfile from "../../user/profile/ViewUserProfile";
 
 interface Props {
   socket: Socket | undefined;
@@ -39,6 +40,7 @@ function ChatRoom({ socket, homePageMainGridRef }: Props): JSX.Element {
         setOpenFriendForGroup={setOpenFriendForGroup}
         setOpenGroupForFriend={setGroupForFriend}
       />
+      <ViewUserProfile />
     </main>
   ) : (
     <main className={styles.no_target}></main>

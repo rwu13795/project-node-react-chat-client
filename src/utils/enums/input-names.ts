@@ -15,4 +15,7 @@ export enum inputNames {
   // group
   new_group_name = "new_group_name",
   groups_limit = "groups_limit",
+
+  // friend
+  friend_display_name = "friend_display_name",
 }

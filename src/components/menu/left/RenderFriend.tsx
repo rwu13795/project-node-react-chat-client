@@ -42,7 +42,16 @@ function RenderFriend({
   }
 
   if (friend) {
-    let { friend_id, friend_username, onlineStatus, avatar_url } = friend;
+    let {
+      friend_id,
+      friend_username,
+      onlineStatus,
+      avatar_url,
+      friend_display_name,
+    } = friend;
+    if (friend_display_name && friend_display_name !== "") {
+      friend_username = friend_display_name;
+    }
     let room_id = `${chatType.private}_${friend_id}`;
     let isTargetRoom =
       room_id === `${type}_${target_id}`

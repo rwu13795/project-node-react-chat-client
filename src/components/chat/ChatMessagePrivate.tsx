@@ -1,11 +1,16 @@
-import { memo, useState } from "react";
+import { memo, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 import { MessageObject, msgType } from "../../redux/message/messageSlice";
-import { CurrentUser, Friend } from "../../redux/user/userSlice";
+import {
+  CurrentUser,
+  Friend,
+  setOpenViewProfileModal,
+  setViewProfileTarget,
+} from "../../redux/user/userSlice";
 import { FileIcons, getFileIcon } from "../../utils";
 import ChatTimeline from "./ChatTimeline";
-import ViewUserProfile from "../user/profile/ViewUserProfile";
 import { RenderAvatar } from "./ChatMessageGroup";
 
 // UI //
@@ -42,28 +47,47 @@ function ChatMessagePrivate({
   currentTime,
 }: Props): JSX.Element {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {
     user_id: currentUserId,
     avatar_url: avatar_self,
     username,
   } = currentUser;
+
   const {
     avatar_url: avatar_friend,
     friend_id,
     friend_email,
     friend_username,
+    friend_display_name,
   } = targetFriend;
+
   const { msg_body, msg_type, file_localUrl, file_type, file_url, created_at } =
     message;
 
-  const [openProfile, setOpenProfile] = useState<boolean>(false);
+  const [displayName, setDisplayName] = useState<string>("");
 
-  function closeProfileHandler() {
-    setOpenProfile(false);
-  }
+  useEffect(() => {
+    setDisplayName(() => {
+      if (!friend_display_name) {
+        return friend_username;
+      } else {
+        return friend_display_name;
+      }
+    });
+  }, [friend_display_name, friend_username]);
+
   function viewUserProfileHandler() {
-    setOpenProfile(true);
+    dispatch(setOpenViewProfileModal(true));
+    dispatch(
+      setViewProfileTarget({
+        email: friend_email,
+        user_id: friend_id,
+        avatar_url: avatar_friend,
+        username: friend_username,
+      })
+    );
   }
   function viewSelfProfileHandler() {
     navigate("/profile");
@@ -104,7 +128,7 @@ function ChatMessagePrivate({
               <RenderAvatar
                 className={styles.avatar}
                 avatar_url={avatar_friend}
-                member_name={friend_username}
+                member_name={displayName}
                 viewProfileHandler={viewUserProfileHandler}
               />
             )}
@@ -159,30 +183,8 @@ function ChatMessagePrivate({
           </div>
         </>
       )}
-
-      {/* have to use margin instead of gap to seperate the timeline and body since the 
-        modal is counted as an inline element here, the gap will also be applied to it */}
-      <ViewUserProfile
-        openModal={openProfile}
-        user_id={friend_id}
-        username={friend_username}
-        email={friend_email}
-        avatar_url={avatar_friend}
-        closeModalHandler={closeProfileHandler}
-      />
     </main>
   );
 }
 
 export default memo(ChatMessagePrivate);
-
-/**
- * 
- * 
- * <Avatar
-                className={styles.avatar}
-                src={avatar_self ? avatar_self : username[0]}
-                alt={username[0]}
-                onClick={viewSelfProfileHandler}
-              />
- */

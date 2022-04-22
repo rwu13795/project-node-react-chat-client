@@ -19,9 +19,6 @@
 }
 
 @media screen and (max-width: 765px) {
-  .main {
-    width: 75%;
-  }
   .text_button_wrapper {
     width: 100%;
     max-width: min(500px, 70vw);

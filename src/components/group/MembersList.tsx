@@ -9,9 +9,10 @@ import {
   selectCurrentUser,
   selectFriendsList,
   selectTargetGroup,
+  setOpenViewProfileModal,
+  setViewProfileTarget,
 } from "../../redux/user/userSlice";
 import ChangeGroupName from "./ChangeGroupName";
-import ViewUserProfile from "../user/profile/ViewUserProfile";
 import { kickMember_emitter } from "../../socket-io/emitters";
 
 // UI //
@@ -34,27 +35,14 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
   const friendsList = useSelector(selectFriendsList);
 
   const { group_id, group_name, group_members, admin_user_id } = targetGroup;
-  const [openProfile, setOpenProfile] = useState<boolean>(false);
-  const [targetUser, setTargetUser] = useState<GroupMember>({
-    user_id: "",
-    username: "",
-    email: "",
-  });
   const [kicking, setKicking] = useState<boolean>(false);
-
-  function openProfileHandler() {
-    setOpenProfile(true);
-  }
-  function closeProfileHandler() {
-    setOpenProfile(false);
-  }
 
   function handleCloseMemberList() {
     setOpenMemberList(false);
   }
   function viewUserProfileHandler(member: GroupMember) {
-    setTargetUser(member);
-    openProfileHandler();
+    dispatch(setOpenViewProfileModal(true));
+    dispatch(setViewProfileTarget(member));
   }
   function kickMemberHandler(member_user_id: string, member_username: string) {
     if (socket) {
@@ -72,14 +60,6 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
           onClick={handleCloseMemberList}
         />
       </div>
-      <ViewUserProfile
-        openModal={openProfile}
-        user_id={targetUser.user_id}
-        username={targetUser.username}
-        email={targetUser.email}
-        avatar_url={targetUser.avatar_url}
-        closeModalHandler={closeProfileHandler}
-      />
 
       <main className={styles.main}>
         {targetGroup && group_members && (
@@ -99,8 +79,17 @@ function MembersList({ socket, setOpenMemberList }: Props): JSX.Element {
               <div className={styles.short_border}></div>
               <div className={styles.list_body}>
                 {group_members.map((member, index) => {
-                  const { user_id, avatar_url, username } = member;
+                  let { user_id, avatar_url, username } = member;
                   const isFriend = friendsList[user_id] !== undefined;
+                  if (
+                    isFriend &&
+                    friendsList[user_id].friend_display_name &&
+                    friendsList[user_id].friend_display_name !== ""
+                  ) {
+                    username = friendsList[user_id]
+                      .friend_display_name as string;
+                  }
+
                   return (
                     <div
                       key={index}

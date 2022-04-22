@@ -18,12 +18,11 @@ function MembersListAvatars({ group_members, user_left }: Props): JSX.Element {
       {group_members && !user_left && (
         <AvatarGroup max={4}>
           {group_members.map((member) => {
-            const { avatar_url, username, user_id } = member;
+            const { avatar_url, user_id } = member;
             return (
               <Avatar
                 key={user_id}
-                alt={username[0]}
-                src={avatar_url ? avatar_url : username[0]}
+                src={avatar_url}
                 className={styles.avatar}
               />
             );

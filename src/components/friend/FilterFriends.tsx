@@ -38,7 +38,11 @@ function FilterFriends({
     if (input.length > 40) return;
     setFilter(input);
     const list = friendsArray.filter((friend) => {
-      return friend.friend_username.toLowerCase().includes(input);
+      if (friend.friend_display_name && friend.friend_display_name !== "") {
+        return friend.friend_display_name.toLowerCase().includes(input);
+      } else {
+        return friend.friend_username.toLowerCase().includes(input);
+      }
     });
     setFilterList(list);
   }

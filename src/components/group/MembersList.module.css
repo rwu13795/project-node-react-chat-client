@@ -70,7 +70,7 @@
 
 .outter_wrapper {
   width: 100px;
-  max-width: 150px;
+  max-width: 110px;
   margin: 5px;
 }
 .outter_wrapper_target {
@@ -84,7 +84,7 @@
 }
 .member_wrapper {
   width: 100px;
-  max-width: 150px;
+  max-width: 110px;
   display: flex;
   flex-flow: column nowrap;
   justify-content: center;
@@ -113,11 +113,12 @@
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.815);
 }
 .username {
-  max-width: 140px;
+  max-width: 110px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  overflow-wrap: break-word;
   text-overflow: ellipsis;
   font-size: 14px;
 }

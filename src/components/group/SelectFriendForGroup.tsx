@@ -82,7 +82,15 @@ function InviteFriendToGroup({
           <div className={styles.short_border}></div>
           <div className={styles.list_body}>
             {Object.values(friendsList).map((friend) => {
-              const { friend_id, avatar_url, friend_username } = friend;
+              let {
+                friend_id,
+                avatar_url,
+                friend_username,
+                friend_display_name,
+              } = friend;
+              if (friend_display_name && friend_display_name !== "") {
+                friend_username = friend_display_name;
+              }
 
               let outter_wrapper = styles.outter_wrapper;
               let isTarget = false;

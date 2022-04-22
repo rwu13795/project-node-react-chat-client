@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { InputFields } from "../../../components/input-field/InputField";
+import { inputNames } from "../../enums/input-names";
 import { onBlurCheck } from "./on-blur-check";
 
 export function onSubmitCheck(
@@ -11,6 +12,10 @@ export function onSubmitCheck(
   // set error on the un-touched empty field
   for (let [name, value] of Object.entries(inputValues)) {
     if (value === "") {
+      if (Object.keys(inputValues)[0] === inputNames.friend_display_name) {
+        return false;
+      }
+
       setInputErrors((prev) => {
         return { ...prev, [name]: "Required field" };
       });

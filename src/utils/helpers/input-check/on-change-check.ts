@@ -36,6 +36,24 @@ export function onChangeCheck(
       }
       return (hasError = false);
     }
+
+    case inputNames.friend_display_name: {
+      if (inputValue.length > 40) {
+        setInputErrors((prev) => {
+          return {
+            ...prev,
+            [inputName]:
+              "Friend's display name cannot be longer than 40 characters",
+          };
+        });
+      } else {
+        setInputErrors((prev) => {
+          return { ...prev, [inputName]: "" };
+        });
+      }
+      return (hasError = false);
+    }
+
     case inputNames.new_group_name: {
       if (inputValue.length > 40) {
         setInputErrors((prev) => {

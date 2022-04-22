@@ -14,6 +14,9 @@ export function onBlurCheck(
 ): boolean {
   let hasError = false;
   if (touched && inputValue === "") {
+    if (inputName === inputNames.friend_display_name) {
+      return false;
+    }
     setInputErrors((prev) => {
       return { ...prev, [inputName]: "Required field" };
     });
@@ -130,6 +133,20 @@ export function onBlurCheck(
             return {
               ...prev,
               [inputName]: "The message exceeds 250-charater limit",
+            };
+          });
+          hasError = true;
+        }
+        break;
+      }
+
+      case inputNames.friend_display_name: {
+        if (inputValue.length > 40) {
+          setInputErrors((prev) => {
+            return {
+              ...prev,
+              [inputName]:
+                "Friend's display name cannot be longer than 40 characters",
             };
           });
           hasError = true;

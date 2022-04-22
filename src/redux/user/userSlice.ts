@@ -31,6 +31,10 @@ import {
   getGroupMembersList_database_fulfilled,
   getUserAuth,
   getUserAuth_fulfilled,
+  setFriendDisplayName,
+  setFriendDisplayName_fulfilled,
+  setFriendDisplayName_pending,
+  setFriendDisplayName_rejected,
   signIn,
   signInWithGoogle,
   signInWithGoogle_fulfilled,
@@ -70,6 +74,8 @@ import {
   setOpenAlertModal_sameUser_reducer,
   setOpenAlertModal_timeOut_reducer,
   setFriendNewName_reducer,
+  setViewProfileTarget_reducer,
+  setOpenViewProfileModal_reducer,
 } from "./reducers";
 import { InputFields } from "../../components/input-field/InputField";
 import { setFriendNewAvatar_reducer } from "./reducers/setFriendNewAvatar";
@@ -105,6 +111,7 @@ export interface Friend {
   friend_username: string;
   friend_email: string;
   avatar_url?: string;
+  friend_display_name?: string;
   user_blocked_friend: boolean;
   user_blocked_friend_at: string;
   friend_blocked_user: boolean;
@@ -156,6 +163,8 @@ export interface UserState {
   requestErrors: RequestErrors;
   openAlertModal_sameUser: boolean;
   openAlertModal_timeOut: boolean;
+  openViewProfileModal: boolean;
+  viewProfileTarget: GroupMember;
 }
 
 export const initialState_user: UserState = {
@@ -181,6 +190,8 @@ export const initialState_user: UserState = {
   requestErrors: {},
   openAlertModal_sameUser: false,
   openAlertModal_timeOut: false,
+  openViewProfileModal: false,
+  viewProfileTarget: { user_id: "", username: "", email: "" },
 };
 
 const userSlice = createSlice({
@@ -234,6 +245,10 @@ const userSlice = createSlice({
     setFriendNewName: setFriendNewName_reducer,
 
     setFriendNewAvatar: setFriendNewAvatar_reducer,
+
+    setViewProfileTarget: setViewProfileTarget_reducer,
+
+    setOpenViewProfileModal: setOpenViewProfileModal_reducer,
   },
 
   extraReducers: (builder) => {
@@ -293,7 +308,12 @@ const userSlice = createSlice({
       /***************  CHANGE GROUP NAME  ***************/
       .addCase(changeGroupName.fulfilled, changeGroupName_fulfilled)
       .addCase(changeGroupName.pending, changeGroupName_pending)
-      .addCase(changeGroupName.rejected, changeGroupName_rejected);
+      .addCase(changeGroupName.rejected, changeGroupName_rejected)
+
+      /***************  SET FRIEND DISPLAY NAME  ***************/
+      .addCase(setFriendDisplayName.fulfilled, setFriendDisplayName_fulfilled)
+      .addCase(setFriendDisplayName.pending, setFriendDisplayName_pending)
+      .addCase(setFriendDisplayName.rejected, setFriendDisplayName_rejected);
   },
 });
 
@@ -322,6 +342,8 @@ export const {
   setOpenAlertModal_timeOut,
   setFriendNewName,
   setFriendNewAvatar,
+  setOpenViewProfileModal,
+  setViewProfileTarget,
 } = userSlice.actions;
 
 export default userSlice.reducer;
@@ -438,4 +460,13 @@ export const selectOpenAlertModal_sameUser = createSelector(
 export const selectOpenAlertModal_timeOut = createSelector(
   [selectUser],
   (userState) => userState.openAlertModal_timeOut
+);
+
+export const selectOpenViewProfileModal = createSelector(
+  [selectUser],
+  (userState) => userState.openViewProfileModal
+);
+export const selectViewProfileTarget = createSelector(
+  [selectUser],
+  (userState) => userState.viewProfileTarget
 );

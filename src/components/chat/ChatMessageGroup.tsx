@@ -1,10 +1,14 @@
-import { memo, useState } from "react";
+import { memo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
-import ViewUserProfile from "../user/profile/ViewUserProfile";
 import { MessageObject, msgType } from "../../redux/message/messageSlice";
 import { FileIcons, getFileIcon } from "../../utils";
-import { CurrentUser, GroupMember } from "../../redux/user/userSlice";
+import {
+  CurrentUser,
+  setOpenViewProfileModal,
+  setViewProfileTarget,
+} from "../../redux/user/userSlice";
 import ChatTimeline from "./ChatTimeline";
 
 // UI //
@@ -27,7 +31,11 @@ const fileIcons: FileIcons = {
 interface Props {
   message: MessageObject;
   group_id: string;
-  targetGroupMembers: { [member_id: string]: GroupMember };
+  friend_display_name: string;
+  member_name: string;
+  avatar_member: string | undefined;
+  member_email: string;
+  member_id: string;
   currentUser: CurrentUser;
   next_created_at: string;
   currentTime: Date;
@@ -38,48 +46,41 @@ const cloudFrontUrl = process.env.REACT_APP_AWS_CLOUD_FRONT_URL;
 function ChatMessageGroup({
   message,
   group_id,
-  targetGroupMembers,
+  friend_display_name,
+  member_name,
+  avatar_member,
+  member_email,
+  member_id,
   currentUser,
   next_created_at,
   currentTime,
 }: Props): JSX.Element {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const {
     user_id: currentUserId,
     username,
     avatar_url: avatar_self,
   } = currentUser;
-  const {
-    sender_id,
-    msg_body,
-    msg_type,
-    file_localUrl,
-    file_type,
-    file_url,
-    created_at,
-  } = message;
-  const [openProfile, setOpenProfile] = useState<boolean>(false);
+  const { msg_body, msg_type, file_localUrl, file_type, file_url, created_at } =
+    message;
+  const displayName =
+    friend_display_name !== "" ? friend_display_name : member_name;
 
-  function closeProfileHandler() {
-    setOpenProfile(false);
-  }
   function viewUserProfileHandler() {
-    setOpenProfile(true);
+    dispatch(setOpenViewProfileModal(true));
+    dispatch(
+      setViewProfileTarget({
+        email: member_email,
+        user_id: member_id,
+        avatar_url: avatar_member,
+        username: member_name,
+      })
+    );
   }
   function viewSelfProfileHandler() {
     navigate("/profile");
-  }
-
-  let member_name = "";
-  let avatar_member = undefined;
-  let member_email = "";
-  let member_id = "";
-  if (targetGroupMembers[sender_id]) {
-    member_name = targetGroupMembers[sender_id].username;
-    avatar_member = targetGroupMembers[sender_id].avatar_url;
-    member_email = targetGroupMembers[sender_id].email;
-    member_id = targetGroupMembers[sender_id].user_id;
   }
 
   const folder = "groups";
@@ -121,7 +122,7 @@ function ChatMessageGroup({
               <RenderAvatar
                 className={styles.avatar_member}
                 avatar_url={avatar_member}
-                member_name={member_name}
+                member_name={displayName}
                 viewProfileHandler={viewUserProfileHandler}
               />
             )}
@@ -129,7 +130,7 @@ function ChatMessageGroup({
               <div className={styles.member_name}>
                 {member_id === ""
                   ? "this member has left the group"
-                  : member_name}
+                  : displayName}
               </div>
               <div className={s_body}>
                 {!isSelf && <div className={s_body_tip}></div>}
@@ -182,17 +183,6 @@ function ChatMessageGroup({
           </div>
         </>
       )}
-
-      {/* have to use margin instead of gap to seperate the timeline and body since the 
-        modal is counted as an inline element here, the gap will also be applied to it */}
-      <ViewUserProfile
-        openModal={openProfile}
-        user_id={member_id}
-        username={member_name}
-        email={member_email}
-        avatar_url={avatar_member}
-        closeModalHandler={closeProfileHandler}
-      />
     </main>
   );
 }

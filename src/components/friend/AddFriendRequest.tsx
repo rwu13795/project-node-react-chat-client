@@ -5,12 +5,9 @@ import { Socket } from "socket.io-client";
 import {
   clearAddFriendRequests,
   selectAddFriendRequests,
-  selectLoadingStatus_2_user,
   selectLoadingStatus_user,
   selectUserId,
   selectUsername,
-  selectUserOnlineStatus,
-  setLoadingStatus_2_user,
   setLoadingStatus_user,
 } from "../../redux/user/userSlice";
 
@@ -33,7 +30,6 @@ import {
 } from "@mui/material";
 import CancelPresentationIcon from "@mui/icons-material/CancelPresentation";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import { getNotifications } from "../../redux/message/asyncThunk";
 
 interface Props {
   socket: Socket | undefined;
@@ -44,14 +40,11 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
 
   const currentUserId = useSelector(selectUserId);
   const currentUsername = useSelector(selectUsername);
-  const currentOnlineStatus = useSelector(selectUserOnlineStatus);
   const addFriendRequests = useSelector(selectAddFriendRequests);
   const loadingStatus = useSelector(selectLoadingStatus_user);
-  const loadingStauts_2 = useSelector(selectLoadingStatus_2_user);
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [reqIndex, setReqIndex] = useState<number>(-1);
-  const [reqSenderId, setReqSenderId] = useState<string>("");
 
   function handleOpenModal() {
     setOpenModal(true);
@@ -78,7 +71,7 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
       });
     }
     setReqIndex(index);
-    setReqSenderId(sender_id);
+
     if (!accept) {
       dispatch(clearAddFriendRequests(index));
       dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
@@ -87,13 +80,6 @@ function AddFriendRequest({ socket }: Props): JSX.Element {
 
   useEffect(() => {
     if (loadingStatus === loadingStatusEnum.addFriend_succeeded) {
-      // only getNotifications after the "getAuth" is fulfilled, otherwise if the "getNotifications"
-      // is fulfilled before the "getAuth", the online_emitter will be triggered before
-      // the "getAuth" finished updating the new friendList, then the new added friend
-      // will be always set as offline if both users are online.
-      // dispatch(getNotifications({ currentUserId }));
-      // dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
-      // dispatch(setLoadingStatus_2_user(loadingStatusEnum.idle));
       dispatch(clearAddFriendRequests(reqIndex));
     }
   }, [loadingStatus, reqIndex, dispatch]);

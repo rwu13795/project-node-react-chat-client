@@ -11,3 +11,4 @@ export * from "./change-password";
 export * from "./change-online-status";
 export * from "./sign-in-goolge";
 export * from "./change-group-name";
+export * from "./set-friend-display-name";

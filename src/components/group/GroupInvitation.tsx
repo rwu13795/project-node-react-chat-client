@@ -102,7 +102,12 @@ function GroupInvitation({ groupInvitations, socket }: Props): JSX.Element {
             <div className={styles.border}></div>
             {groupInvitations.map((inv, index) => {
               const { group_id, group_name, inviter_id, discarded } = inv;
-              const { friend_username, avatar_url } = friendsList[inviter_id];
+              let { friend_username, avatar_url, friend_display_name } =
+                friendsList[inviter_id];
+              if (friend_display_name && friend_display_name !== "") {
+                friend_username = friend_display_name;
+              }
+
               return (
                 <div key={group_id} className={styles.invitation_wrapper}>
                   {discarded ? (

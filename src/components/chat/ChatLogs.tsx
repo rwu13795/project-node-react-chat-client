@@ -16,6 +16,7 @@ import {
 import {
   Friend,
   selectCurrentUser,
+  selectFriendsList,
   selectTargetGroupMembers,
 } from "../../redux/user/userSlice";
 import ChatMessagePrivate from "./ChatMessagePrivate";
@@ -43,6 +44,7 @@ function ChatLogs({
 
   const chatHistory = useSelector(selectTargetChatRoom_history);
   const currentUser = useSelector(selectCurrentUser);
+  const friendsList = useSelector(selectFriendsList);
   const infiniteScrollStats = useSelector(selectInfiniteScrollStats);
   const loadingStatus = useSelector(selectLoadingStatus_msg);
   const loadingStatus_2 = useSelector(selectLoadingStatus_2_msg);
@@ -151,12 +153,36 @@ function ChatLogs({
           chatHistory.map((msg, index) => {
             const next_msg = chatHistory[index + 1];
             const currentTime = new Date();
+            const sender_id = msg.sender_id;
+
+            let member_name = "";
+            let avatar_member = undefined;
+            let member_email = "";
+            let member_id = "";
+            if (targetGroupMembers[sender_id]) {
+              member_name = targetGroupMembers[sender_id].username;
+              avatar_member = targetGroupMembers[sender_id].avatar_url;
+              member_email = targetGroupMembers[sender_id].email;
+              member_id = targetGroupMembers[sender_id].user_id;
+            }
+            let friend_display_name = "";
+            if (friendsList[sender_id]) {
+              if (friendsList[sender_id].friend_display_name) {
+                friend_display_name = friendsList[sender_id]
+                  .friend_display_name as string;
+              }
+            }
+
             return (
               <ChatMessageGroup
                 key={index}
                 message={msg}
                 group_id={targetChatRoom.id}
-                targetGroupMembers={targetGroupMembers}
+                friend_display_name={friend_display_name}
+                member_name={member_name}
+                avatar_member={avatar_member}
+                member_email={member_email}
+                member_id={member_id}
                 currentUser={currentUser}
                 currentTime={currentTime}
                 next_created_at={next_msg ? next_msg.created_at : ""}

@@ -1,9 +1,12 @@
-import { memo, useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { memo, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { selectTargetFriend } from "../../../redux/user/userSlice";
-import ViewUserProfile from "../../user/profile/ViewUserProfile";
+import {
+  selectTargetFriend,
+  setOpenViewProfileModal,
+  setViewProfileTarget,
+} from "../../../redux/user/userSlice";
 import OptionsPrivateChatMenu from "./OptionsPrivateChatMenu";
 import { scrollMainPage } from "../../../utils";
 import BlockUnblockFriend from "../../friend/BlockUnblockFriend";
@@ -28,10 +31,11 @@ function PrivateChatMenu({
   setOpenGroupForFriend,
   homePageMainGridRef,
 }: Props): JSX.Element {
+  const dispatch = useDispatch();
   const isSmall = useMediaQuery("(max-width:765px)");
   const max_900px = useMediaQuery("(max-width:900px)");
 
-  const {
+  let {
     friend_blocked_user,
     friend_blocked_user_at,
     user_blocked_friend,
@@ -39,15 +43,24 @@ function PrivateChatMenu({
     friend_username,
     friend_email,
     avatar_url,
+    friend_display_name,
   } = useSelector(selectTargetFriend(friend_id));
 
-  const [openProfile, setOpenProfile] = useState<boolean>(false);
+  let display_name = friend_username;
+  if (friend_display_name && friend_display_name !== "") {
+    display_name = friend_display_name;
+  }
 
   function openProfileHandler() {
-    setOpenProfile(true);
-  }
-  function closeProfileHandler() {
-    setOpenProfile(false);
+    dispatch(setOpenViewProfileModal(true));
+    dispatch(
+      setViewProfileTarget({
+        email: friend_email,
+        user_id: friend_id,
+        avatar_url,
+        username: friend_username,
+      })
+    );
   }
 
   function openGroupForFriendHandler() {
@@ -75,12 +88,12 @@ function PrivateChatMenu({
         <div className={styles.center}>
           <div className={styles_2.avatar_wrapper}>
             <Avatar
-              src={avatar_url ? avatar_url : friend_username[0]}
-              alt={friend_username[0]}
+              src={avatar_url ? avatar_url : display_name[0]}
+              alt={display_name[0]}
               className={styles_2.avatar}
               onClick={openProfileHandler}
             />
-            <div className={styles_2.username}>{friend_username}</div>
+            <div className={styles_2.username}>{display_name}</div>
           </div>
 
           {friend_blocked_user && (
@@ -126,14 +139,6 @@ function PrivateChatMenu({
           )}
         </div>
       </main>
-      <ViewUserProfile
-        openModal={openProfile}
-        user_id={friend_id}
-        username={friend_username}
-        email={friend_email}
-        avatar_url={avatar_url}
-        closeModalHandler={closeProfileHandler}
-      />
     </>
   );
 }

@@ -1,19 +1,12 @@
-import { memo } from "react";
-import GoogleLogin, {
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
+import { memo, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { CredentialResponse } from "google-one-tap";
+
 import { signInWithGoogle } from "../../../redux/user/asyncThunk";
-import {
-  selectLoadingStatus_user,
-  selectRequestErrors,
-} from "../../../redux/user/userSlice";
+import { selectLoadingStatus_user } from "../../../redux/user/userSlice";
 import { loadingStatusEnum } from "../../../utils";
 
 // UI //
-import styles from "./GoogleSignIn.module.css";
-import logo from "./../../../images/google-logo-2.webp";
 import CircularProgress from "@mui/material/CircularProgress";
 
 interface Props {
@@ -23,53 +16,45 @@ interface Props {
 function GoogleSignIn({ appearOffline }: Props): JSX.Element {
   const dispatch = useDispatch();
 
-  const requestError = useSelector(selectRequestErrors);
   const loading = useSelector(selectLoadingStatus_user);
 
-  function handleLogin(
-    response: GoogleLoginResponse | GoogleLoginResponseOffline
-  ) {
-    if (instanceOf_GoogleLoginResponse(response)) {
-      dispatch(signInWithGoogle({ token: response.tokenId, appearOffline }));
+  async function handleCallbackResponse(response: CredentialResponse) {
+    // when the user successfully logged in using his/her google account
+    // the client will receive a token which we will need to decode in the server
+    // and extract the user's info
+    dispatch(signInWithGoogle({ token: response.credential, appearOffline }));
+  }
+
+  useEffect(() => {
+    // initialize the google client
+    google.accounts.id.initialize({
+      client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID!,
+      callback: handleCallbackResponse,
+    });
+
+    const signInButton = document.getElementById("google-sign-in");
+    if (signInButton) {
+      // render a google sign-in button
+      google.accounts.id.renderButton(
+        signInButton,
+        // find more options in the api document https://developers.google.com/identity/gsi/web/reference/js-reference
+        { theme: "filled_blue", size: "large", width: 200 }
+      );
     }
-  }
 
-  function handleFailure(error: any) {
-    console.log(error);
-  }
+    // one-tap signin
+    google.accounts.id.prompt();
+  }, []);
 
-  // since the GoogleLogin is only used to identify the user, and the express-session
-  // is not depending on the cookies of the google account, I don't need to use the
-  // GoogleLogout. When the express-session expires, the user will need to use
-  // the GoogleLogin to identify himself to sign in
   return (
-    <div>
-      <GoogleLogin
-        clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID!}
-        onSuccess={handleLogin}
-        onFailure={handleFailure}
-        className={styles.sign_in_button}
-        scope="profile"
-      >
-        {loading === loadingStatusEnum.googleSignIn_loading ? (
-          <body>
-            <CircularProgress size={30} color="secondary" />
-          </body>
-        ) : (
-          <img src={logo} alt="google-logo" className={styles.logo} />
-        )}
-
-        <div className={styles.text}>Sign in with Google</div>
-      </GoogleLogin>
-      <div className={styles.error}>{requestError["google_auth"]}</div>
-    </div>
+    <>
+      {loading === loadingStatusEnum.googleSignIn_loading ? (
+        <CircularProgress size={30} color="secondary" />
+      ) : (
+        <div id="google-sign-in"></div>
+      )}
+    </>
   );
 }
 
 export default memo(GoogleSignIn);
-
-function instanceOf_GoogleLoginResponse(
-  response: any
-): response is GoogleLoginResponse {
-  return true;
-}

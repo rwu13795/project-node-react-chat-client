@@ -9,6 +9,7 @@ import { loadingStatusEnum } from "../../../utils";
 // UI //
 import styles from "./GoogleSignIn.module.css";
 import CircularProgress from "@mui/material/CircularProgress";
+import { useScript } from "../../../utils/hooks/useScript";
 
 interface Props {
   appearOffline: boolean;
@@ -17,6 +18,7 @@ interface Props {
 function GoogleSignIn({ appearOffline }: Props): JSX.Element {
   const dispatch = useDispatch();
 
+  const scriptLoadStatus = useScript("https://accounts.google.com/gsi/client");
   const loading = useSelector(selectLoadingStatus_user);
 
   async function handleCallbackResponse(response: CredentialResponse) {
@@ -27,25 +29,28 @@ function GoogleSignIn({ appearOffline }: Props): JSX.Element {
   }
 
   useEffect(() => {
-    // initialize the google client
-    google.accounts.id.initialize({
-      client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID!,
-      callback: handleCallbackResponse,
-    });
+    // only initialize the google identity button after the script is loaded
+    if (scriptLoadStatus === "ready") {
+      // initialize the google client
+      google.accounts.id.initialize({
+        client_id: process.env.REACT_APP_GOOGLE_CLIENT_ID!,
+        callback: handleCallbackResponse,
+      });
 
-    const signInButton = document.getElementById("google-sign-in");
-    if (signInButton) {
-      // render a google sign-in button
-      google.accounts.id.renderButton(
-        signInButton,
-        // find more options in the api document https://developers.google.com/identity/gsi/web/reference/js-reference
-        { theme: "filled_blue", size: "large", width: 200 }
-      );
+      const signInButton = document.getElementById("google-sign-in");
+      if (signInButton) {
+        // render a google sign-in button
+        google.accounts.id.renderButton(
+          signInButton,
+          // find more options in the api document https://developers.google.com/identity/gsi/web/reference/js-reference
+          { theme: "filled_blue", size: "large", width: 200 }
+        );
+      }
+
+      // one-tap signin
+      google.accounts.id.prompt();
     }
-
-    // one-tap signin
-    google.accounts.id.prompt();
-  }, []);
+  }, [scriptLoadStatus]);
 
   return (
     <>

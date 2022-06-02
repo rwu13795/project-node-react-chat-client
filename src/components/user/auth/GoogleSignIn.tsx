@@ -7,6 +7,7 @@ import { selectLoadingStatus_user } from "../../../redux/user/userSlice";
 import { loadingStatusEnum } from "../../../utils";
 
 // UI //
+import styles from "./GoogleSignIn.module.css";
 import CircularProgress from "@mui/material/CircularProgress";
 
 interface Props {
@@ -51,7 +52,7 @@ function GoogleSignIn({ appearOffline }: Props): JSX.Element {
       {loading === loadingStatusEnum.googleSignIn_loading ? (
         <CircularProgress size={30} color="secondary" />
       ) : (
-        <div id="google-sign-in"></div>
+        <div id="google-sign-in" className={styles.button_wrapper}></div>
       )}
     </>
   );

@@ -3,7 +3,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { CredentialResponse } from "google-one-tap";
 
 import { signInWithGoogle } from "../../../redux/user/asyncThunk";
-import { selectLoadingStatus_user } from "../../../redux/user/userSlice";
+import {
+  selectIsLoggedIn,
+  selectLoadingStatus_user,
+} from "../../../redux/user/userSlice";
 import { loadingStatusEnum } from "../../../utils";
 
 // UI //
@@ -20,6 +23,7 @@ function GoogleSignIn({ appearOffline }: Props): JSX.Element {
 
   const scriptLoadStatus = useScript("https://accounts.google.com/gsi/client");
   const loading = useSelector(selectLoadingStatus_user);
+  const isLoggedIn = useSelector(selectIsLoggedIn);
 
   async function handleCallbackResponse(response: CredentialResponse) {
     // when the user successfully logged in using his/her google account
@@ -47,10 +51,11 @@ function GoogleSignIn({ appearOffline }: Props): JSX.Element {
         );
       }
 
-      // one-tap signin
-      google.accounts.id.prompt();
+      if (!isLoggedIn) {
+        google.accounts.id.prompt();
+      }
     }
-  }, [scriptLoadStatus]);
+  }, [scriptLoadStatus, isLoggedIn]);
 
   return (
     <>

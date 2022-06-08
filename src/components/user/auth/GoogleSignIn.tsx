@@ -58,7 +58,7 @@ function GoogleSignIn({ appearOffline }: Props): JSX.Element {
       if (!isLoggedIn && scriptLoadStatus === "ready") {
         google.accounts.id.prompt();
       }
-    }, 3000);
+    }, 2000);
 
     return () => {
       clearTimeout(timeoutId);

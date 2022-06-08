@@ -50,12 +50,20 @@ function GoogleSignIn({ appearOffline }: Props): JSX.Element {
           { theme: "filled_blue", size: "large", width: 200 }
         );
       }
+    }
+  }, [scriptLoadStatus]);
 
-      if (!isLoggedIn) {
+  useEffect(() => {
+    let timeoutId = setTimeout(() => {
+      if (!isLoggedIn && scriptLoadStatus === "ready") {
         google.accounts.id.prompt();
       }
-    }
-  }, [scriptLoadStatus, isLoggedIn]);
+    }, 3000);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
+  }, [isLoggedIn, scriptLoadStatus]);
 
   return (
     <>

@@ -1,9 +1,13 @@
-- This project was written in Typescript in both frontend and backend. I utilized the frameworks Next.js and React.js to create the client and Node.js to create the server.
+### live-demo: https://www.reachat.live/
+- This project was written in Typescript in both frontend and backend. I utilized the React.js, Node.js and Socket.io to create the client and the server.
+- it is a real-time chat app allows users and groups of users to commnuicate with each other. 
 
-- This e-commerce web app is a complete application which has most of the essential features. 
-
-- For example, an user is able to create an account, to sign in, to keep user session,  to update password, to change user profile, to request for password reset with an verified email
-
-- As a customer, user is able to search and filter products, to read and write reviews for products, to get purchase history
-
-- Furthermore, an administrator is able to add new, edit and delete products using admin account
+### User is able to
+- create an account with an email or sign-in/sign-up with Google Identity
+- update password and request for password reset with an verified email
+- change user infomation and upload profile picture.
+- keep user session
+- search, add, filter and block friends
+- create groups, invite friends to group and kick members from group
+- use emoji selector
+- send pictures and files

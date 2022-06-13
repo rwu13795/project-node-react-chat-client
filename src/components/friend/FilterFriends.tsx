@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { Friend, selectFriendsArray } from "../../redux/user/userSlice";
+import { Friend, selectFriendsList } from "../../redux/user/userSlice";
 import RenderFriend from "../menu/left/RenderFriend";
 
 // UI //
@@ -22,14 +22,14 @@ function FilterFriends({
   closeFilterFriend,
   setExpandList,
 }: Props): JSX.Element {
-  const friendsArray = useSelector(selectFriendsArray);
+  const friendsList = useSelector(selectFriendsList);
 
   const [filter, setFilter] = useState<string>("");
   const [filterList, setFilterList] = useState<Friend[]>([]);
 
   useEffect(() => {
-    if (friendsArray) setFilterList(friendsArray);
-  }, [friendsArray]);
+    if (friendsList) setFilterList(Object.values(friendsList));
+  }, [friendsList]);
 
   function inputChangeHandler(
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -37,7 +37,7 @@ function FilterFriends({
     const input = e.target.value;
     if (input.length > 40) return;
     setFilter(input);
-    const list = friendsArray.filter((friend) => {
+    const list = Object.values(friendsList).filter((friend) => {
       if (friend.friend_display_name && friend.friend_display_name !== "") {
         return friend.friend_display_name.toLowerCase().includes(input);
       } else {

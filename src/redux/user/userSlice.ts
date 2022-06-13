@@ -147,7 +147,6 @@ export interface UserState {
   currentUser: CurrentUser;
   // friends
   friendsList: FriendsList;
-  friendsArray: Friend[];
   addFriendRequests: AddFriendRequest[];
   result_addFriendRequest: string;
   // groups
@@ -176,7 +175,6 @@ export const initialState_user: UserState = {
     onlineStatus: onlineStatus_enum.offline,
   },
   friendsList: {},
-  friendsArray: [],
   addFriendRequests: [],
   result_addFriendRequest: "",
   groupInvitations: [],
@@ -445,10 +443,6 @@ export const selectLoadingStatus_2_user = createSelector(
   (userState) => userState.loadingStatus_2
 );
 
-export const selectFriendsArray = createSelector(
-  [selectUser],
-  (userState) => userState.friendsArray
-);
 export const selectGroupsArray = createSelector(
   [selectUser],
   (userState) => userState.groupsArray

@@ -15,5 +15,4 @@ export function resetAfterSignOut_user_reducer(
   state.groupsToJoin = initialState_user.groupsToJoin;
   state.newGroupToJoin = initialState_user.newGroupToJoin;
   state.requestErrors = initialState_user.requestErrors;
-  state.groupsArray = [];
 }

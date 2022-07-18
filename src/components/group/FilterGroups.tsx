@@ -2,7 +2,7 @@ import { memo, useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Socket } from "socket.io-client";
 
-import { Group, selectGroupsArray } from "../../redux/user/userSlice";
+import { Group, selectGroupsList } from "../../redux/user/userSlice";
 import RenderGroup from "../menu/left/RenderGroup";
 
 // UI //
@@ -24,14 +24,14 @@ function FilterGroups({
   closeFilterGroup,
   setExpandList,
 }: Props): JSX.Element {
-  const GroupsArray = useSelector(selectGroupsArray);
+  const groupsList = useSelector(selectGroupsList);
 
   const [filter, setFilter] = useState<string>("");
   const [filterList, setFilterList] = useState<Group[]>([]);
 
   useEffect(() => {
-    if (GroupsArray) setFilterList(GroupsArray);
-  }, [GroupsArray]);
+    if (groupsList) setFilterList(Object.values(groupsList));
+  }, [groupsList]);
 
   function inputChangeHandler(
     e: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
@@ -39,7 +39,7 @@ function FilterGroups({
     const input = e.target.value;
     if (input.length > 40) return;
     setFilter(input);
-    const list = GroupsArray.filter((group) => {
+    const list = Object.values(groupsList).filter((group) => {
       return group.group_name.toLowerCase().includes(input);
     });
     setFilterList(list);

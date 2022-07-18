@@ -2,21 +2,21 @@ import { memo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
-  selectOpenAlertModal_sameUser,
-  setOpenAlertModal_sameUser,
+  selectOpenAlertModal_timeOut,
+  setOpenAlertModal_timeOut,
 } from "../../redux/user/userSlice";
 
 // UI //
 import styles from "./TimeOutModal.module.css";
 import { Modal, Fade, Box, Backdrop, Button } from "@mui/material";
 
-function AlterModalSameUser(): JSX.Element {
+function AlertModalTimeOut(): JSX.Element {
   const dispatch = useDispatch();
 
-  const openModal = useSelector(selectOpenAlertModal_sameUser);
+  const openModal = useSelector(selectOpenAlertModal_timeOut);
 
   function handleClose() {
-    dispatch(setOpenAlertModal_sameUser(false));
+    dispatch(setOpenAlertModal_timeOut(false));
   }
 
   return (
@@ -32,8 +32,8 @@ function AlterModalSameUser(): JSX.Element {
       <Fade in={openModal}>
         <Box className={styles.modal}>
           <div className={styles.text}>
-            You have signed in using a different browser or device. You were
-            automatically logged out from this session.
+            To protect your privacy, you were automatically logged out for being
+            idle more than 15 minutes.
           </div>
           <div className={styles.buttons_wrapper}>
             <Button
@@ -51,4 +51,4 @@ function AlterModalSameUser(): JSX.Element {
   );
 }
 
-export default memo(AlterModalSameUser);
+export default memo(AlertModalTimeOut);

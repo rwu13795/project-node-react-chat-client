@@ -23,8 +23,8 @@ import {
 import TimeOutModal from "./components/app-modal/TimeOutModal";
 import { logout_emitter } from "./socket-io/emitters";
 import { signOut } from "./redux/user/asyncThunk";
-import AlterModalTimeOut from "./components/app-modal/AlterModalTimeOut";
-import AlterModalSameUser from "./components/app-modal/AlterModalSameUser";
+import AlertModalTimeOut from "./components/app-modal/AlertModalTimeOut";
+import AlertModalSameUser from "./components/app-modal/AlertModalSameUser";
 
 function App(): JSX.Element {
   const dispatch = useDispatch();
@@ -127,8 +127,8 @@ function App(): JSX.Element {
         handleStaySignedIn={handleStaySignedIn}
         handleSignOut={handleSignOut}
       />
-      <AlterModalTimeOut />
-      <AlterModalSameUser />
+      <AlertModalTimeOut />
+      <AlertModalSameUser />
     </Router>
   );
 }

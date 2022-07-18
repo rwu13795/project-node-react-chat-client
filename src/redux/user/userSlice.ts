@@ -151,7 +151,6 @@ export interface UserState {
   result_addFriendRequest: string;
   // groups
   groupsList: GroupsList;
-  groupsArray: Group[];
   groupsToJoin: string[];
   newGroupToJoin: string;
   groupInvitations: GroupInvitation[];
@@ -180,7 +179,6 @@ export const initialState_user: UserState = {
   groupInvitations: [],
   result_groupInvitation: "",
   groupsList: {},
-  groupsArray: [],
   groupsToJoin: [],
   newGroupToJoin: "",
   loadingStatus: loadingStatusEnum.idle,
@@ -443,10 +441,6 @@ export const selectLoadingStatus_2_user = createSelector(
   (userState) => userState.loadingStatus_2
 );
 
-export const selectGroupsArray = createSelector(
-  [selectUser],
-  (userState) => userState.groupsArray
-);
 export const selectOpenAlertModal_sameUser = createSelector(
   [selectUser],
   (userState) => userState.openAlertModal_sameUser

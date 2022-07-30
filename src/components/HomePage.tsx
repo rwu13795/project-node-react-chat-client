@@ -20,7 +20,6 @@ import {
   setLoadingStatus_user,
 } from "../redux/user/userSlice";
 import { getNotifications } from "../redux/message/asyncThunk";
-import SocketClient from "../socket-io/SocketClient";
 import { loadingStatusEnum, resizeMenu } from "../utils";
 import { online_emitter } from "../socket-io/emitters";
 import RoomLists from "./menu/left/RoomLists";
@@ -30,6 +29,8 @@ import ChatRoom from "./menu/right/ChatRoom";
 import styles from "./HomePage.module.css";
 import { CircularProgress, useMediaQuery } from "@mui/material";
 import DragHandleIcon from "@mui/icons-material/DragHandle";
+import connectSocket from "../socket-io/socketConnection";
+import addAllListeners from "../socket-io/add-all-listener";
 
 interface Props {
   socket: Socket | undefined;
@@ -71,13 +72,9 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
     } else {
       // if getAuth has not finished loading before the selector selected the user_id
       if (!currentUserId) return;
+      if (socket) return;
 
-      if (socket) {
-        return;
-      }
-
-      let socketClient = SocketClient.getClient();
-      let newSocket = socketClient.connect(currentUserId, currentUsername);
+      let newSocket: Socket = connectSocket(currentUserId, currentUsername);
 
       newSocket.on("connect", () => {
         console.log(isLoggedIn);
@@ -85,7 +82,7 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
         dispatch(setCurrentUserId_msg(currentUserId));
 
         setSocket(newSocket);
-        socketClient.addAllListeners(dispatch, {
+        addAllListeners(newSocket, dispatch, {
           user_id: currentUserId,
           group_ids: groupsToJoin,
         });

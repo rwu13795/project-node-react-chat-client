@@ -8,7 +8,7 @@ interface Req_body {
 }
 
 export const changeOnlineStatus_session = createAsyncThunk<void, Req_body>(
-  "user/changePassword",
+  "user/changeOnlineStatus_session",
   async (body) => {
     const client = AxiosClient.getClient();
 

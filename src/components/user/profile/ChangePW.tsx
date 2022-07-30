@@ -42,6 +42,7 @@ function ChangePW(): JSX.Element {
 
   useEffect(() => {
     if (loading === loadingStatusEnum.resetPW_succeeded) {
+      console.log("loadingStatusEnum.resetPW_succeede", loading);
       setIsChanged(true);
       dispatch(setLoadingStatus_user(loadingStatusEnum.idle));
     }

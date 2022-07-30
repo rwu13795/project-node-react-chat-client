@@ -11,7 +11,7 @@ import {
   selectTargetGroup,
   selectUserId,
 } from "../../redux/user/userSlice";
-import { axios_client, scrollMainPage } from "../../utils";
+import { AxiosClient, scrollMainPage } from "../../utils";
 import { serverUrl } from "../../redux/utils";
 
 // UI //
@@ -27,7 +27,7 @@ interface Props {
 
 function RemoveGroup({ homePageMainGridRef }: Props): JSX.Element {
   const dispatch = useDispatch();
-  const client = axios_client();
+  const client = AxiosClient.getClient();
 
   const currentUserId = useSelector(selectUserId);
   const targetChatRoom = useSelector(selectTargetChatRoom);

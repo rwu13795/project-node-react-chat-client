@@ -1,12 +1,12 @@
 import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 import { RootState } from "../..";
-import { axios_client, loadingStatusEnum } from "../../../utils";
+import { AxiosClient, loadingStatusEnum } from "../../../utils";
 
 import { serverUrl } from "../../utils";
 import { UserState } from "../userSlice";
 
-interface Res_body {
+interface Req_body {
   username: string;
 }
 
@@ -16,10 +16,10 @@ interface Payload {
 
 export const changeUsername = createAsyncThunk<
   Payload,
-  Res_body,
+  Req_body,
   { state: RootState }
 >("user/changeUsername", async (body, thunkAPI) => {
-  const client = axios_client();
+  const client = AxiosClient.getClient();
 
   try {
     const { data } = await client.post<Payload>(

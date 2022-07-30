@@ -2,7 +2,7 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
-import { axios_client, loadingStatusEnum } from "../../../utils";
+import { AxiosClient, loadingStatusEnum } from "../../../utils";
 import { serverUrl } from "../../utils";
 import { MessageState } from "../messageSlice";
 
@@ -22,7 +22,7 @@ interface Payload {
   currentUserId: string;
   wasHistoryLoaded: boolean;
 }
-interface Res_body {
+interface Req_body {
   targetRoom_type: string;
   targetRoom_id: string;
   currentUserId: string;
@@ -35,7 +35,7 @@ interface Res_body {
 // the chatHistory by using "loadMoreOldChatHistory"
 export const loadChatHistory_database = createAsyncThunk<
   Payload,
-  Res_body,
+  Req_body,
   { state: RootState }
 >(
   "message/loadChatHistory",
@@ -43,7 +43,7 @@ export const loadChatHistory_database = createAsyncThunk<
     { targetRoom_type, targetRoom_id, currentUserId, date_limit },
     thunkAPI
   ) => {
-    const client = axios_client();
+    const client = AxiosClient.getClient();
 
     // id can be user's, group's or public-channel's id
     const room_id = `${targetRoom_type}_${targetRoom_id}`;

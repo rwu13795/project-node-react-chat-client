@@ -2,11 +2,11 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
-import { axios_client, loadingStatusEnum } from "../../../utils";
+import { AxiosClient, loadingStatusEnum } from "../../../utils";
 import { serverUrl } from "../../utils";
 import { Group, UserState } from "../userSlice";
 
-interface Res_body {
+interface Req_body {
   group_name: string;
   admin_user_id: string;
 }
@@ -14,10 +14,10 @@ interface Payload extends Group {}
 
 export const createNewGroup = createAsyncThunk<
   Payload,
-  Res_body,
+  Req_body,
   { state: RootState }
 >("user/createNewGroup", async (body, thunkAPI) => {
-  const client = axios_client();
+  const client = AxiosClient.getClient();
 
   try {
     const response = await client.post<Payload>(

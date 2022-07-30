@@ -1,7 +1,7 @@
 import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 import { RootState } from "../..";
-import { axios_client } from "../../../utils";
+import { AxiosClient } from "../../../utils";
 import { chatType } from "../../message/messageSlice";
 
 import { serverUrl } from "../../utils";
@@ -23,7 +23,7 @@ export const getGroupMembersList_database = createAsyncThunk<
   Req_body,
   { state: RootState }
 >("user/getGroupMembersList", async ({ group_id, initialize }, thunkAPI) => {
-  const client = axios_client();
+  const client = AxiosClient.getClient();
 
   const room_id = `${chatType.group}_${group_id}`;
   // if the room is visited, that means chat history has been loaded,

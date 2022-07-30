@@ -3,14 +3,14 @@ import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
 import {
-  axios_client,
+  AxiosClient,
   loadingStatusEnum,
   onlineStatus_enum,
 } from "../../../utils";
 import { serverUrl } from "../../utils";
 import { CurrentUser, Friend, UserState } from "../userSlice";
 
-interface Res_body {
+interface Req_body {
   email: string;
   username: string;
   password: string;
@@ -22,10 +22,10 @@ interface Payload {
   friendsList: Friend[];
 }
 
-export const signUp = createAsyncThunk<Payload, Res_body, { state: RootState }>(
+export const signUp = createAsyncThunk<Payload, Req_body, { state: RootState }>(
   "user/signUp",
   async (signUpBody, thunkAPI) => {
-    const client = axios_client();
+    const client = AxiosClient.getClient();
 
     try {
       const response = await client.post<Payload>(

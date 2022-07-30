@@ -2,11 +2,11 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
-import { axios_client } from "../../../utils";
+import { AxiosClient } from "../../../utils";
 import { serverUrl } from "../../utils";
 import { chatType, MessageState } from "../messageSlice";
 
-interface Res_body {
+interface Req_body {
   previousRoom_id: string;
   previousRoom_type: string;
   nextRoom_id: string;
@@ -19,7 +19,7 @@ interface Payload {
 
 export const clearNotifications = createAsyncThunk<
   Payload,
-  Res_body,
+  Req_body,
   { state: RootState }
 >(
   "message/clearNotifications",
@@ -27,7 +27,7 @@ export const clearNotifications = createAsyncThunk<
     { previousRoom_id, previousRoom_type, nextRoom_id, nextRoom_type },
     thunkAPI
   ) => {
-    const client = axios_client();
+    const client = AxiosClient.getClient();
 
     if (previousRoom_id !== "" && previousRoom_type !== "") {
       const user_id = thunkAPI.getState().user.currentUser.user_id;

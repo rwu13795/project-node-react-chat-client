@@ -2,7 +2,7 @@ import { createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
-import { axios_client, loadingStatusEnum } from "../../../utils";
+import { AxiosClient, loadingStatusEnum } from "../../../utils";
 import { serverUrl } from "../../utils";
 import { chatType, MessageState, sortByLastAdded } from "../messageSlice";
 
@@ -20,16 +20,16 @@ interface Payload {
   private: PrivateNotifications[];
   group: GroupNotifications[];
 }
-interface Res_body {
+interface Req_body {
   currentUserId: string;
 }
 
 export const getNotifications = createAsyncThunk<
   Payload,
-  Res_body,
+  Req_body,
   { state: RootState }
 >("message/getNotifications", async ({ currentUserId }) => {
-  const client = axios_client();
+  const client = AxiosClient.getClient();
 
   const response = await client.get<Payload>(
     serverUrl + `/chat/get-notifications?user_id=${currentUserId}`

@@ -8,7 +8,7 @@ export * from "./hooks/useCheckToken";
 
 export * from "./helpers/scroll-to-top";
 export * from "./helpers/resize-menu";
-export * from "./helpers/axios-client";
+export * from "./helpers/AxiosClient";
 export * from "./helpers/cap-first-letter";
 export * from "./helpers/crop-image";
 export * from "./helpers/resize-chat-board";

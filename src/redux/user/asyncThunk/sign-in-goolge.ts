@@ -3,7 +3,7 @@ import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
 import {
-  axios_client,
+  AxiosClient,
   loadingStatusEnum,
   onlineStatus_enum,
 } from "../../../utils";
@@ -36,7 +36,7 @@ export const signInWithGoogle = createAsyncThunk<
   Req_body,
   { state: RootState }
 >("user/SignInWithGoogle", async (body, thunkAPI) => {
-  const client = axios_client();
+  const client = AxiosClient.getClient();
 
   try {
     const response = await client.post<Payload>(

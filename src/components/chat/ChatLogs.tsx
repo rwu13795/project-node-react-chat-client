@@ -21,7 +21,7 @@ import {
 } from "../../redux/user/userSlice";
 import ChatMessagePrivate from "./ChatMessagePrivate";
 import ChatMessageGroup from "./ChatMessageGroup";
-import { axios_client, loadingStatusEnum } from "../../utils";
+import { AxiosClient, loadingStatusEnum } from "../../utils";
 import { serverUrl } from "../../redux/utils";
 
 // UI //
@@ -40,7 +40,7 @@ function ChatLogs({
   targetChatRoom,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
-  const client = axios_client();
+  const client = AxiosClient.getClient();
 
   const chatHistory = useSelector(selectTargetChatRoom_history);
   const currentUser = useSelector(selectCurrentUser);

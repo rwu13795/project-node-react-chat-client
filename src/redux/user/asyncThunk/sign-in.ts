@@ -3,7 +3,7 @@ import { WritableDraft } from "immer/dist/internal";
 
 import { RootState } from "../..";
 import {
-  axios_client,
+  AxiosClient,
   loadingStatusEnum,
   onlineStatus_enum,
 } from "../../../utils";
@@ -51,7 +51,7 @@ export const signIn = createAsyncThunk<
     // thunkAPI.rejectWithValue to the reducer
     thunkAPI
   ) => {
-    const client = axios_client();
+    const client = AxiosClient.getClient();
 
     try {
       const response = await client.post<Payload>(serverUrl + "/auth/sign-in", {

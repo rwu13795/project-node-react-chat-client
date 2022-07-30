@@ -19,7 +19,7 @@ import {
 import { serverUrl } from "../../redux/utils";
 import { addFriendRequest_emitter } from "../../socket-io/emitters";
 import {
-  axios_client,
+  AxiosClient,
   inputFieldSizes,
   inputNames,
   loadingStatusEnum,
@@ -53,7 +53,7 @@ function SearchUser({
   setExpand,
 }: Props): JSX.Element {
   const dispatch = useDispatch();
-  const client = axios_client();
+  const client = AxiosClient.getClient();
 
   const friendsList = useSelector(selectFriendsList);
   const currentUser = useSelector(selectCurrentUser);

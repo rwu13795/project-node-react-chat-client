@@ -1,11 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { WritableDraft } from "immer/dist/internal";
-import { axios_client, loadingStatusEnum } from "../../../utils";
+import { AxiosClient, loadingStatusEnum } from "../../../utils";
 import { serverUrl } from "../../utils";
 import { UserState } from "../userSlice";
 
 export const signOut = createAsyncThunk("user/signOut", async () => {
-  const client = axios_client();
+  const client = AxiosClient.getClient();
   await client.post(serverUrl + "/auth/sign-out");
   return;
 });

@@ -20,8 +20,8 @@ import {
   setLoadingStatus_user,
 } from "../redux/user/userSlice";
 import { getNotifications } from "../redux/message/asyncThunk";
-import connectSocket from "../socket-io/socketConnection";
-import addAllListeners from "../socket-io/add-all-listener";
+import SocketClient from "../socket-io/SocketClient";
+import { addAllListeners } from "../socket-io/add-all-listener";
 import { loadingStatusEnum, resizeMenu } from "../utils";
 import { online_emitter } from "../socket-io/emitters";
 import RoomLists from "./menu/left/RoomLists";
@@ -76,7 +76,10 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
 
       // only initialize the socket once. Pass all the user_id to socket-server to let
       // the server identify this socket-client
-      let newSocket: Socket = connectSocket(currentUserId, currentUsername);
+      let newSocket: Socket = SocketClient.getClient(
+        currentUserId,
+        currentUsername
+      );
 
       newSocket.on("connect", () => {
         dispatch(getNotifications({ currentUserId }));

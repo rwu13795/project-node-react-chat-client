@@ -11,8 +11,8 @@ import {
 import ChangeUsername from "./ChangeUsername";
 import ChangePW from "./ChangePW";
 import AddAvatar from "./AddAvatar";
-import connectSocket from "../../../socket-io/socketConnection";
-import addAllListeners from "../../../socket-io/add-all-listener";
+import SocketClient from "../../../socket-io/SocketClient";
+import { addAllListeners } from "../../../socket-io/add-all-listener";
 import { setCurrentUserId_msg } from "../../../redux/message/messageSlice";
 import { scrollToTop } from "../../../utils";
 
@@ -57,7 +57,7 @@ function UserProfile({ socket, setSocket }: Props): JSX.Element {
       if (socket) return;
 
       dispatch(setCurrentUserId_msg(user_id));
-      let newSocket: Socket = connectSocket(user_id, username);
+      let newSocket: Socket = SocketClient.getClient(user_id, username);
       setSocket(newSocket);
       addAllListeners(newSocket, dispatch, {
         user_id,

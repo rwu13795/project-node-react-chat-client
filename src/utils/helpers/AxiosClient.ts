@@ -10,6 +10,7 @@ export class AxiosClient {
   private constructor() {}
 
   public static getClient() {
+    // if there is no existing client instance, create a new one
     if (!AxiosClient.client) {
       AxiosClient.client = axios.create({
         withCredentials: true,

@@ -21,7 +21,7 @@ import {
   online_listener,
 } from "./listeners";
 
-export default function addAllListeners(
+export function addAllListeners(
   socket: Socket,
   dispatch: Dispatch,
   data: {

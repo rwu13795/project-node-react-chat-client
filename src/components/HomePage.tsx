@@ -21,7 +21,6 @@ import {
 } from "../redux/user/userSlice";
 import { getNotifications } from "../redux/message/asyncThunk";
 import SocketClient from "../socket-io/SocketClient";
-import { addAllListeners } from "../socket-io/add-all-listener";
 import { loadingStatusEnum, resizeMenu } from "../utils";
 import { online_emitter } from "../socket-io/emitters";
 import RoomLists from "./menu/left/RoomLists";
@@ -72,21 +71,21 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
     } else {
       // if getAuth has not finished loading before the selector selected the user_id
       if (!currentUserId) return;
-      if (socket) return;
 
-      // only initialize the socket once. Pass all the user_id to socket-server to let
-      // the server identify this socket-client
-      let newSocket: Socket = SocketClient.getClient(
-        currentUserId,
-        currentUsername
-      );
+      if (socket) {
+        return;
+      }
+
+      let socketClient = SocketClient.getClient();
+      let newSocket = socketClient.connect(currentUserId, currentUsername);
 
       newSocket.on("connect", () => {
+        console.log(isLoggedIn);
         dispatch(getNotifications({ currentUserId }));
         dispatch(setCurrentUserId_msg(currentUserId));
+
         setSocket(newSocket);
-        // initialize all the listeners //
-        addAllListeners(newSocket, dispatch, {
+        socketClient.addAllListeners(dispatch, {
           user_id: currentUserId,
           group_ids: groupsToJoin,
         });

@@ -31,7 +31,7 @@ function App(): JSX.Element {
 
   const isLoggedIn = useSelector(selectIsLoggedIn);
 
-  const [socket, setSocket] = useState<Socket>();
+  const [socket, setSocket] = useState<Socket | undefined>();
   const [showFooter, setShowFooter] = useState<boolean>(true);
   const [isAuth, setIsAuth] = useState<boolean>(false);
   const [openTimeOutModal, setOpenTimeOutModal] = useState<boolean>(false);
@@ -54,6 +54,7 @@ function App(): JSX.Element {
       logout_emitter(socket);
     }
     dispatch(signOut());
+    socket?.disconnect();
     dispatch(setIsLoggedIn(false));
     dispatch(setOpenAlertModal_timeOut(true));
   }

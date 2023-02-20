@@ -1,7 +1,10 @@
 import { memo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
-import { selectRequestErrors } from "../../../redux/user/userSlice";
+import {
+  selectRequestErrors,
+  selectUserId,
+} from "../../../redux/user/userSlice";
 import { inputNames, onSubmitCheck } from "../../../utils";
 import InputField, {
   inputFieldStyles,
@@ -27,6 +30,7 @@ function SetFriendDisplayName({
 }: Props): JSX.Element {
   const dispatch = useDispatch();
 
+  const currenetUserId = useSelector(selectUserId);
   const requestErrors = useSelector(selectRequestErrors);
 
   const [inputValues, setInputValues] = useState<InputFields>({});
@@ -56,6 +60,7 @@ function SetFriendDisplayName({
 
     dispatch(
       setFriendDisplayName({
+        user_id: currenetUserId,
         friend_id,
         friend_display_name: inputValues[inputNames.friend_display_name],
       })

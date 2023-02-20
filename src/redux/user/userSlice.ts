@@ -2,83 +2,9 @@ import { createSelector, createSlice } from "@reduxjs/toolkit";
 
 import type { RootState } from "../index";
 import { loadingStatusEnum, onlineStatus_enum } from "../../utils";
-import {
-  changeGroupName,
-  changeGroupName_fulfilled,
-  changeGroupName_pending,
-  changeGroupName_rejected,
-  changePassword,
-  changePassword_fulfilled,
-  changePassword_pending,
-  changePassword_rejected,
-  changeUsername,
-  changeUsername_fulfilled,
-  changeUsername_pending,
-  changeUsername_rejected,
-  createNewGroup,
-  createNewGroup_fulfilled,
-  createNewGroup_pending,
-  createNewGroup_rejected,
-  forgotPasswordRequest,
-  forgotPasswordRequest_fulfilled,
-  forgotPasswordRequest_pending,
-  forgotPasswordRequest_rejected,
-  forgotPasswordReset,
-  forgotPasswordReset_fulfilled,
-  forgotPasswordReset_pending,
-  forgotPasswordReset_rejected,
-  getGroupMembersList_database,
-  getGroupMembersList_database_fulfilled,
-  getUserAuth,
-  getUserAuth_fulfilled,
-  setFriendDisplayName,
-  setFriendDisplayName_fulfilled,
-  setFriendDisplayName_pending,
-  setFriendDisplayName_rejected,
-  signIn,
-  signInWithGoogle,
-  signInWithGoogle_fulfilled,
-  signInWithGoogle_pending,
-  signInWithGoogle_rejected,
-  signIn_fulfilled,
-  signIn_pending,
-  signIn_rejected,
-  signOut,
-  signOut_fulfilled,
-  signUp,
-  signUp_fulfilled,
-  signUp_pending,
-  signUp_rejected,
-} from "./asyncThunk";
-import {
-  changeAvatar_reducer,
-  clearAddFriendRequests_reducer,
-  clearLeftMember_reducer,
-  clearRequestError_reducer,
-  leaveGroup_reducer,
-  removeGroup_reducer,
-  deleteGroupInvitation_reducer,
-  setAddFriendRequests_reducer,
-  setBlockFriend_reducer,
-  setFriendsOnlineStatus_reducer,
-  setGroupInvitation_reducer,
-  setIsLoggedIn_reducer,
-  setLoadingStatus_user_reducer,
-  setLoadingStatus_2_user_reducer,
-  setResult_addFriendRequest_reducer,
-  setResult_groupInvitation_reducer,
-  setUserOnlineStatus_reducer,
-  updateGroupAdmin_reducer,
-  updateGroupsList_reducer,
-  resetAfterSignOut_user_reducer,
-  setOpenAlertModal_sameUser_reducer,
-  setOpenAlertModal_timeOut_reducer,
-  setFriendNewName_reducer,
-  setViewProfileTarget_reducer,
-  setOpenViewProfileModal_reducer,
-} from "./reducers";
+import * as asyncThunk from "./asyncThunk";
+import * as reducers from "./reducers";
 import { InputFields } from "../../components/input-field/InputField";
-import { setFriendNewAvatar_reducer } from "./reducers/setFriendNewAvatar";
 
 export interface CurrentUser {
   username: string;
@@ -194,122 +120,197 @@ const userSlice = createSlice({
   name: "user",
   initialState: initialState_user,
   reducers: {
-    setLoadingStatus_user: setLoadingStatus_user_reducer,
+    setLoadingStatus_user: reducers.setLoadingStatus_user_reducer,
 
-    setLoadingStatus_2_user: setLoadingStatus_2_user_reducer,
+    setLoadingStatus_2_user: reducers.setLoadingStatus_2_user_reducer,
 
-    setFriendsOnlineStatus: setFriendsOnlineStatus_reducer,
+    setFriendsOnlineStatus: reducers.setFriendsOnlineStatus_reducer,
 
-    setAddFriendRequests: setAddFriendRequests_reducer,
+    setAddFriendRequests: reducers.setAddFriendRequests_reducer,
 
-    clearAddFriendRequests: clearAddFriendRequests_reducer,
+    clearAddFriendRequests: reducers.clearAddFriendRequests_reducer,
 
-    setResult_addFriendRequest: setResult_addFriendRequest_reducer,
+    setResult_addFriendRequest: reducers.setResult_addFriendRequest_reducer,
 
-    setResult_groupInvitation: setResult_groupInvitation_reducer,
+    setResult_groupInvitation: reducers.setResult_groupInvitation_reducer,
 
-    setGroupInvitation: setGroupInvitation_reducer,
+    setGroupInvitation: reducers.setGroupInvitation_reducer,
 
-    deleteGroupInvitation: deleteGroupInvitation_reducer,
+    deleteGroupInvitation: reducers.deleteGroupInvitation_reducer,
 
-    updateGroupsList: updateGroupsList_reducer,
+    updateGroupsList: reducers.updateGroupsList_reducer,
 
-    leaveGroup: leaveGroup_reducer,
+    leaveGroup: reducers.leaveGroup_reducer,
 
-    clearLeftMember: clearLeftMember_reducer,
+    clearLeftMember: reducers.clearLeftMember_reducer,
 
-    removeGroup: removeGroup_reducer,
+    removeGroup: reducers.removeGroup_reducer,
 
-    setBlockFriend: setBlockFriend_reducer,
+    setBlockFriend: reducers.setBlockFriend_reducer,
 
-    setUserOnlineStatus: setUserOnlineStatus_reducer,
+    setUserOnlineStatus: reducers.setUserOnlineStatus_reducer,
 
-    changeAvatar: changeAvatar_reducer,
+    changeAvatar: reducers.changeAvatar_reducer,
 
-    clearRequestError: clearRequestError_reducer,
+    clearRequestError: reducers.clearRequestError_reducer,
 
-    setIsLoggedIn: setIsLoggedIn_reducer,
+    setIsLoggedIn: reducers.setIsLoggedIn_reducer,
 
-    updateGroupAdmin: updateGroupAdmin_reducer,
+    updateGroupAdmin: reducers.updateGroupAdmin_reducer,
 
-    resetAfterSignOut_user: resetAfterSignOut_user_reducer,
+    resetAfterSignOut_user: reducers.resetAfterSignOut_user_reducer,
 
-    setOpenAlertModal_sameUser: setOpenAlertModal_sameUser_reducer,
+    setOpenAlertModal_sameUser: reducers.setOpenAlertModal_sameUser_reducer,
 
-    setOpenAlertModal_timeOut: setOpenAlertModal_timeOut_reducer,
+    setOpenAlertModal_timeOut: reducers.setOpenAlertModal_timeOut_reducer,
 
-    setFriendNewName: setFriendNewName_reducer,
+    setFriendNewName: reducers.setFriendNewName_reducer,
 
-    setFriendNewAvatar: setFriendNewAvatar_reducer,
+    setFriendNewAvatar: reducers.setFriendNewAvatar_reducer,
 
-    setViewProfileTarget: setViewProfileTarget_reducer,
+    setViewProfileTarget: reducers.setViewProfileTarget_reducer,
 
-    setOpenViewProfileModal: setOpenViewProfileModal_reducer,
+    setOpenViewProfileModal: reducers.setOpenViewProfileModal_reducer,
   },
 
   extraReducers: (builder) => {
     builder
       /***************  GET AUTH  ***************/
-      .addCase(getUserAuth.fulfilled, getUserAuth_fulfilled)
+      .addCase(
+        asyncThunk.getUserAuth.fulfilled,
+        asyncThunk.getUserAuth_fulfilled
+      )
 
       /***************  SIGN IN  ***************/
-      .addCase(signIn.fulfilled, signIn_fulfilled)
-      .addCase(signIn.pending, signIn_pending)
-      .addCase(signIn.rejected, signIn_rejected)
+      .addCase(asyncThunk.signIn.fulfilled, asyncThunk.signIn_fulfilled)
+      .addCase(asyncThunk.signIn.pending, asyncThunk.signIn_pending)
+      .addCase(asyncThunk.signIn.rejected, asyncThunk.signIn_rejected)
 
       /***************  SIGN UP  ***************/
-      .addCase(signUp.fulfilled, signUp_fulfilled)
-      .addCase(signUp.pending, signUp_pending)
-      .addCase(signUp.rejected, signUp_rejected)
+      .addCase(asyncThunk.signUp.fulfilled, asyncThunk.signUp_fulfilled)
+      .addCase(asyncThunk.signUp.pending, asyncThunk.signUp_pending)
+      .addCase(asyncThunk.signUp.rejected, asyncThunk.signUp_rejected)
 
       /***************  SIGN OUT  ***************/
-      .addCase(signOut.fulfilled, signOut_fulfilled)
+      .addCase(asyncThunk.signOut.fulfilled, asyncThunk.signOut_fulfilled)
 
       /***************  CREATE A NEW GROUP  ***************/
-      .addCase(createNewGroup.fulfilled, createNewGroup_fulfilled)
-      .addCase(createNewGroup.pending, createNewGroup_pending)
-      .addCase(createNewGroup.rejected, createNewGroup_rejected)
+      .addCase(
+        asyncThunk.createNewGroup.fulfilled,
+        asyncThunk.createNewGroup_fulfilled
+      )
+      .addCase(
+        asyncThunk.createNewGroup.pending,
+        asyncThunk.createNewGroup_pending
+      )
+      .addCase(
+        asyncThunk.createNewGroup.rejected,
+        asyncThunk.createNewGroup_rejected
+      )
 
       /***************  GET GROUP MEMBERS  ***************/
       .addCase(
-        getGroupMembersList_database.fulfilled,
-        getGroupMembersList_database_fulfilled
+        asyncThunk.getGroupMembersList_database.fulfilled,
+        asyncThunk.getGroupMembersList_database_fulfilled
       )
 
       /***************  FORGOT PASSWORD REQUEST  ***************/
-      .addCase(forgotPasswordRequest.fulfilled, forgotPasswordRequest_fulfilled)
-      .addCase(forgotPasswordRequest.pending, forgotPasswordRequest_pending)
-      .addCase(forgotPasswordRequest.rejected, forgotPasswordRequest_rejected)
+      .addCase(
+        asyncThunk.forgotPasswordRequest.fulfilled,
+        asyncThunk.forgotPasswordRequest_fulfilled
+      )
+      .addCase(
+        asyncThunk.forgotPasswordRequest.pending,
+        asyncThunk.forgotPasswordRequest_pending
+      )
+      .addCase(
+        asyncThunk.forgotPasswordRequest.rejected,
+        asyncThunk.forgotPasswordRequest_rejected
+      )
 
       /***************  FORGOT PASSWORD RESET  ***************/
-      .addCase(forgotPasswordReset.fulfilled, forgotPasswordReset_fulfilled)
-      .addCase(forgotPasswordReset.pending, forgotPasswordReset_pending)
-      .addCase(forgotPasswordReset.rejected, forgotPasswordReset_rejected)
+      .addCase(
+        asyncThunk.forgotPasswordReset.fulfilled,
+        asyncThunk.forgotPasswordReset_fulfilled
+      )
+      .addCase(
+        asyncThunk.forgotPasswordReset.pending,
+        asyncThunk.forgotPasswordReset_pending
+      )
+      .addCase(
+        asyncThunk.forgotPasswordReset.rejected,
+        asyncThunk.forgotPasswordReset_rejected
+      )
 
       /***************  CHANGE PASSWORD  ***************/
-      .addCase(changePassword.fulfilled, changePassword_fulfilled)
-      .addCase(changePassword.pending, changePassword_pending)
-      .addCase(changePassword.rejected, changePassword_rejected)
+      .addCase(
+        asyncThunk.changePassword.fulfilled,
+        asyncThunk.changePassword_fulfilled
+      )
+      .addCase(
+        asyncThunk.changePassword.pending,
+        asyncThunk.changePassword_pending
+      )
+      .addCase(
+        asyncThunk.changePassword.rejected,
+        asyncThunk.changePassword_rejected
+      )
 
       /***************  CHANGE USERNAME  ***************/
-      .addCase(changeUsername.fulfilled, changeUsername_fulfilled)
-      .addCase(changeUsername.pending, changeUsername_pending)
-      .addCase(changeUsername.rejected, changeUsername_rejected)
+      .addCase(
+        asyncThunk.changeUsername.fulfilled,
+        asyncThunk.changeUsername_fulfilled
+      )
+      .addCase(
+        asyncThunk.changeUsername.pending,
+        asyncThunk.changeUsername_pending
+      )
+      .addCase(
+        asyncThunk.changeUsername.rejected,
+        asyncThunk.changeUsername_rejected
+      )
 
       /***************  GOOGLE SIGN IN  ***************/
-      .addCase(signInWithGoogle.fulfilled, signInWithGoogle_fulfilled)
-      .addCase(signInWithGoogle.pending, signInWithGoogle_pending)
-      .addCase(signInWithGoogle.rejected, signInWithGoogle_rejected)
+      .addCase(
+        asyncThunk.signInWithGoogle.fulfilled,
+        asyncThunk.signInWithGoogle_fulfilled
+      )
+      .addCase(
+        asyncThunk.signInWithGoogle.pending,
+        asyncThunk.signInWithGoogle_pending
+      )
+      .addCase(
+        asyncThunk.signInWithGoogle.rejected,
+        asyncThunk.signInWithGoogle_rejected
+      )
 
       /***************  CHANGE GROUP NAME  ***************/
-      .addCase(changeGroupName.fulfilled, changeGroupName_fulfilled)
-      .addCase(changeGroupName.pending, changeGroupName_pending)
-      .addCase(changeGroupName.rejected, changeGroupName_rejected)
+      .addCase(
+        asyncThunk.changeGroupName.fulfilled,
+        asyncThunk.changeGroupName_fulfilled
+      )
+      .addCase(
+        asyncThunk.changeGroupName.pending,
+        asyncThunk.changeGroupName_pending
+      )
+      .addCase(
+        asyncThunk.changeGroupName.rejected,
+        asyncThunk.changeGroupName_rejected
+      )
 
       /***************  SET FRIEND DISPLAY NAME  ***************/
-      .addCase(setFriendDisplayName.fulfilled, setFriendDisplayName_fulfilled)
-      .addCase(setFriendDisplayName.pending, setFriendDisplayName_pending)
-      .addCase(setFriendDisplayName.rejected, setFriendDisplayName_rejected);
+      .addCase(
+        asyncThunk.setFriendDisplayName.fulfilled,
+        asyncThunk.setFriendDisplayName_fulfilled
+      )
+      .addCase(
+        asyncThunk.setFriendDisplayName.pending,
+        asyncThunk.setFriendDisplayName_pending
+      )
+      .addCase(
+        asyncThunk.setFriendDisplayName.rejected,
+        asyncThunk.setFriendDisplayName_rejected
+      );
   },
 });
 

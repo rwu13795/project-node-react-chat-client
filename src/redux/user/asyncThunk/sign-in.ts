@@ -17,11 +17,11 @@ import {
   UserState,
 } from "../userSlice";
 
-interface SignIn_body {
+type SignIn_body = {
   email: string;
   password: string;
   appearOffline: boolean;
-}
+};
 
 interface Payload {
   currentUser: CurrentUser;

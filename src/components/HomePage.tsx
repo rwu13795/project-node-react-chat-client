@@ -77,7 +77,6 @@ function MainPage({ socket, setSocket, setShowFooter }: Props): JSX.Element {
       let newSocket: Socket = connectSocket(currentUserId, currentUsername);
 
       newSocket.on("connect", () => {
-        console.log(isLoggedIn);
         dispatch(getNotifications({ currentUserId }));
         dispatch(setCurrentUserId_msg(currentUserId));
 

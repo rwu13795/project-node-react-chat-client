@@ -137,7 +137,7 @@ export default App;
 
 /*
 (1) <Switch /> <Redirect /> and other properties that used in the Redux
-    tutorial is depreciated !
+    tutorial is deprecated !
 
     read the tutorial below for new syntax
     https://github.com/remix-run/react-router/blob/main/docs/getting-started/tutorial.md

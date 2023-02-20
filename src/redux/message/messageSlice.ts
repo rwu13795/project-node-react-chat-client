@@ -2,28 +2,8 @@ import { createSelector, createSlice } from "@reduxjs/toolkit";
 import { loadingStatusEnum } from "../../utils";
 import type { RootState } from "../index";
 
-import {
-  loadChatHistory_database,
-  clearNotifications,
-  getNotifications,
-  loadChatHistory_database_fulfilled,
-  getNotifications_fulfilled,
-  clearNotifications_fulfilled,
-  loadChatHistory_database_pending,
-} from "./asyncThunk";
-import {
-  addNewMessageToHistory_memory_reducer,
-  loadMoreOldChatHistory_database_reducer,
-  removeGroupPosition_reducer,
-  resetAfterSignOut_msg_reducer,
-  resetVisitedRoom_reducer,
-  setCurrentUserId_msg_reducer,
-  setInfiniteScrollStats_reducer,
-  setLoadingStatus_2_msg_reducer,
-  setLoadingStatus_msg_reducer,
-  setTargetChatRoom_reducer,
-  updateGroupNote_afterJoining_reducer,
-} from "./reducers";
+import * as asyncThunk from "./asyncThunk";
+import * as reducers from "./reducers";
 
 export enum chatType {
   group = "group",
@@ -106,46 +86,54 @@ const messageSlice = createSlice({
   name: "message",
   initialState: initialState_msg,
   reducers: {
-    setCurrentUserId_msg: setCurrentUserId_msg_reducer,
+    setCurrentUserId_msg: reducers.setCurrentUserId_msg_reducer,
 
-    setTargetChatRoom: setTargetChatRoom_reducer,
+    setTargetChatRoom: reducers.setTargetChatRoom_reducer,
 
-    setInfiniteScrollStats: setInfiniteScrollStats_reducer,
+    setInfiniteScrollStats: reducers.setInfiniteScrollStats_reducer,
 
-    addNewMessageToHistory_memory: addNewMessageToHistory_memory_reducer,
+    addNewMessageToHistory_memory:
+      reducers.addNewMessageToHistory_memory_reducer,
 
-    loadMoreOldChatHistory_database: loadMoreOldChatHistory_database_reducer,
+    loadMoreOldChatHistory_database:
+      reducers.loadMoreOldChatHistory_database_reducer,
 
-    resetVisitedRoom: resetVisitedRoom_reducer,
+    resetVisitedRoom: reducers.resetVisitedRoom_reducer,
 
-    setLoadingStatus_msg: setLoadingStatus_msg_reducer,
+    setLoadingStatus_msg: reducers.setLoadingStatus_msg_reducer,
 
-    setLoadingStatus_2_msg: setLoadingStatus_2_msg_reducer,
+    setLoadingStatus_2_msg: reducers.setLoadingStatus_2_msg_reducer,
 
-    updateGroupNote_afterJoining: updateGroupNote_afterJoining_reducer,
+    updateGroupNote_afterJoining: reducers.updateGroupNote_afterJoining_reducer,
 
-    resetAfterSignOut_msg: resetAfterSignOut_msg_reducer,
+    resetAfterSignOut_msg: reducers.resetAfterSignOut_msg_reducer,
 
-    removeGroupPosition: removeGroupPosition_reducer,
+    removeGroupPosition: reducers.removeGroupPosition_reducer,
   },
 
   extraReducers: (builder) => {
     builder
       /***************  Load Chat History  ***************/
       .addCase(
-        loadChatHistory_database.fulfilled,
-        loadChatHistory_database_fulfilled
+        asyncThunk.loadChatHistory_database.fulfilled,
+        asyncThunk.loadChatHistory_database_fulfilled
       )
       .addCase(
-        loadChatHistory_database.pending,
-        loadChatHistory_database_pending
+        asyncThunk.loadChatHistory_database.pending,
+        asyncThunk.loadChatHistory_database_pending
       )
 
       /***************  Get Notifications  ***************/
-      .addCase(getNotifications.fulfilled, getNotifications_fulfilled)
+      .addCase(
+        asyncThunk.getNotifications.fulfilled,
+        asyncThunk.getNotifications_fulfilled
+      )
 
       /***************  Clear Notifications  ***************/
-      .addCase(clearNotifications.fulfilled, clearNotifications_fulfilled);
+      .addCase(
+        asyncThunk.clearNotifications.fulfilled,
+        asyncThunk.clearNotifications_fulfilled
+      );
   },
 });
 

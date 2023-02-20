@@ -9,6 +9,7 @@ import { UserState } from "../userSlice";
 interface Req_body {
   friend_id: string;
   friend_display_name: string;
+  user_id: string;
 }
 
 interface Payload {
